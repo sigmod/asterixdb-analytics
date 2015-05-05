@@ -197,7 +197,7 @@ public class ClusterConfig {
         for (String key : map.keySet()) {
             NodeControllerInfo info = map.get(key);
             String id = info.getNodeId();
-            byte[] ip = info.getNetworkAddress().getIpAddress();
+            byte[] ip = info.getNetworkAddress().lookupIpAddress();
             StringBuilder sb = new StringBuilder();
             for (byte b : ip) {
                 if (sb.length() > 0)

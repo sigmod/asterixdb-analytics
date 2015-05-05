@@ -148,7 +148,7 @@ public class SpreadOD extends AbstractSingleActivityOperatorDescriptor {
                 IJobSerializerDeserializer jobSerDe = ctx.getJobletContext()
                         .getApplicationContext()
                         .getJobSerializerDeserializerContainer()
-                        .getJobSerializerDeerializer(deploymentId);
+                        .getJobSerializerDeserializer(deploymentId);
                 Serializable model = (Serializable) jobSerDe.deserialize(bs);
                 imruContext.setModel(model, roundNum);
             } else {

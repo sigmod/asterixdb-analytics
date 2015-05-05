@@ -368,7 +368,7 @@ public class Client<Model extends Serializable, Data extends Serializable> {
         ncConfig1.clusterNetIPAddress = host;
         ncConfig1.ccPort = clusterNetPort;
         ncConfig1.dataIPAddress = "127.0.0.1";
-        ncConfig1.datasetIPAddress = "127.0.0.1";
+        ncConfig1.resultIPAddress = "127.0.0.1";
         ncConfig1.appNCMainClass = "edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUNCBootstrapImpl";
         ncConfig1.nodeId = NC1_ID;
         File file = new File("/tmp/cache/tmp/" + NC1_ID);
