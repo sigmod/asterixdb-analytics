@@ -20,6 +20,12 @@
   <packaging>pom</packaging>
   <name>pregelix</name>
 
+  <parent>
+    <groupId>edu.uci.ics.hyracks</groupId>
+    <artifactId>asterixdb-analytics</artifactId>
+    <version>0.2.16-SNAPSHOT</version>
+  </parent>
+
   <properties>
     <jvm.extraargs />
     <hanging.pregelix.tests>**/pregelix/**/FailureRecovery*.java</hanging.pregelix.tests>

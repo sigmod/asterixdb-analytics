@@ -20,6 +20,12 @@
   <packaging>pom</packaging>
   <name>imru</name>
 
+  <parent>
+    <groupId>edu.uci.ics.hyracks</groupId>
+    <artifactId>asterixdb-analytics</artifactId>
+    <version>0.2.16-SNAPSHOT</version>
+  </parent>
+
   <properties>
     <jvm.extraargs />
     <global.test.includes>**/*TestSuite.java,**/*Test.java</global.test.includes>

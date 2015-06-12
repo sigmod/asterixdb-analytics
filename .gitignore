@@ -10,7 +10,7 @@ ClusterControllerService
 actual
 build
 edu.uci.ics.hyracks.control.nc.NodeControllerService
-<<<<<<< HEAD
+
 exception
 expected
 teststore1
@@ -30,5 +30,5 @@ dist
 expected
 teststore*
 *pregelix-example/dev*
-pregelix-example/storage/
+pregelix/pregelix-example/storage*
 
