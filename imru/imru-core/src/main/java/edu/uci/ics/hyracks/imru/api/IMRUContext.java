@@ -52,7 +52,7 @@ public class IMRUContext {
     }
 
     public int getFrameSize() {
-        return ctx.getFrameSize();
+        return ctx.getInitialFrameSize();
     }
 
     public IHyracksJobletContext getJobletContext() {
@@ -60,21 +60,18 @@ public class IMRUContext {
     }
 
     public IMRURuntimeContext getRuntimeContext() {
-        INCApplicationContext appContext = getJobletContext()
-                .getApplicationContext();
+        INCApplicationContext appContext = getJobletContext().getApplicationContext();
         return (IMRURuntimeContext) appContext.getApplicationObject();
     }
 
     /**
      * Get the model shared in each node controller
-     * 
+     *
      * @return
      */
     public Serializable getModel() {
-        INCApplicationContext appContext = getJobletContext()
-                .getApplicationContext();
-        IMRURuntimeContext context = (IMRURuntimeContext) appContext
-                .getApplicationObject();
+        INCApplicationContext appContext = getJobletContext().getApplicationContext();
+        IMRURuntimeContext context = (IMRURuntimeContext) appContext.getApplicationObject();
         return context.model;
     }
 
@@ -82,10 +79,8 @@ public class IMRUContext {
      * Set the model shared in each node controller
      */
     public void setModel(Serializable model) {
-        INCApplicationContext appContext = getJobletContext()
-                .getApplicationContext();
-        IMRURuntimeContext context = (IMRURuntimeContext) appContext
-                .getApplicationObject();
+        INCApplicationContext appContext = getJobletContext().getApplicationContext();
+        IMRURuntimeContext context = (IMRURuntimeContext) appContext.getApplicationObject();
         context.model = model;
     }
 
@@ -93,10 +88,8 @@ public class IMRUContext {
      * Set the model shared in each node controller
      */
     public void setModel(Serializable model, int age) {
-        INCApplicationContext appContext = getJobletContext()
-                .getApplicationContext();
-        IMRURuntimeContext context = (IMRURuntimeContext) appContext
-                .getApplicationObject();
+        INCApplicationContext appContext = getJobletContext().getApplicationContext();
+        IMRURuntimeContext context = (IMRURuntimeContext) appContext.getApplicationObject();
         context.model = model;
         context.modelAge = age;
     }

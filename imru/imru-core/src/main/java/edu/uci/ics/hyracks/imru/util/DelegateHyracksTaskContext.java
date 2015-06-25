@@ -20,7 +20,6 @@ import java.nio.ByteBuffer;
 import edu.uci.ics.hyracks.api.context.IHyracksJobletContext;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.TaskAttemptId;
-import edu.uci.ics.hyracks.api.dataflow.TaskId;
 import edu.uci.ics.hyracks.api.dataflow.state.IStateObject;
 import edu.uci.ics.hyracks.api.dataset.IDatasetPartitionManager;
 import edu.uci.ics.hyracks.api.deployment.DeploymentId;
@@ -41,7 +40,7 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
 
     /**
      * Construct a new DelegateHyracksTaskContext.
-     * 
+     *
      * @param delegate
      *            The task context to delegate calls to.
      */
@@ -60,8 +59,8 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
     }
 
     @Override
-    public int getFrameSize() {
-        return delegate.getFrameSize();
+    public int getInitialFrameSize() {
+        return delegate.getInitialFrameSize();
     }
 
     @Override
@@ -70,14 +69,12 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
     }
 
     @Override
-    public FileReference createUnmanagedWorkspaceFile(String prefix)
-            throws HyracksDataException {
+    public FileReference createUnmanagedWorkspaceFile(String prefix) throws HyracksDataException {
         return delegate.createUnmanagedWorkspaceFile(prefix);
     }
 
     @Override
-    public FileReference createManagedWorkspaceFile(String prefix)
-            throws HyracksDataException {
+    public FileReference createManagedWorkspaceFile(String prefix) throws HyracksDataException {
         return delegate.createManagedWorkspaceFile(prefix);
     }
 
@@ -117,8 +114,18 @@ public class DelegateHyracksTaskContext implements IHyracksTaskContext {
     }
 
     @Override
-    public void sendApplicationMessageToCC(byte[] arg0, DeploymentId arg1,
-            String arg2) throws Exception {
+    public void sendApplicationMessageToCC(byte[] arg0, DeploymentId arg1, String arg2) throws Exception {
         delegate.sendApplicationMessageToCC(arg0, arg1, arg2);
+    }
+
+    @Override
+    public ByteBuffer allocateFrame(int bytes) throws HyracksDataException {
+        return delegate.allocateFrame(bytes);
+    }
+
+    @Override
+    public ByteBuffer reallocateFrame(ByteBuffer tobeDeallocate, int newSizeInBytes, boolean copyOldData)
+            throws HyracksDataException {
+        return delegate.reallocateFrame(tobeDeallocate, newSizeInBytes, copyOldData);
     }
 }

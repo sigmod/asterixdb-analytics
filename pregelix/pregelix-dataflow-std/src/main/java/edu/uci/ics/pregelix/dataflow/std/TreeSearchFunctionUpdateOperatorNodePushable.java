@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,9 @@ package edu.uci.ics.pregelix.dataflow.std;
 import java.io.DataOutput;
 import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparator;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -52,7 +54,7 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
     protected IndexDataflowHelper treeIndexHelper;
     protected FrameTupleAccessor accessor;
 
-    protected ByteBuffer writeBuffer;
+    protected IFrame writeFrame;
     protected FrameTupleAppender appender;
     protected ArrayTupleBuilder tb;
     protected DataOutput dos;
@@ -112,7 +114,7 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
         this.writers = new IFrameWriter[outputArity];
         this.functionProxy = new FunctionProxy(ctx, functionFactory, preHookFactory, postHookFactory, inputRdFactory,
                 writers);
-        this.updateBuffer = new UpdateBuffer(ctx, 2);
+        this.updateBuffer = new UpdateBuffer(ctx);
     }
 
     @Override
@@ -121,7 +123,7 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
          * open the function
          */
         functionProxy.functionOpen();
-        accessor = new FrameTupleAccessor(treeIndexHelper.getTaskContext().getFrameSize(), recDesc);
+        accessor = new FrameTupleAccessor(recDesc);
 
         try {
             treeIndexHelper.open();
@@ -131,10 +133,12 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
             // Construct range predicate.
             int lowKeySearchFields = index.getComparatorFactories().length;
             int highKeySearchFields = index.getComparatorFactories().length;
-            if (lowKey != null)
+            if (lowKey != null) {
                 lowKeySearchFields = lowKey.getFieldCount();
-            if (highKey != null)
+            }
+            if (highKey != null) {
                 highKeySearchFields = highKey.getFieldCount();
+            }
 
             IBinaryComparator[] lowKeySearchComparators = new IBinaryComparator[lowKeySearchFields];
             for (int i = 0; i < lowKeySearchFields; i++) {
@@ -155,18 +159,17 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
             rangePred = new RangePredicate(null, null, lowKeyInclusive, highKeyInclusive, lowKeySearchCmp,
                     highKeySearchCmp);
 
-            writeBuffer = treeIndexHelper.getTaskContext().allocateFrame();
+            writeFrame = new VSizeFrame(treeIndexHelper.getTaskContext());
             tb = new ArrayTupleBuilder(index.getFieldCount());
             dos = tb.getDataOutput();
-            appender = new FrameTupleAppender(treeIndexHelper.getTaskContext().getFrameSize());
-            appender.reset(writeBuffer, true);
+            appender = new FrameTupleAppender();
+            appender.reset(writeFrame, true);
             indexAccessor = index.createAccessor(NoOpOperationCallback.INSTANCE, NoOpOperationCallback.INSTANCE);
             setCursor();
 
             cloneUpdateTb = new ArrayTupleBuilder(index.getFieldCount());
-            updateBuffer.setFieldCount(index.getFieldCount());
         } catch (Exception e) {
-        	closeResource();
+            closeResource();
             throw new HyracksDataException(e);
         }
     }
@@ -206,7 +209,7 @@ public class TreeSearchFunctionUpdateOperatorNodePushable extends AbstractUnaryI
                 writeSearchResults();
             }
         } catch (Exception e) {
-        	closeResource();
+            closeResource();
             throw new HyracksDataException(e);
         }
     }

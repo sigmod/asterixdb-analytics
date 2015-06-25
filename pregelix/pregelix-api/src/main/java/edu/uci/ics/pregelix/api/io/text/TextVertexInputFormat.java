@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,11 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 
 import edu.uci.ics.pregelix.api.io.VertexInputFormat;
 import edu.uci.ics.pregelix.api.io.VertexReader;
-import edu.uci.ics.pregelix.api.io.WritableSizable;
 
 /**
  * Abstract class that users should subclass to use their own text based vertex
  * output format.
- * 
+ *
  * @param <I>
  *            Vertex index value
  * @param <V>
@@ -46,8 +45,8 @@ import edu.uci.ics.pregelix.api.io.WritableSizable;
  *            Message value
  */
 @SuppressWarnings("rawtypes")
-public abstract class TextVertexInputFormat<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable>
-        extends VertexInputFormat<I, V, E, M> {
+public abstract class TextVertexInputFormat<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable>
+extends VertexInputFormat<I, V, E, M> {
     /** Uses the TextInputFormat to do everything */
     protected TextInputFormat textInputFormat = new TextInputFormat();
 
@@ -55,7 +54,7 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
      * Abstract class to be implemented by the user based on their specific
      * vertex input. Easiest to ignore the key value separator and only use key
      * instead.
-     * 
+     *
      * @param <I>
      *            Vertex index value
      * @param <V>
@@ -63,8 +62,8 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
      * @param <E>
      *            Edge value
      */
-    public static abstract class TextVertexReader<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable>
-            implements VertexReader<I, V, E, M> {
+    public static abstract class TextVertexReader<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable>
+    implements VertexReader<I, V, E, M> {
         /** Internal line record reader */
         private final RecordReader<LongWritable, Text> lineRecordReader;
         /** Context passed to initialize */
@@ -72,7 +71,7 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
 
         /**
          * Initialize with the LineRecordReader.
-         * 
+         *
          * @param lineRecordReader
          *            Line record reader from TextInputFormat
          */
@@ -82,7 +81,7 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
 
         @Override
         public void initialize(InputSplit inputSplit, TaskAttemptContext context) throws IOException,
-                InterruptedException {
+        InterruptedException {
             lineRecordReader.initialize(inputSplit, context);
             this.context = context;
         }
@@ -99,7 +98,7 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
 
         /**
          * Get the line record reader.
-         * 
+         *
          * @return Record reader to be used for reading.
          */
         protected RecordReader<LongWritable, Text> getRecordReader() {
@@ -108,7 +107,7 @@ public abstract class TextVertexInputFormat<I extends WritableComparable, V exte
 
         /**
          * Get the context.
-         * 
+         *
          * @return Context passed to initialize.
          */
         protected TaskAttemptContext getContext() {

@@ -15,12 +15,11 @@
 
 package edu.uci.ics.external.connector.api;
 
-import java.util.List;
+import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 
-import org.apache.hadoop.fs.Path;
+public interface IReadOperatorDescriptorFactory {
 
-public interface IPathProvider {
+    public IOperatorDescriptor getReaderOperatorDescriptor();
 
-    public List<Path> getPaths();
-
+    public String[] getLocationConstraints();
 }

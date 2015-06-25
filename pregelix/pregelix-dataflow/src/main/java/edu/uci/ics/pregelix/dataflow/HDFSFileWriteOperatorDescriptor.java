@@ -64,7 +64,7 @@ public class HDFSFileWriteOperatorDescriptor extends AbstractSingleActivityOpera
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             final IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
-            throws HyracksDataException {
+                    throws HyracksDataException {
         return new AbstractUnaryInputSinkOperatorNodePushable() {
             private RecordDescriptor rd0;
             private FrameDeserializer frameDeserializer;
@@ -79,7 +79,7 @@ public class HDFSFileWriteOperatorDescriptor extends AbstractSingleActivityOpera
             public void open() throws HyracksDataException {
                 rd0 = inputRdFactory == null ? recordDescProvider.getInputRecordDescriptor(getActivityId(), 0)
                         : inputRdFactory.createRecordDescriptor(ctx);
-                frameDeserializer = new FrameDeserializer(ctx.getFrameSize(), rd0);
+                frameDeserializer = new FrameDeserializer(rd0);
                 ctxCL = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
                 job = confFactory.getConf();
@@ -159,7 +159,7 @@ public class HDFSFileWriteOperatorDescriptor extends AbstractSingleActivityOpera
             }
 
             private FileStatus[] findPartitionPaths(Path outputPath, FileSystem dfs) throws FileNotFoundException,
-                    IOException {
+            IOException {
                 FileStatus[] tempPaths = dfs.listStatus(outputPath, new PathFilter() {
                     @Override
                     public boolean accept(Path dir) {
@@ -178,7 +178,7 @@ public class HDFSFileWriteOperatorDescriptor extends AbstractSingleActivityOpera
             }
 
             private void renameFile(FileSystem dfs, Path filePath, FileStatus[] results) throws IOException,
-                    HyracksDataException, FileNotFoundException {
+            HyracksDataException, FileNotFoundException {
                 Path srcDir = results[0].getPath();
                 if (!dfs.exists(srcDir)) {
                     throw new HyracksDataException("file " + srcDir.toString() + " does not exist!");

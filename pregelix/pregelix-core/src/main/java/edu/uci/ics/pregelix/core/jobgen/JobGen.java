@@ -82,6 +82,8 @@ import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 import edu.uci.ics.hyracks.dataflow.std.group.HashSpillableTableFactory;
 import edu.uci.ics.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
 import edu.uci.ics.hyracks.dataflow.std.group.external.ExternalGroupOperatorDescriptor;
+import edu.uci.ics.hyracks.dataflow.std.group.preclustered.PreclusteredGroupOperatorDescriptor;
+import edu.uci.ics.hyracks.dataflow.std.group.sort.SortGroupByOperatorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.misc.ConstantTupleSourceOperatorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.sort.Algorithm;
 import edu.uci.ics.hyracks.dataflow.std.sort.ExternalSortOperatorDescriptor;
@@ -139,9 +141,6 @@ import edu.uci.ics.pregelix.dataflow.std.TreeIndexBulkReLoadOperatorDescriptor;
 import edu.uci.ics.pregelix.dataflow.std.TreeSearchFunctionUpdateOperatorDescriptor;
 import edu.uci.ics.pregelix.dataflow.std.base.IRecordDescriptorFactory;
 import edu.uci.ics.pregelix.dataflow.std.base.IRuntimeHookFactory;
-import edu.uci.ics.pregelix.dataflow.std.group.ClusteredGroupOperatorDescriptor;
-import edu.uci.ics.pregelix.dataflow.std.group.IClusteredAggregatorDescriptorFactory;
-import edu.uci.ics.pregelix.dataflow.std.sort.FastSortOperatorDescriptor;
 import edu.uci.ics.pregelix.dataflow.util.PregelixAsterixIntegrationUtil;
 import edu.uci.ics.pregelix.runtime.bootstrap.IndexLifeCycleManagerProvider;
 import edu.uci.ics.pregelix.runtime.bootstrap.StorageManagerInterface;
@@ -701,7 +700,7 @@ public abstract class JobGen implements IJobGen {
         fieldTypesNodes[1] = new AUnionType(Arrays.asList(new IAType[] { BuiltinType.ANULL, vertexValueType }), "value");
         try {
             fieldTypesNodes[2] = new AUnorderedListType(new ARecordType("EdgeType", new String[] { "destVertexId",
-            "value" }, fieldTypesEdges, true), "EdgeType");
+                    "value" }, fieldTypesEdges, true), "EdgeType");
         } catch (AsterixException e) {
             e.printStackTrace();
         }
@@ -722,7 +721,7 @@ public abstract class JobGen implements IJobGen {
         RecordDescriptor recordDescriptorAsterixSmall = new RecordDescriptor(
                 new ISerializerDeserializer[] { AqlSerializerDeserializerProvider.INSTANCE
                         .getNonTaggedSerializerDeserializer(nodeType) },
-                        new ITypeTraits[] { new TypeTraits(false) });
+                new ITypeTraits[] { new TypeTraits(false) });
 
         IBinaryComparatorFactory[] comparatorFactories = new IBinaryComparatorFactory[1];
         comparatorFactories[0] = PointableBinaryComparatorFactory.of(IntegerPointable.FACTORY);
@@ -846,7 +845,7 @@ public abstract class JobGen implements IJobGen {
 
     @SuppressWarnings({ "rawtypes" })
     private JobSpecification scanIndexWriteToHDFS(Configuration conf, boolean ckpointing) throws HyracksDataException,
-    HyracksException {
+            HyracksException {
         Class<? extends WritableComparable<?>> vertexIdClass = BspUtils.getVertexIndexClass(conf);
         Class<? extends Writable> vertexClass = BspUtils.getVertexClass(conf);
         JobSpecification spec = new JobSpecification(frameSize);
@@ -1025,7 +1024,7 @@ public abstract class JobGen implements IJobGen {
         fieldTypesNodes[1] = new AUnionType(Arrays.asList(new IAType[] { BuiltinType.ANULL, vertexValueType }), "value");
         try {
             fieldTypesNodes[2] = new AUnorderedListType(new ARecordType("EdgeType", new String[] { "destVertexId",
-            "value" }, fieldTypesEdges, true), "EdgeType");
+                    "value" }, fieldTypesEdges, true), "EdgeType");
         } catch (AsterixException e) {
             e.printStackTrace();
         }
@@ -1403,35 +1402,34 @@ public abstract class JobGen implements IJobGen {
 
         if (sortOrHash) {
             /**
-             * construct local sort operator
+             * construct local group-by operator
              */
-            IClusteredAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils
-                    .getAccumulatingAggregatorFactory(this.getConfigurationFactory(), false, false);
-            IClusteredAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils
-                    .getAccumulatingAggregatorFactory(this.getConfigurationFactory(), false, true);
-            IOperatorDescriptor localGby = new FastSortOperatorDescriptor(spec, maxFrameNumber, keyFields,
-                    rdUnnestedMessage, keyFields, localAggregatorFactory, partialAggregatorFactory, rdCombinedMessage,
-                    rdCombinedMessage, true);
+            IAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
+                    this.getConfigurationFactory(), false, false);
+            IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
+                    this.getConfigurationFactory(), false, true);
+            IOperatorDescriptor localGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
+                    keyFields, nkmFactory, sortCmpFactories, localAggregatorFactory, partialAggregatorFactory,
+                    rdCombinedMessage, rdCombinedMessage, false);
             setLocationConstraint(spec, localGby);
 
             /**
              * construct global group-by operator
              */
-            IClusteredAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils
-                    .getAccumulatingAggregatorFactory(getConfigurationFactory(), true, true);
+            IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
+                    getConfigurationFactory(), true, true);
             ITuplePartitionComputerFactory partionFactory = getVertexPartitionComputerFactory();
             if (merge) {
-                IOperatorDescriptor globalGby = new ClusteredGroupOperatorDescriptor(spec, keyFields, sortCmpFactories,
-                        finalAggregatorFactory, rdFinal);
+                IOperatorDescriptor globalGby = new PreclusteredGroupOperatorDescriptor(spec, keyFields,
+                        sortCmpFactories, finalAggregatorFactory, rdFinal);
                 setLocationConstraint(spec, globalGby);
-                spec.connect(
-                        new edu.uci.ics.pregelix.dataflow.std.connectors.MToNPartitioningMergingConnectorDescriptor(
-                                spec, partionFactory, keyFields), localGby, 0, globalGby, 0);
+                spec.connect(new MToNPartitioningMergingConnectorDescriptor(spec, partionFactory, keyFields,
+                        sortCmpFactories, nkmFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
             } else {
-                IOperatorDescriptor globalGby = new FastSortOperatorDescriptor(spec, maxFrameNumber, keyFields,
-                        rdCombinedMessage, keyFields, partialAggregatorFactory, finalAggregatorFactory,
-                        rdCombinedMessage, rdFinal, false);
+                IOperatorDescriptor globalGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
+                        keyFields, nkmFactory, sortCmpFactories, partialAggregatorFactory, finalAggregatorFactory,
+                        rdCombinedMessage, rdFinal, true);
                 setLocationConstraint(spec, globalGby);
                 spec.connect(new MToNPartitioningConnectorDescriptor(spec, partionFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
@@ -1452,19 +1450,17 @@ public abstract class JobGen implements IJobGen {
                     new HashSpillableTableFactory(partionFactory, hashTableSize), merge ? true : false);
             setLocationConstraint(spec, localGby);
 
-            IClusteredAggregatorDescriptorFactory aggregatorFactoryFinal = DataflowUtils
-                    .getAccumulatingAggregatorFactory(getConfigurationFactory(), true, true);
+            IAggregatorDescriptorFactory aggregatorFactoryFinal = DataflowUtils.getAccumulatingAggregatorFactory(
+                    getConfigurationFactory(), true, true);
             /**
              * construct global group-by operator
              */
             if (merge) {
-                IOperatorDescriptor globalGby = new ClusteredGroupOperatorDescriptor(spec, keyFields, sortCmpFactories,
-                        aggregatorFactoryFinal, rdFinal);
+                IOperatorDescriptor globalGby = new PreclusteredGroupOperatorDescriptor(spec, keyFields,
+                        sortCmpFactories, aggregatorFactoryFinal, rdFinal);
                 setLocationConstraint(spec, globalGby);
-
-                spec.connect(
-                        new edu.uci.ics.pregelix.dataflow.std.connectors.MToNPartitioningMergingConnectorDescriptor(
-                                spec, partionFactory, keyFields), localGby, 0, globalGby, 0);
+                spec.connect(new MToNPartitioningMergingConnectorDescriptor(spec, partionFactory, keyFields,
+                        sortCmpFactories, nkmFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
             } else {
                 IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(

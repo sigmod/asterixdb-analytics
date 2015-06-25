@@ -22,8 +22,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
@@ -31,8 +33,6 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import com.google.common.collect.Maps;
 
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.pregelix.api.datatypes.DoubleWritable;
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
 import edu.uci.ics.pregelix.api.graph.Vertex;
@@ -116,7 +116,7 @@ public class PageRankVertex extends Vertex<VLongWritable, DoubleWritable, FloatW
     }
 
     @Override
-    public void configure(Configuration conf){
+    public void configure(Configuration conf) {
         maxIteration = conf.getInt(ITERATIONS, 10);
     }
 

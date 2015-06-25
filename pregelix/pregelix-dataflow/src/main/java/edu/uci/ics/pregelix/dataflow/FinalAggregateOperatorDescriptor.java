@@ -66,8 +66,9 @@ public class FinalAggregateOperatorDescriptor extends AbstractSingleActivityOper
         return new AbstractUnaryInputSinkOperatorNodePushable() {
             private final Configuration conf = confFactory.createConfiguration(ctx);
             private final List<GlobalAggregator> aggregators = BspUtils.createGlobalAggregators(conf);
-            private final List<String> aggregateClassNames = Arrays.asList(BspUtils.getGlobalAggregatorClassNames(conf));
-            private final FrameTupleAccessor accessor = new FrameTupleAccessor(ctx.getFrameSize(),
+            private final List<String> aggregateClassNames = Arrays
+                    .asList(BspUtils.getGlobalAggregatorClassNames(conf));
+            private final FrameTupleAccessor accessor = new FrameTupleAccessor(
                     inputRdFactory.createRecordDescriptor(ctx));
             private final ByteBufferInputStream inputStream = new ByteBufferInputStream();
             private final DataInput input = new DataInputStream(inputStream);

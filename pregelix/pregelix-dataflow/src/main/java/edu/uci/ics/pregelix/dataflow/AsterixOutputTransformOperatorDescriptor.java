@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,8 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.io.VLongWritable;
+
 import edu.uci.ics.asterix.dataflow.data.nontagged.serde.AInt64SerializerDeserializer;
 import edu.uci.ics.asterix.dataflow.data.nontagged.serde.ARecordSerializerDeserializer;
 import edu.uci.ics.asterix.om.base.AInt64;
@@ -28,6 +30,8 @@ import edu.uci.ics.asterix.om.base.AUnorderedList;
 import edu.uci.ics.asterix.om.base.IAObject;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.AUnorderedListType;
+import edu.uci.ics.hyracks.api.comm.IFrame;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -40,7 +44,6 @@ import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
 import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
 import edu.uci.ics.hyracks.dataflow.std.base.AbstractSingleActivityOperatorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperatorNodePushable;
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 import edu.uci.ics.pregelix.api.graph.Edge;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
@@ -72,24 +75,24 @@ public class AsterixOutputTransformOperatorDescriptor extends AbstractSingleActi
             private RecordDescriptor rd0;
             private FrameDeserializer frameDeserializer;
             private ClassLoader ctxCL;
-          
+
             private final ArrayTupleBuilder tb = new ArrayTupleBuilder(2);
             private final DataOutput dos = tb.getDataOutput();
 
-            private final ByteBuffer writeBuffer = ctx.allocateFrame();
+            private final IFrame frame = new VSizeFrame(ctx);
 
-            private final FrameTupleAppender appender = new FrameTupleAppender(ctx.getFrameSize());
+            private final FrameTupleAppender appender = new FrameTupleAppender();
 
             @Override
             public void open() throws HyracksDataException {
                 rd0 = inputRdFactory == null ? recordDescProvider.getInputRecordDescriptor(getActivityId(), 0)
                         : inputRdFactory.createRecordDescriptor(ctx);
-                frameDeserializer = new FrameDeserializer(ctx.getFrameSize(), rd0);
+                frameDeserializer = new FrameDeserializer(rd0);
                 ctxCL = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
 
                 writer.open();
-                appender.reset(writeBuffer, true);
+                appender.reset(frame, true);
 
             }
 
@@ -132,27 +135,20 @@ public class AsterixOutputTransformOperatorDescriptor extends AbstractSingleActi
 
                         AInt64SerializerDeserializer.INSTANCE.serialize(vertexId, dos);
                         tb.addFieldEndOffset();
-                        
-                        dos.write(new byte[]{24});
+
+                        dos.write(new byte[] { 24 });
                         ARecordSerializerDeserializer ser = new ARecordSerializerDeserializer(recordType);
                         ser.serialize(record, dos, true);
 
                         tb.addFieldEndOffset();
-
-                        if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                            FrameUtils.flushFrame(writeBuffer, writer);
-                            appender.reset(writeBuffer, true);
-                            if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                                throw new IllegalStateException();
-                            }
-                        }
+                        FrameUtils.appendToWriter(writer, appender, tb.getFieldEndOffsets(), tb.getByteArray(), 0,
+                                tb.getSize());
                     }
 
                 } catch (IOException e) {
                     throw new HyracksDataException(e);
                 }
             }
-            
 
             @Override
             public void fail() throws HyracksDataException {
@@ -163,7 +159,7 @@ public class AsterixOutputTransformOperatorDescriptor extends AbstractSingleActi
             public void close() throws HyracksDataException {
                 try {
                     if (appender.getTupleCount() > 0) {
-                        FrameUtils.flushFrame(writeBuffer, writer);
+                        FrameUtils.flushFrame(frame.getBuffer(), writer);
                     }
                     writer.close();
                 } catch (IOException e) {

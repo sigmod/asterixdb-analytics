@@ -18,7 +18,6 @@ import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +29,8 @@ import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -81,7 +82,7 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             IRecordDescriptorProvider recordDescProvider, final int partition, final int nPartitions)
-            throws HyracksDataException {
+                    throws HyracksDataException {
         final List<FileSplit> splits = splitsFactory.getSplits();
 
         return new AbstractUnaryOutputSourceOperatorNodePushable() {
@@ -133,9 +134,8 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
                     throws IOException, ClassNotFoundException, InterruptedException, InstantiationException,
                     IllegalAccessException, NoSuchFieldException, InvocationTargetException {
                 int treeVertexSizeLimit = IterationUtils.getVFrameSize(ctx) / 2;
-                int dataflowPageSize = ctx.getFrameSize();
-                ByteBuffer frame = ctx.allocateFrame();
-                FrameTupleAppender appender = new FrameTupleAppender(dataflowPageSize);
+                IFrame frame = new VSizeFrame(ctx);
+                FrameTupleAppender appender = new FrameTupleAppender();
                 appender.reset(frame, true);
 
                 VertexInputFormat vertexInputFormat = BspUtils.createVertexInputFormat(conf);
@@ -174,7 +174,7 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
                     readerVertex.write(dos);
                     tb.addFieldEndOffset();
 
-                    if (tb.getSize() >= treeVertexSizeLimit || tb.getSize() > dataflowPageSize) {
+                    if (tb.getSize() >= treeVertexSizeLimit) {
                         //if (tb.getSize() < dataflowPageSize) {
                         //spill vertex to HDFS if it cannot fit into a tree storage page
                         String pathStr = BspUtils.TMP_DIR + jobId + File.separator + vertexId;
@@ -187,23 +187,13 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
                         tb.addFieldEndOffset();
                         readerVertex.setUnSpilled();
                     }
-                    if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                        if (appender.getTupleCount() <= 0) {
-                            throw new IllegalStateException("zero tuples in a frame!");
-                        }
-                        FrameUtils.flushFrame(frame, writer);
-                        appender.reset(frame, true);
-                        if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                            //this place should never be reached, otherwise it is a bug
-                            throw new IllegalStateException(
-                                    "An overflow vertex content should not be flushed into bulkload dataflow.");
-                        }
-                    }
+                    FrameUtils.appendToWriter(writer, appender, tb.getFieldEndOffsets(), tb.getByteArray(), 0,
+                            tb.getSize());
                 }
 
                 vertexReader.close();
                 if (appender.getTupleCount() > 0) {
-                    FrameUtils.flushFrame(frame, writer);
+                    FrameUtils.flushFrame(frame.getBuffer(), writer);
                 }
                 System.gc();
             }

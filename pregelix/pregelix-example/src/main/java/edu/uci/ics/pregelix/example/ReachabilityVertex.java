@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,14 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.ByteWritable;
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.pregelix.api.datatypes.ByteWritable;
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 import edu.uci.ics.pregelix.api.graph.Edge;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -111,7 +111,7 @@ public class ReachabilityVertex extends Vertex<VLongWritable, ByteWritable, Floa
 
     /**
      * Is this vertex the source id?
-     * 
+     *
      * @return True if the source id
      */
     private boolean isSource(VLongWritable v) {
@@ -120,15 +120,15 @@ public class ReachabilityVertex extends Vertex<VLongWritable, ByteWritable, Floa
 
     /**
      * Is this vertex the dest id?
-     * 
+     *
      * @return True if the source id
      */
     private boolean isDest(VLongWritable v) {
         return (v.get() == destId);
     }
-    
+
     @Override
-    public void configure(Configuration conf){
+    public void configure(Configuration conf) {
         sourceId = conf.getLong(SOURCE_ID, SOURCE_ID_DEFAULT);
     }
 

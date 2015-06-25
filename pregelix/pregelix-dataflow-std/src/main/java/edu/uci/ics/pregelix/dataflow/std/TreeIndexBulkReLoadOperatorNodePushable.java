@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,7 +59,7 @@ public class TreeIndexBulkReLoadOperatorNodePushable extends AbstractUnaryInputS
     @Override
     public void open() throws HyracksDataException {
         RecordDescriptor recDesc = recordDescProvider.getInputRecordDescriptor(opDesc.getActivityId(), 0);
-        accessor = new FrameTupleAccessor(treeIndexOpHelper.getTaskContext().getFrameSize(), recDesc);
+        accessor = new FrameTupleAccessor(recDesc);
         treeIndexOpHelper.destroy();
         treeIndexOpHelper.create();
         treeIndexOpHelper.open();
@@ -105,6 +105,6 @@ public class TreeIndexBulkReLoadOperatorNodePushable extends AbstractUnaryInputS
         } catch (IndexException e) {
             treeIndexOpHelper.close();
             throw new HyracksDataException(e);
-        } 
+        }
     }
 }

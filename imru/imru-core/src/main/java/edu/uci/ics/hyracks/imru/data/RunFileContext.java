@@ -41,13 +41,13 @@ public class RunFileContext extends DelegateHyracksTaskContext {
     }
 
     @Override
-    public int getFrameSize() {
+    public int getInitialFrameSize() {
         return frameSize;
     }
 
     @Override
     public ByteBuffer allocateFrame() {
-        return ByteBuffer.allocate(getFrameSize());
+        return ByteBuffer.allocate(getInitialFrameSize());
     }
 
 }

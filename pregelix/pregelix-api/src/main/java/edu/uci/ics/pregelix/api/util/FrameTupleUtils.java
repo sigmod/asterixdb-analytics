@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,47 +15,35 @@
 
 package edu.uci.ics.pregelix.api.util;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-
+import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
+import edu.uci.ics.hyracks.api.comm.IFrameTupleAppender;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
 import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
 import edu.uci.ics.pregelix.api.io.Pointable;
 
 public class FrameTupleUtils {
 
-    public static void flushTuple(FrameTupleAppender appender, ArrayTupleBuilder tb, IFrameWriter writer)
+    public static void flushTuple(IFrameFieldAppender appender, ArrayTupleBuilder tb, IFrameWriter writer)
             throws HyracksDataException {
-        if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-            FrameUtils.flushFrame(appender.getBuffer(), writer);
-            appender.reset(appender.getBuffer(), true);
-            if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                throw new IllegalStateException();
-            }
-        }
+        FrameUtils.appendToWriter(writer, (IFrameTupleAppender) appender, tb.getFieldEndOffsets(), tb.getByteArray(),
+                0, tb.getSize());
     }
 
-    public static void flushPointableKeyValueTuple(FrameTupleAppender appender, IFrameWriter writer, Pointable key,
+    public static void flushPointableKeyValueTuple(IFrameFieldAppender appender, IFrameWriter writer, Pointable key,
             Pointable value) throws HyracksDataException {
         if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
             FrameUtils.flushFrame(appender.getBuffer(), writer);
-            appender.reset(appender.getBuffer(), true);
+            appender.reset(appender.getFrame(), true);
             if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
                 throw new IllegalStateException();
             }
         }
     }
 
-    private static boolean flushPointableKeyValueTupleInternal(FrameTupleAppender appender, Pointable key,
-            Pointable value) {
+    private static boolean flushPointableKeyValueTupleInternal(IFrameFieldAppender appender, Pointable key,
+            Pointable value) throws HyracksDataException {
         if (!appender.appendField(key.getByteArray(), key.getStartOffset(), key.getLength())) {
             return false;
         }
@@ -65,28 +53,10 @@ public class FrameTupleUtils {
         return true;
     }
 
-    public static void flushTuplesFinal(FrameTupleAppender appender, IFrameWriter writer) throws HyracksDataException {
+    public static void flushTuplesFinal(IFrameFieldAppender appender, IFrameWriter writer) throws HyracksDataException {
         if (appender.getTupleCount() > 0) {
             FrameUtils.flushFrame(appender.getBuffer(), writer);
-            appender.reset(appender.getBuffer(), true);
-        }
-    }
-
-    public static void flushTupleToHDFS(ArrayTupleBuilder atb, Configuration conf, long superStep)
-            throws HyracksDataException {
-        try {
-            if (atb.getSize() > 0) {
-                FileSystem dfs = FileSystem.get(conf);
-                String fileName = BspUtils.getGlobalAggregateSpillingDirName(conf, superStep) + "/" + UUID.randomUUID();
-                Path path = new Path(fileName);
-                FSDataOutputStream dos = dfs.create(path, true);
-                // write the partial aggregate value
-                dos.write(atb.getByteArray(), 0, atb.getSize());
-                dos.flush();
-                dos.close();
-            }
-        } catch (IOException e) {
-            throw new HyracksDataException(e);
+            appender.reset(appender.getFrame(), true);
         }
     }
 }

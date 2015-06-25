@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,8 +17,10 @@ package edu.uci.ics.pregelix.dataflow.std;
 import java.io.DataOutput;
 import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameTupleAccessor;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparator;
 import edu.uci.ics.hyracks.api.dataflow.value.INullWriter;
@@ -54,7 +56,7 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
     private IndexDataflowHelper treeIndexOpHelper;
     private FrameTupleAccessor accessor;
 
-    private ByteBuffer writeBuffer;
+    private IFrame writeFrame;
     private FrameTupleAppender appender;
     private ArrayTupleBuilder nullTupleBuilder;
     private DataOutput dos;
@@ -111,7 +113,7 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
         this.writers = new IFrameWriter[outputArity];
         this.functionProxy = new FunctionProxy(ctx, functionFactory, preHookFactory, postHookFactory, inputRdFactory,
                 writers);
-        this.updateBuffer = new UpdateBuffer(ctx, 2);
+        this.updateBuffer = new UpdateBuffer(ctx);
     }
 
     protected void setCursor() {
@@ -124,7 +126,7 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
          * function open
          */
         functionProxy.functionOpen();
-        accessor = new FrameTupleAccessor(treeIndexOpHelper.getTaskContext().getFrameSize(), recDesc);
+        accessor = new FrameTupleAccessor(recDesc);
 
         try {
             treeIndexOpHelper.open();
@@ -153,7 +155,7 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
 
             rangePred = new RangePredicate(null, null, true, true, lowKeySearchCmp, highKeySearchCmp);
 
-            writeBuffer = treeIndexOpHelper.getTaskContext().allocateFrame();
+            writeFrame = new VSizeFrame(treeIndexOpHelper.getTaskContext());
 
             nullTupleBuilder = new ArrayTupleBuilder(inputRecDesc.getFields().length);
             dos = nullTupleBuilder.getDataOutput();
@@ -163,8 +165,8 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
                 nullTupleBuilder.addFieldEndOffset();
             }
 
-            appender = new FrameTupleAppender(treeIndexOpHelper.getTaskContext().getFrameSize());
-            appender.reset(writeBuffer, true);
+            appender = new FrameTupleAppender();
+            appender.reset(writeFrame, true);
 
             indexAccessor = index.createAccessor(NoOpOperationCallback.INSTANCE, NoOpOperationCallback.INSTANCE);
             setCursor();
@@ -183,7 +185,6 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
             }
 
             cloneUpdateTb = new ArrayTupleBuilder(index.getFieldCount());
-            updateBuffer.setFieldCount(index.getFieldCount());
         } catch (Exception e) {
             closeResource();
             throw new HyracksDataException(e);
@@ -196,10 +197,12 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
         int tupleCount = accessor.getTupleCount();
         try {
             for (int i = 0; i < tupleCount && currentTopTuple != null;) {
-                if (lowKey != null)
+                if (lowKey != null) {
                     lowKey.reset(accessor, i);
-                if (highKey != null)
+                }
+                if (highKey != null) {
                     highKey.reset(accessor, i);
+                }
                 // TODO: currently use low key only, check what they mean
                 int cmp = compare(lowKey, currentTopTuple);
                 if (cmp <= 0) {

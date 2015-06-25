@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -30,6 +31,8 @@ import edu.uci.ics.asterix.om.pointables.base.IVisitablePointable;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.ATypeTag;
 import edu.uci.ics.asterix.om.types.EnumDeserializer;
+import edu.uci.ics.hyracks.api.comm.IFrame;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -42,7 +45,6 @@ import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
 import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
 import edu.uci.ics.hyracks.dataflow.std.base.AbstractSingleActivityOperatorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperatorNodePushable;
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
@@ -68,15 +70,15 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             final IRecordDescriptorProvider recordDescProvider, int partition, int nPartitions)
-            throws HyracksDataException {
+                    throws HyracksDataException {
         return new AbstractUnaryInputUnaryOutputOperatorNodePushable() {
 
             private final RecordDescriptor rd0 = recordDescProvider.getInputRecordDescriptor(getActivityId(), 0);
-            private final FrameTupleAppender appender = new FrameTupleAppender(ctx.getFrameSize());
+            private final FrameTupleAppender appender = new FrameTupleAppender();
             private final ArrayTupleBuilder tb = new ArrayTupleBuilder(fieldSize);
             private final DataOutput dos = tb.getDataOutput();
-            private final ByteBuffer writeBuffer = ctx.allocateFrame();
-            private final FrameTupleAccessor accessor = new FrameTupleAccessor(ctx.getFrameSize(), rd0);
+            private final IFrame frame = new VSizeFrame(ctx);
+            private final FrameTupleAccessor accessor = new FrameTupleAccessor(rd0);
             private final Configuration conf = confFactory.createConfiguration(ctx);
 
             // used for the transformation
@@ -103,7 +105,7 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                     int fldLen = accessor.getFieldLength(tIndex, 0);
 
                     ARecordPointable recordPointer = (ARecordPointable) new PointableAllocator()
-                            .allocateRecordValue(recordType);
+                    .allocateRecordValue(recordType);
                     recordPointer.set(accessor.getBuffer().array(), fldStart, fldLen);
 
                     Vertex v = convertPointableToVertex(recordPointer, conf);
@@ -129,31 +131,21 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                         e.printStackTrace();
                     }
 
-                    if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                        if (appender.getTupleCount() <= 0) {
-                            throw new IllegalStateException("zero tuples in a frame!");
-                        }
-                        FrameUtils.flushFrame(frame, writer);
-                        appender.reset(frame, true);
-                        if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                            //this place should never be reached, otherwise it is a bug
-                            throw new IllegalStateException(
-                                    "An overflow vertex content should not be flushed into bulkload dataflow.");
-                        }
-                    }
+                    FrameUtils.appendToWriter(writer, appender, tb.getFieldEndOffsets(), tb.getByteArray(), 0,
+                            tb.getSize());
                 }
             }
 
             @Override
             public void open() throws HyracksDataException {
                 writer.open();
-                appender.reset(writeBuffer, true);
+                appender.reset(frame, true);
             }
 
             @SuppressWarnings({ "rawtypes", "unchecked" })
             /**
              * Internal helper function to transform a Asterix ARecordPointable pointer into a Pregelix Vertex
-             * 
+             *
              * @param pointer
              * @param conf
              * @return
@@ -198,7 +190,7 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                     // type of the edge value
                     ATypeTag edgeValueType = EnumDeserializer.ATYPETAGDESERIALIZER.deserialize(edgePointer
                             .getFieldTypeTags().get(1).getByteArray()[edgePointer.getFieldTypeTags().get(1)
-                            .getStartOffset()]);
+                                                                      .getStartOffset()]);
 
                     // @TODO: Look for a better way to handle this hack
                     //if (edgePointer.getFieldValues().get(1).getLength() <= 1) {
@@ -218,7 +210,7 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
             @Override
             public void close() throws HyracksDataException {
                 if (appender.getTupleCount() > 0) {
-                    FrameUtils.flushFrame(writeBuffer, writer);
+                    FrameUtils.flushFrame(frame.getBuffer(), writer);
                 }
                 writer.close();
             }

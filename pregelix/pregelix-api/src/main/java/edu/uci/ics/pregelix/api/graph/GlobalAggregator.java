@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.pregelix.api.io.WritableSizable;
 
 /**
  * This is the abstract class to implement for aggregating the state of all the vertices globally in the graph.
@@ -29,7 +28,7 @@ import edu.uci.ics.pregelix.api.io.WritableSizable;
  * 1. a local phase which aggregates vertice sent from a single machine and produces
  * the partially aggregated state;
  * 2. a final phase which aggregates all partially aggregated states
- * 
+ *
  * @param <I extends Writable> vertex identifier type
  * @param <V extends Writable> vertex value type
  * @param <E extends Writable> edge type
@@ -40,7 +39,7 @@ import edu.uci.ics.pregelix.api.io.WritableSizable;
  */
 
 @SuppressWarnings("rawtypes")
-public abstract class GlobalAggregator<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable, P extends Writable, F extends Writable> {
+public abstract class GlobalAggregator<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable, P extends Writable, F extends Writable> {
     /**
      * initialize aggregator
      */
@@ -48,7 +47,7 @@ public abstract class GlobalAggregator<I extends WritableComparable, V extends W
 
     /**
      * step through all vertex at each slave partition
-     * 
+     *
      * @param vertexIndex
      * @param msg
      * @throws IOException
@@ -57,7 +56,7 @@ public abstract class GlobalAggregator<I extends WritableComparable, V extends W
 
     /**
      * step through all intermediate aggregate result
-     * 
+     *
      * @param partialResult
      *            partial aggregate value
      */
@@ -65,14 +64,14 @@ public abstract class GlobalAggregator<I extends WritableComparable, V extends W
 
     /**
      * finish partial aggregate
-     * 
+     *
      * @return the final aggregate value
      */
     public abstract P finishPartial();
 
     /**
      * finish final aggregate
-     * 
+     *
      * @return the final aggregate value
      */
     public abstract F finishFinal();

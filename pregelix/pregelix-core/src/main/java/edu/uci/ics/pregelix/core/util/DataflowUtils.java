@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,8 @@ package edu.uci.ics.pregelix.core.util;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
 
+import edu.uci.ics.hyracks.algebricks.runtime.base.IAggregateEvaluatorFactory;
+import edu.uci.ics.hyracks.algebricks.runtime.operators.aggreg.SimpleAlgebricksAccumulatingAggregatorFactory;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
 import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
@@ -24,12 +26,9 @@ import edu.uci.ics.hyracks.api.exceptions.HyracksException;
 import edu.uci.ics.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.WritableRecordDescriptorFactory;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
-import edu.uci.ics.pregelix.dataflow.std.base.IAggregateFunctionFactory;
 import edu.uci.ics.pregelix.dataflow.std.base.IRecordDescriptorFactory;
 import edu.uci.ics.pregelix.dataflow.std.base.ISerializableAggregateFunctionFactory;
-import edu.uci.ics.pregelix.dataflow.std.group.IClusteredAggregatorDescriptorFactory;
-import edu.uci.ics.pregelix.runtime.agg.AccumulatingAggregatorFactory;
-import edu.uci.ics.pregelix.runtime.agg.AggregationFunctionFactory;
+import edu.uci.ics.pregelix.runtime.agg.AggregationEvaluatorFactory;
 import edu.uci.ics.pregelix.runtime.agg.SerializableAggregationFunctionFactory;
 import edu.uci.ics.pregelix.runtime.agg.SerializableAggregatorDescriptorFactory;
 import edu.uci.ics.pregelix.runtime.touchpoint.DatatypeHelper;
@@ -64,9 +63,10 @@ public class DataflowUtils {
         ClassLoader loader = DataflowUtils.class.getClassLoader();
         try {
             int i = 0;
-            for (String className : classNames)
+            for (String className : classNames) {
                 serdes[i++] = DatatypeHelper.createSerializerDeserializer(
                         (Class<? extends Writable>) loader.loadClass(className), conf, null);
+            }
         } catch (ClassNotFoundException cnfe) {
             throw new HyracksException(cnfe);
         }
@@ -80,12 +80,12 @@ public class DataflowUtils {
         return rdFactory;
     }
 
-    public static IClusteredAggregatorDescriptorFactory getAccumulatingAggregatorFactory(
-            IConfigurationFactory confFactory, boolean isFinal, boolean partialAggAsInput) {
-        IAggregateFunctionFactory aggFuncFactory = new AggregationFunctionFactory(confFactory, isFinal,
+    public static IAggregatorDescriptorFactory getAccumulatingAggregatorFactory(IConfigurationFactory confFactory,
+            boolean isFinal, boolean partialAggAsInput) {
+        IAggregateEvaluatorFactory aggEvalFactory = new AggregationEvaluatorFactory(confFactory, isFinal,
                 partialAggAsInput);
-        IClusteredAggregatorDescriptorFactory aggregatorFactory = new AccumulatingAggregatorFactory(
-                new IAggregateFunctionFactory[] { aggFuncFactory });
+        IAggregatorDescriptorFactory aggregatorFactory = new SimpleAlgebricksAccumulatingAggregatorFactory(
+                new IAggregateEvaluatorFactory[] { aggEvalFactory }, new int[] { 1 });
         return aggregatorFactory;
     }
 

@@ -34,10 +34,9 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
+import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
-import edu.uci.ics.pregelix.api.io.WritableSizable;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.api.util.JobStateUtils;
 
@@ -55,7 +54,7 @@ import edu.uci.ics.pregelix.api.util.JobStateUtils;
  *            Message value type
  */
 @SuppressWarnings("rawtypes")
-public abstract class Vertex<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable>
+public abstract class Vertex<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable>
         implements Writable {
     /** task context, only used in scanners */
     public static TaskAttemptContext taskContext;
@@ -459,7 +458,7 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
      *
      * @param writers
      */
-    public void setOutputAppenders(List<FrameTupleAppender> appenders) {
+    public void setOutputAppenders(List<IFrameFieldAppender> appenders) {
         delegate.setOutputAppenders(appenders);
     }
 

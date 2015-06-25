@@ -1,5 +1,13 @@
 package edu.uci.ics.pregelix.dataflow.util;
 
+import org.apache.hadoop.io.BooleanWritable;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.FloatWritable;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.VIntWritable;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
 
 import edu.uci.ics.asterix.dataflow.data.nontagged.serde.ABooleanSerializerDeserializer;
@@ -16,14 +24,6 @@ import edu.uci.ics.asterix.om.base.ANull;
 import edu.uci.ics.asterix.om.base.IAObject;
 import edu.uci.ics.asterix.om.types.ATypeTag;
 import edu.uci.ics.hyracks.algebricks.common.exceptions.NotImplementedException;
-import edu.uci.ics.pregelix.api.datatypes.BooleanWritable;
-import edu.uci.ics.pregelix.api.datatypes.DoubleWritable;
-import edu.uci.ics.pregelix.api.datatypes.FloatWritable;
-import edu.uci.ics.pregelix.api.datatypes.IntWritable;
-import edu.uci.ics.pregelix.api.datatypes.LongWritable;
-import edu.uci.ics.pregelix.api.datatypes.NullWritable;
-import edu.uci.ics.pregelix.api.datatypes.VIntWritable;
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 
 public class PregelixAsterixIntegrationUtil {
 

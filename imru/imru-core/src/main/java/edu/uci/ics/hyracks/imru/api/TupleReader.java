@@ -35,25 +35,21 @@ public class TupleReader extends DataInputStream {
     int tupleCount;
 
     public TupleReader(ByteBuffer input, int fieldCount) {
-        this(input, new FrameTupleAccessor(input.limit(), new RecordDescriptor(
-                new ISerializerDeserializer[fieldCount])),
+        this(input, new FrameTupleAccessor(new RecordDescriptor(new ISerializerDeserializer[fieldCount])),
                 new ByteBufferInputStream());
     }
 
     public TupleReader(ByteBuffer input, int frameSize, int fieldCount) {
-        this(input, new FrameTupleAccessor(frameSize, new RecordDescriptor(
-                new ISerializerDeserializer[fieldCount])),
+        this(input, new FrameTupleAccessor(new RecordDescriptor(new ISerializerDeserializer[fieldCount])),
                 new ByteBufferInputStream());
     }
 
     public TupleReader(Iterator<ByteBuffer> input, int frameSize, int fieldCount) {
-        this(input, new FrameTupleAccessor(frameSize, new RecordDescriptor(
-                new ISerializerDeserializer[fieldCount])),
+        this(input, new FrameTupleAccessor(new RecordDescriptor(new ISerializerDeserializer[fieldCount])),
                 new ByteBufferInputStream());
     }
 
-    public TupleReader(Iterator<ByteBuffer> input, FrameTupleAccessor accessor,
-            ByteBufferInputStream in) {
+    public TupleReader(Iterator<ByteBuffer> input, FrameTupleAccessor accessor, ByteBufferInputStream in) {
         super(in);
         this.input = input;
         this.accessor = accessor;
@@ -62,8 +58,7 @@ public class TupleReader extends DataInputStream {
         tupleCount = 0;
     }
 
-    public TupleReader(final ByteBuffer input, FrameTupleAccessor accessor,
-            ByteBufferInputStream in) {
+    public TupleReader(final ByteBuffer input, FrameTupleAccessor accessor, ByteBufferInputStream in) {
         super(in);
         this.input = new Iterator<ByteBuffer>() {
             boolean first = true;
@@ -72,6 +67,7 @@ public class TupleReader extends DataInputStream {
             public void remove() {
             }
 
+            @Override
             public ByteBuffer next() {
                 if (first) {
                     first = false;
@@ -95,14 +91,14 @@ public class TupleReader extends DataInputStream {
         this(accessor, new ByteBufferInputStream(), tupleId);
     }
 
-    public TupleReader(IFrameTupleAccessor accessor, ByteBufferInputStream in,
-            int tupleId) {
+    public TupleReader(IFrameTupleAccessor accessor, ByteBufferInputStream in, int tupleId) {
         super(in);
         this.input = new Iterator<ByteBuffer>() {
             @Override
             public void remove() {
             }
 
+            @Override
             public ByteBuffer next() {
                 return null;
             }
@@ -119,16 +115,18 @@ public class TupleReader extends DataInputStream {
     }
 
     public boolean hasNextTuple() {
-        if (tupleId + 1 < tupleCount)
+        if (tupleId + 1 < tupleCount) {
             return true;
+        }
         return input.hasNext();
     }
 
     public boolean nextTuple() {
         tupleId++;
         while (tupleId >= tupleCount) {
-            if (!input.hasNext())
+            if (!input.hasNext()) {
                 return false;
+            }
             ByteBuffer buf = input.next();
             accessor.reset(buf);
             tupleId = 0;
@@ -139,11 +137,10 @@ public class TupleReader extends DataInputStream {
     }
 
     public void seekToField(int fieldId) {
-        int startOffset = accessor.getFieldSlotsLength()
-                + accessor.getTupleStartOffset(tupleId)
+        int startOffset = accessor.getFieldSlotsLength() + accessor.getTupleStartOffset(tupleId)
                 + accessor.getFieldStartOffset(tupleId, fieldId);
-//                Rt.p(accessor.getFieldSlotsLength() +" "+ accessor.getTupleStartOffset(tupleId)
-//                        +" "+ accessor.getFieldStartOffset(tupleId, fieldId));
+        //                Rt.p(accessor.getFieldSlotsLength() +" "+ accessor.getTupleStartOffset(tupleId)
+        //                        +" "+ accessor.getFieldStartOffset(tupleId, fieldId));
         in.setByteBuffer(accessor.getBuffer(), startOffset);
     }
 
@@ -154,15 +151,17 @@ public class TupleReader extends DataInputStream {
 
     public String readChars(int length) throws IOException {
         char[] cs = new char[length];
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++) {
             cs[i] = readChar();
+        }
         return new String(cs);
     }
 
     public String readUTF(int length) throws IOException {
         byte[] cs = new byte[length];
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++) {
             cs[i] = (byte) read();
+        }
         return new String(cs);
     }
 

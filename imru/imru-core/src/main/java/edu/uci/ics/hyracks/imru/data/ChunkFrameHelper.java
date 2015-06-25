@@ -26,21 +26,11 @@ import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
 /**
  * Tool for encapsulating frames to add chunking information.
  * <p>
- * To make it possible to re-assemble chunks at the operator level,
- * frames are required to have two additional fields: the number of
- * the partition that sent the frame, and a flag indicating whether
- * this is the last frame. This functionality could be pushed down to
- * the connector level, but this would greatly increase the code's
- * complexity.
+ * To make it possible to re-assemble chunks at the operator level, frames are required to have two additional fields: the number of the partition that sent the frame, and a flag indicating whether this is the last frame. This functionality could be pushed down to the connector level, but this would greatly increase the code's complexity.
  * <p>
- * Instead, UDFs are called with a context that allocates frames that
- * are smaller than the actual physical frame size. When these frames
- * are written to a wrapped frame writer, the frames are copied into
- * full-sized frames and prepended with the partition information.
+ * Instead, UDFs are called with a context that allocates frames that are smaller than the actual physical frame size. When these frames are written to a wrapped frame writer, the frames are copied into full-sized frames and prepended with the partition information.
  * <p>
- * To retain compatibility with connectors that expect frames to use
- * Hyracks' data frame format (as specified by FrameTupleAccessor),
- * the chunk is encapsulated in a frame with one tuple.
+ * To retain compatibility with connectors that expect frames to use Hyracks' data frame format (as specified by FrameTupleAccessor), the chunk is encapsulated in a frame with one tuple.
  *
  * @author Josh Rosen
  */
@@ -67,7 +57,7 @@ public class ChunkFrameHelper {
         //      4 bytes for frame tuple count
         //      4 bytes for tuple end offset
         //   = 20 bytes total overhead
-        this.chunkSize = ctx.getFrameSize() - 20;
+        this.chunkSize = ctx.getInitialFrameSize() - 20;
     }
 
     /**
@@ -81,15 +71,15 @@ public class ChunkFrameHelper {
     private void setUpFrame(ByteBuffer encapsulatedChunk) {
         // Set up the proper tuple structure in the frame:
         // Tuple count
-        encapsulatedChunk.position(FrameHelper.getTupleCountOffset(ctx.getFrameSize()));
+        encapsulatedChunk.position(FrameHelper.getTupleCountOffset(ctx.getInitialFrameSize()));
         encapsulatedChunk.putInt(1);
-        assert encapsulatedChunk.getInt(FrameHelper.getTupleCountOffset(ctx.getFrameSize())) == 1;
+        assert encapsulatedChunk.getInt(FrameHelper.getTupleCountOffset(ctx.getInitialFrameSize())) == 1;
         // Tuple end offset
-        encapsulatedChunk.position(FrameHelper.getTupleCountOffset(ctx.getFrameSize()) - 4);
-        encapsulatedChunk.putInt(FrameHelper.getTupleCountOffset(ctx.getFrameSize()) - 4);
+        encapsulatedChunk.position(FrameHelper.getTupleCountOffset(ctx.getInitialFrameSize()) - 4);
+        encapsulatedChunk.putInt(FrameHelper.getTupleCountOffset(ctx.getInitialFrameSize()) - 4);
         // Field end offset
         encapsulatedChunk.position(0);
-        encapsulatedChunk.putInt(FrameHelper.getTupleCountOffset(ctx.getFrameSize()) - 4);
+        encapsulatedChunk.putInt(FrameHelper.getTupleCountOffset(ctx.getInitialFrameSize()) - 4);
         encapsulatedChunk.position(0);
     }
 
@@ -102,7 +92,7 @@ public class ChunkFrameHelper {
      *            The partition number of the operator sending the
      *            chunks.
      * @return A wrapped IFrameWriter that performs the encapsulation.
-     * @throws HyracksDataException 
+     * @throws HyracksDataException
      */
     public IFrameWriter wrapWriter(final IFrameWriter writer, final int partition) throws HyracksDataException {
         return new IFrameWriter() {
@@ -173,7 +163,7 @@ public class ChunkFrameHelper {
      * @return True if this is the last chunk, False otherwise.
      */
     public boolean isLastChunk(ByteBuffer encapsulatedChunk) {
-        assert encapsulatedChunk.limit() == ctx.getFrameSize();
+        assert encapsulatedChunk.limit() == ctx.getInitialFrameSize();
         return encapsulatedChunk.getInt(BYTES_IN_INT * 2) == 1;
     }
 
@@ -185,7 +175,7 @@ public class ChunkFrameHelper {
      * @return The partition number of this chunk's sender.
      */
     public int getPartition(ByteBuffer encapsulatedChunk) {
-        assert encapsulatedChunk.limit() == ctx.getFrameSize();
+        assert encapsulatedChunk.limit() == ctx.getInitialFrameSize();
         return encapsulatedChunk.getInt(BYTES_IN_INT);
     }
 
@@ -198,7 +188,7 @@ public class ChunkFrameHelper {
      *         passing to user code.
      */
     public ByteBuffer extractChunk(ByteBuffer encapsulatedChunk) {
-        assert encapsulatedChunk.limit() == ctx.getFrameSize();
+        assert encapsulatedChunk.limit() == ctx.getInitialFrameSize();
         ByteBuffer chunk = ByteBuffer.allocate(chunkSize);
         chunk.put(encapsulatedChunk.array(), 3 * BYTES_IN_INT, chunkSize);
         return chunk;

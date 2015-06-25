@@ -17,9 +17,9 @@ package edu.uci.ics.external.connector.api;
 
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 
-public interface IReaderOperatorDescriptorFactory {
+public interface IWriteOperatorDescriptorFactory {
 
-    public IOperatorDescriptor getReaderOperatorDescriptorFactory();
+    public IOperatorDescriptor getWriterOperatorDescriptor();
 
     public String[] getLocationConstraints();
 }

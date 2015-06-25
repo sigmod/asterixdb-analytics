@@ -15,13 +15,17 @@
 
 package edu.uci.ics.external.connector.api;
 
+import java.util.List;
+
+import org.apache.hadoop.fs.Path;
+
 public interface IConnector {
 
-    public IPathProvider getPathProvider();
+    public List<Path> getPaths(String... name);
 
-    public IReaderOperatorDescriptorFactory getReaderFactory();
+    public IReadOperatorDescriptorFactory getReaderFactory(List<Path> outputPaths);
 
-    public IWriterOperatorDescriptorFactory getWriterFactory();
+    public IWriteOperatorDescriptorFactory getWriterFactory(List<Path> inputPaths);
 
-    public IFieldConverterFactory getTypeConverterFactory();
+    public IFieldConverterFactory getFieldConverterFactory();
 }

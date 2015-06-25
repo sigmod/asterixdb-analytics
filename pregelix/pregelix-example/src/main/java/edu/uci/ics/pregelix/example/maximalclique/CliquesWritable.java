@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
-
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 
 /**
  * The representation of cliques stored in a vertex.
@@ -45,7 +44,7 @@ public class CliquesWritable implements Writable {
 
     /**
      * Set the srcId
-     * 
+     *
      * @param srcId
      *            the source vertex Id
      */
@@ -55,7 +54,7 @@ public class CliquesWritable implements Writable {
 
     /**
      * Set the size of cliques.
-     * 
+     *
      * @param sizeOfClique
      *            the size of each maximal clique
      */
@@ -65,7 +64,7 @@ public class CliquesWritable implements Writable {
 
     /**
      * Add the clique vertexes
-     * 
+     *
      * @param cliques
      *            the list of vertexes -- can contain multiple cliques
      */
@@ -75,7 +74,7 @@ public class CliquesWritable implements Writable {
 
     /**
      * Add the clique vertexes
-     * 
+     *
      * @param cliques
      *            the list of vertexes -- can contain multiple cliques
      */
@@ -139,8 +138,9 @@ public class CliquesWritable implements Writable {
 
     @Override
     public String toString() {
-        if (sizeOfClique == 0)
+        if (sizeOfClique == 0) {
             return "";
+        }
         StringBuffer sb = new StringBuffer();
         int numCliques = cliques.size() / sizeOfClique;
         for (int i = 0; i < numCliques; i++) {

@@ -39,7 +39,7 @@ import edu.uci.ics.pregelix.api.graph.Vertex;
  *            Message data
  */
 @SuppressWarnings("rawtypes")
-public interface VertexReader<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable> {
+public interface VertexReader<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable> {
     /**
      * Use the input split and context t o setup reading the vertices.
      * Guaranteed to be called prior to any other function.

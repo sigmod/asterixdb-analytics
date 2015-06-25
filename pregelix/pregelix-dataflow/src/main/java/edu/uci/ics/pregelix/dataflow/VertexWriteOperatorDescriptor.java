@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,7 @@ public class VertexWriteOperatorDescriptor extends AbstractSingleActivityOperato
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             final IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
-            throws HyracksDataException {
+                    throws HyracksDataException {
         IOperatorNodePushable op = new AbstractUnaryInputSinkOperatorNodePushable() {
             private RecordDescriptor rd0;
             private FrameDeserializer frameDeserializer;
@@ -65,12 +65,13 @@ public class VertexWriteOperatorDescriptor extends AbstractSingleActivityOperato
             public void open() throws HyracksDataException {
                 rd0 = inputRdFactory == null ? recordDescProvider.getInputRecordDescriptor(getActivityId(), 0)
                         : inputRdFactory.createRecordDescriptor(ctx);
-                frameDeserializer = new FrameDeserializer(ctx.getFrameSize(), rd0);
+                frameDeserializer = new FrameDeserializer(rd0);
                 try {
                     outputWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(splits[partition]
                             .getLocalFile().getFile())));
-                    if (preHookFactory != null)
+                    if (preHookFactory != null) {
                         preHookFactory.createRuntimeHook().configure(ctx);
+                    }
                 } catch (IOException e) {
                     throw new HyracksDataException(e);
                 }
@@ -94,8 +95,9 @@ public class VertexWriteOperatorDescriptor extends AbstractSingleActivityOperato
 
             @Override
             public void close() throws HyracksDataException {
-                if (postHookFactory != null)
+                if (postHookFactory != null) {
                     postHookFactory.createRuntimeHook().configure(ctx);
+                }
                 outputWriter.close();
             }
 

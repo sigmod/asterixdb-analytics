@@ -17,9 +17,10 @@ package edu.uci.ics.hyracks.imru.api;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
@@ -28,14 +29,14 @@ import edu.uci.ics.hyracks.imru.util.Rt;
 
 public class TupleWriter implements DataOutput {
     FrameWriter writer;
-    ByteBuffer frame;
+    IFrame frame;
     DataOutput dos;
     FrameTupleAppender appender;
     ArrayTupleBuilder tb;
 
-    public TupleWriter(IHyracksTaskContext ctx, ByteBuffer frame, int nFields) {
+    public TupleWriter(IHyracksTaskContext ctx, IFrame frame, int nFields) throws HyracksDataException {
         this.frame = frame;
-        appender = new FrameTupleAppender(ctx.getFrameSize());
+        appender = new FrameTupleAppender();
         appender.reset(frame, true);
         tb = new ArrayTupleBuilder(nFields);
         dos = tb.getDataOutput();
@@ -46,8 +47,8 @@ public class TupleWriter implements DataOutput {
 
     public TupleWriter(IMRUContext ctx, FrameWriter writer, int nFields) throws HyracksDataException {
         this.writer = writer;
-        frame = ctx.allocateFrame();
-        appender = new FrameTupleAppender(ctx.getFrameSize());
+        frame = new VSizeFrame(ctx.getHyracksTaskContext());
+        appender = new FrameTupleAppender();
         appender.reset(frame, true);
         tb = new ArrayTupleBuilder(nFields);
         dos = tb.getDataOutput();
@@ -58,8 +59,8 @@ public class TupleWriter implements DataOutput {
 
     public TupleWriter(IHyracksTaskContext ctx, IFrameWriter writer, int nFields) throws HyracksDataException {
         this.writer = new FrameWriter(writer);
-        frame = ctx.allocateFrame();
-        appender = new FrameTupleAppender(ctx.getFrameSize());
+        frame = new VSizeFrame(ctx);
+        appender = new FrameTupleAppender();
         appender.reset(frame, true);
         tb = new ArrayTupleBuilder(nFields);
         dos = tb.getDataOutput();
@@ -74,18 +75,19 @@ public class TupleWriter implements DataOutput {
 
     /**
      * Force to finish a frame
-     * 
+     *
      * @throws HyracksDataException
      */
     public void finishFrame() throws HyracksDataException {
-        if (writer != null)
-            writer.writeFrame(frame);
+        if (writer != null) {
+            writer.writeFrame(frame.getBuffer());
+        }
         appender.reset(frame, true);
     }
 
     public void finishTuple() throws HyracksDataException {
         if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-            writer.writeFrame(frame);
+            writer.writeFrame(frame.getBuffer());
             appender.reset(frame, true);
             if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
                 // LOG.severe("Example too large to fit in frame: " +
@@ -97,12 +99,12 @@ public class TupleWriter implements DataOutput {
     }
 
     public void dump() {
-        Rt.p(Rt.getHex(0, frame.array(), 0, 256, false));
+        Rt.p(Rt.getHex(0, frame.getBuffer().array(), 0, 256, false));
     }
-    
+
     public void close() throws HyracksDataException {
         if (appender.getTupleCount() > 0) {
-            writer.writeFrame(frame);
+            writer.writeFrame(frame.getBuffer());
             appender.reset(frame, true);
         }
     }

@@ -102,6 +102,7 @@
   </build>
 
   <modules>
-    <module>external-connector-api</module>	
+    <module>external-connector-api</module>
+    <module>external-connector-asterixdb</module>	
   </modules>
 </project>

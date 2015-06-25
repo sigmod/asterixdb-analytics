@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,7 @@
 package edu.uci.ics.pregelix.core.jobgen;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.WritableComparator;
 
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
@@ -25,15 +26,20 @@ import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.RawBinaryComparatorFactory;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.RawNormalizedKeyComputerFactory;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.WritableComparingBinaryComparatorFactory;
+import edu.uci.ics.pregelix.runtime.touchpoint.VLongWritableComparator;
 import edu.uci.ics.pregelix.runtime.touchpoint.VertexIdNormalizedKeyComputerFactory;
 
 @SuppressWarnings({ "rawtypes" })
 public class JobGenUtil {
 
+    static {
+        WritableComparator.define(VLongWritable.class, new VLongWritableComparator());
+    }
+
     /**
      * get normalized key factory for an iteration, to sort messages iteration
      * 1: asc order iteration 2: desc order
-     * 
+     *
      * @param iteration
      * @param keyClass
      * @return
@@ -45,7 +51,7 @@ public class JobGenUtil {
     /**
      * get comparator for an iteration, to sort messages iteration 1: asc order
      * iteration 0: desc order
-     * 
+     *
      * @param iteration
      * @param keyClass
      * @return
@@ -56,7 +62,7 @@ public class JobGenUtil {
 
     /**
      * get normalized key factory for the final output job
-     * 
+     *
      * @param iteration
      * @param keyClass
      * @return
@@ -71,7 +77,7 @@ public class JobGenUtil {
 
     /**
      * get comparator for the final output job
-     * 
+     *
      * @param iteration
      * @param keyClass
      * @return
@@ -84,7 +90,7 @@ public class JobGenUtil {
     /**
      * get the B-tree scan order for an iteration iteration 1: desc order,
      * backward scan iteration 2: asc order, forward scan
-     * 
+     *
      * @param iteration
      * @return
      */

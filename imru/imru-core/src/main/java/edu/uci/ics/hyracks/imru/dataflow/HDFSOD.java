@@ -32,43 +32,38 @@ import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
 import edu.uci.ics.hyracks.imru.util.Rt;
 
 /**
- * 
  * @author Rui Wang
  */
-public class HDFSOD extends IMRUOperatorDescriptor<Serializable,Serializable> {
-    private static final Logger LOG = Logger
-            .getLogger(MapOperatorDescriptor.class.getName());
+public class HDFSOD extends IMRUOperatorDescriptor<Serializable, Serializable> {
+    private static final Logger LOG = Logger.getLogger(MapOperatorDescriptor.class.getName());
 
     private static final long serialVersionUID = 1L;
 
     protected final ConfigurationFactory confFactory;
     protected final IMRUFileSplit[] inputSplits;
 
-    public HDFSOD(JobSpecification spec, IIMRUJob2<Serializable,Serializable> imruSpec,
-            IMRUFileSplit[] inputSplits, ConfigurationFactory confFactory) {
+    public HDFSOD(JobSpecification spec, IIMRUJob2<Serializable, Serializable> imruSpec, IMRUFileSplit[] inputSplits,
+            ConfigurationFactory confFactory) {
         super(spec, 1, 0, "parse", imruSpec);
         this.inputSplits = inputSplits;
         this.confFactory = confFactory;
     }
 
     @Override
-    public IOperatorNodePushable createPushRuntime(
-            final IHyracksTaskContext ctx,
-            IRecordDescriptorProvider recordDescProvider, final int partition,
-            int nPartitions) throws HyracksDataException {
+    public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
+            IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
+            throws HyracksDataException {
         return new AbstractUnaryInputSinkOperatorNodePushable() {
             @Override
             public void open() throws HyracksDataException {
             }
 
             @Override
-            public void nextFrame(ByteBuffer buffer)
-                    throws HyracksDataException {
+            public void nextFrame(ByteBuffer buffer) throws HyracksDataException {
                 try {
-                    TupleReader reader = new TupleReader(buffer,
-                            ctx.getFrameSize(), 1);
+                    TupleReader reader = new TupleReader(buffer, ctx.getInitialFrameSize(), 1);
                     while (reader.nextTuple()) {
-//                        reader.dump();
+                        //                        reader.dump();
                         int len = reader.getFieldLength(0);
                         reader.seekToField(0);
                         byte[] bs = new byte[len];

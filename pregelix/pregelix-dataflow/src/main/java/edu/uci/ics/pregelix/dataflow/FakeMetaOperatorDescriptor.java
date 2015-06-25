@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,8 @@
  */
 package edu.uci.ics.pregelix.dataflow;
 
-import java.nio.ByteBuffer;
-
+import edu.uci.ics.hyracks.api.comm.IFrame;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -54,15 +54,15 @@ public class FakeMetaOperatorDescriptor extends AbstractSingleActivityOperatorDe
         try {
             long randomId;
             do {
-                randomId = Math.round(1000000+(Math.random()*100000));
-            } 
-            while (RuntimeContext.get(ctx).getLocalResourceRepository().getResourceById(randomId) != null);
+                randomId = Math.round(1000000 + (Math.random() * 100000));
+            } while (RuntimeContext.get(ctx).getLocalResourceRepository().getResourceById(randomId) != null);
 
             for (FileSplit f : fileSplitToAdd.getFileSplits()) {
                 String name = f.getLocalFile().getFile().getAbsolutePath();
-                if (RuntimeContext.get(ctx).getLocalResourceRepository().getResourceByName(name + "/device_id_0") == null)
+                if (RuntimeContext.get(ctx).getLocalResourceRepository().getResourceByName(name + "/device_id_0") == null) {
                     RuntimeContext.get(ctx).getLocalResourceRepository()
                             .insert(new LocalResource(randomId++, name + "/device_id_0", 0, 0, null));
+                }
             }
         } catch (HyracksDataException e) {
             e.printStackTrace();
@@ -75,18 +75,16 @@ public class FakeMetaOperatorDescriptor extends AbstractSingleActivityOperatorDe
             final IRecordDescriptorProvider recordDescProvider, int partition, int nPartitions) {
         return new AbstractUnaryOutputSourceOperatorNodePushable() {
 
+            @Override
             public void initialize() throws HyracksDataException {
-
-                ByteBuffer frame = ctx.allocateFrame();
+                IFrame frame = new VSizeFrame(ctx);
                 ArrayTupleBuilder tb = new ArrayTupleBuilder(0);
-                FrameTupleAppender appender = new FrameTupleAppender(ctx.getFrameSize());
+                FrameTupleAppender appender = new FrameTupleAppender();
 
                 writer.open();
                 appender.reset(frame, true);
-                if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                    throw new IllegalStateException();
-                }
-                FrameUtils.flushFrame(frame, writer);
+                appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize());
+                FrameUtils.flushFrame(frame.getBuffer(), writer);
                 writer.close();
             }
         };

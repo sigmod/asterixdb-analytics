@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,14 +28,13 @@ import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.io.VertexInputFormat;
 import edu.uci.ics.pregelix.api.io.VertexReader;
-import edu.uci.ics.pregelix.api.io.WritableSizable;
 
 /**
  * @author yingyib
  */
 @SuppressWarnings("rawtypes")
-public class InternalVertexInputFormat<I extends WritableComparable, V extends Writable, E extends Writable, M extends WritableSizable>
-        extends VertexInputFormat<I, V, E, M> {
+public class InternalVertexInputFormat<I extends WritableComparable, V extends Writable, E extends Writable, M extends Writable>
+extends VertexInputFormat<I, V, E, M> {
     /** Uses the SequenceFileInputFormat to do everything */
     private SequenceFileInputFormat sequenceInputFormat = new SequenceFileInputFormat();
 
@@ -53,7 +52,7 @@ public class InternalVertexInputFormat<I extends WritableComparable, V extends W
 
             @Override
             public void initialize(InputSplit inputSplit, TaskAttemptContext context) throws IOException,
-                    InterruptedException {
+            InterruptedException {
                 recordReader.initialize(inputSplit, context);
             }
 

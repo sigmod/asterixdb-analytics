@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,9 @@ import java.util.List;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
+import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
 import edu.uci.ics.pregelix.api.io.Pointable;
 import edu.uci.ics.pregelix.api.util.FrameTupleUtils;
 
@@ -38,22 +38,22 @@ class VertexDelegate<I extends WritableComparable, V extends Writable, E extends
     /** message tuple builder */
     private ArrayTupleBuilder message;
     private IFrameWriter msgWriter;
-    private FrameTupleAppender appenderMsg;
+    private IFrameFieldAppender appenderMsg;
 
     /** alive tuple builder */
     private ArrayTupleBuilder alive;
     private IFrameWriter aliveWriter;
-    private FrameTupleAppender appenderAlive;
+    private IFrameFieldAppender appenderAlive;
 
     /** the tuple for insert */
     private ArrayTupleBuilder insertTb;
     private IFrameWriter insertWriter;
-    private FrameTupleAppender appenderInsert;
+    private IFrameFieldAppender appenderInsert;
 
     /** the tuple for insert */
     private ArrayTupleBuilder deleteTb;
     private IFrameWriter deleteWriter;
-    private FrameTupleAppender appenderDelete;
+    private IFrameFieldAppender appenderDelete;
 
     /** message list */
     private MsgList dummyMessageList = new MsgList();
@@ -167,7 +167,7 @@ class VertexDelegate<I extends WritableComparable, V extends Writable, E extends
         }
     }
 
-    public final void setOutputAppenders(List<FrameTupleAppender> appenders) {
+    public final void setOutputAppenders(List<IFrameFieldAppender> appenders) {
         appenderMsg = appenders.get(0);
         appenderInsert = appenders.get(1);
         appenderDelete = appenders.get(2);

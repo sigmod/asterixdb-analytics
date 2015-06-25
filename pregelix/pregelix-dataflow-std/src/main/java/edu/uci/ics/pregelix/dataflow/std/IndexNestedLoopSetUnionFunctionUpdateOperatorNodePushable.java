@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +16,10 @@ package edu.uci.ics.pregelix.dataflow.std;
 
 import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameTupleAccessor;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparator;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -51,7 +53,7 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
     private IndexDataflowHelper treeIndexOpHelper;
     private FrameTupleAccessor accessor;
 
-    private ByteBuffer writeBuffer;
+    private IFrame writeFrame;
     private FrameTupleAppender appender;
 
     private ITreeIndex index;
@@ -102,7 +104,7 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
         this.writers = new IFrameWriter[outputArity];
         this.functionProxy = new FunctionProxy(ctx, functionFactory, preHookFactory, postHookFactory, inputRdFactory,
                 writers);
-        this.updateBuffer = new UpdateBuffer(ctx, 2);
+        this.updateBuffer = new UpdateBuffer(ctx);
     }
 
     protected void setCursor() {
@@ -112,7 +114,7 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
     @Override
     public void open() throws HyracksDataException {
         functionProxy.functionOpen();
-        accessor = new FrameTupleAccessor(treeIndexOpHelper.getTaskContext().getFrameSize(), recDesc);
+        accessor = new FrameTupleAccessor(recDesc);
 
         try {
             treeIndexOpHelper.open();
@@ -126,9 +128,9 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
             }
             lowKeySearchCmp = new MultiComparator(lowKeySearchComparators);
 
-            writeBuffer = treeIndexOpHelper.getTaskContext().allocateFrame();
-            appender = new FrameTupleAppender(treeIndexOpHelper.getTaskContext().getFrameSize());
-            appender.reset(writeBuffer, true);
+            writeFrame = new VSizeFrame(treeIndexOpHelper.getTaskContext());
+            appender = new FrameTupleAppender();
+            appender.reset(writeFrame, true);
 
             indexAccessor = index.createAccessor(NoOpOperationCallback.INSTANCE, NoOpOperationCallback.INSTANCE);
             setCursor();
@@ -146,7 +148,6 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
                 match = false;
             }
             cloneUpdateTb = new ArrayTupleBuilder(index.getFieldCount());
-            updateBuffer.setFieldCount(index.getFieldCount());
         } catch (Exception e) {
             closeResource();
             throw new HyracksDataException(e);
@@ -159,10 +160,12 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
         int tupleCount = accessor.getTupleCount();
         try {
             for (int i = 0; i < tupleCount;) {
-                if (lowKey != null)
+                if (lowKey != null) {
                     lowKey.reset(accessor, i);
-                if (highKey != null)
+                }
+                if (highKey != null) {
                     highKey.reset(accessor, i);
+                }
                 // TODO: currently use low key only, check what they mean
                 if (currentTopTuple != null) {
                     int cmp = compare(lowKey, currentTopTuple);

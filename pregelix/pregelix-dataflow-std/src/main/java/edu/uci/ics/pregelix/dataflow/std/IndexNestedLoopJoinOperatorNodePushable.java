@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,9 @@ package edu.uci.ics.pregelix.dataflow.std;
 import java.io.DataOutput;
 import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameTupleAccessor;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparator;
 import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
@@ -43,7 +45,7 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
     private IndexDataflowHelper treeIndexOpHelper;
     private FrameTupleAccessor accessor;
 
-    private ByteBuffer writeBuffer;
+    private IFrame writeFrame;
     private FrameTupleAppender appender;
     private ArrayTupleBuilder tb;
     private DataOutput dos;
@@ -87,7 +89,7 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
 
     @Override
     public void open() throws HyracksDataException {
-        accessor = new FrameTupleAccessor(treeIndexOpHelper.getTaskContext().getFrameSize(), recDesc);
+        accessor = new FrameTupleAccessor(recDesc);
 
         try {
             treeIndexOpHelper.open();
@@ -96,10 +98,12 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
 
             int lowKeySearchFields = index.getComparatorFactories().length;
             int highKeySearchFields = index.getComparatorFactories().length;
-            if (lowKey != null)
+            if (lowKey != null) {
                 lowKeySearchFields = lowKey.getFieldCount();
-            if (highKey != null)
+            }
+            if (highKey != null) {
                 highKeySearchFields = highKey.getFieldCount();
+            }
 
             IBinaryComparator[] lowKeySearchComparators = new IBinaryComparator[lowKeySearchFields];
             for (int i = 0; i < lowKeySearchFields; i++) {
@@ -119,11 +123,11 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
 
             rangePred = new RangePredicate(null, null, lowKeyInclusive, highKeyInclusive, lowKeySearchCmp,
                     highKeySearchCmp);
-            writeBuffer = treeIndexOpHelper.getTaskContext().allocateFrame();
+            writeFrame = new VSizeFrame(treeIndexOpHelper.getTaskContext());
             tb = new ArrayTupleBuilder(inputRecDesc.getFields().length + index.getFieldCount());
             dos = tb.getDataOutput();
-            appender = new FrameTupleAppender(treeIndexOpHelper.getTaskContext().getFrameSize());
-            appender.reset(writeBuffer, true);
+            appender = new FrameTupleAppender();
+            appender.reset(writeFrame, true);
             indexAccessor = index.createAccessor(NoOpOperationCallback.INSTANCE, NoOpOperationCallback.INSTANCE);
             setCursor();
         } catch (Exception e) {
@@ -150,14 +154,7 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
                 dos.write(frameTuple.getFieldData(i), frameTuple.getFieldStart(i), frameTuple.getFieldLength(i));
                 tb.addFieldEndOffset();
             }
-
-            if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                FrameUtils.flushFrame(writeBuffer, writer);
-                appender.reset(writeBuffer, true);
-                if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
-                    throw new IllegalStateException();
-                }
-            }
+            FrameUtils.appendToWriter(writer, appender, tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize());
         }
     }
 
@@ -168,10 +165,12 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
         int tupleCount = accessor.getTupleCount();
         try {
             for (int i = 0; i < tupleCount; i++) {
-                if (lowKey != null)
+                if (lowKey != null) {
                     lowKey.reset(accessor, i);
-                if (highKey != null)
+                }
+                if (highKey != null) {
                     highKey.reset(accessor, i);
+                }
                 rangePred.setLowKey(lowKey, lowKeyInclusive);
                 rangePred.setHighKey(highKey, highKeyInclusive);
 
@@ -188,7 +187,7 @@ public class IndexNestedLoopJoinOperatorNodePushable extends AbstractUnaryInputU
     public void close() throws HyracksDataException {
         try {
             if (appender.getTupleCount() > 0) {
-                FrameUtils.flushFrame(writeBuffer, writer);
+                FrameUtils.flushFrame(writeFrame.getBuffer(), writer);
             }
             writer.close();
             try {

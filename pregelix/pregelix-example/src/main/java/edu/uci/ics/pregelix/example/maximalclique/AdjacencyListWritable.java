@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,13 +23,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
-import edu.uci.ics.pregelix.api.io.WritableSizable;
+import org.apache.hadoop.io.VLongWritable;
+import org.apache.hadoop.io.Writable;
 
 /**
  * The adjacency list contains <src, list-of-neighbors>
  */
-public class AdjacencyListWritable implements WritableSizable {
+public class AdjacencyListWritable implements Writable {
 
     private VLongWritable sourceVertex = new VLongWritable();
     private Set<VLongWritable> destinationVertexes = new TreeSet<VLongWritable>();
@@ -93,15 +93,6 @@ public class AdjacencyListWritable implements WritableSizable {
 
     public boolean isNeighbor(VLongWritable v) {
         return destinationVertexes.contains(v);
-    }
-
-    @Override
-    public int sizeInBytes() {
-        int size = 4; // the size of list bytes
-        for (VLongWritable dest : destinationVertexes) {
-            size += dest.sizeInBytes();
-        }
-        return size;
     }
 
 }

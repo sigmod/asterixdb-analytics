@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,16 @@ package edu.uci.ics.pregelix.runtime.function;
 
 import java.io.DataOutput;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
+import edu.uci.ics.hyracks.api.comm.IFrame;
+import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
 import edu.uci.ics.hyracks.api.comm.IFrameWriter;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameTupleAppender;
+import edu.uci.ics.hyracks.dataflow.common.comm.io.FrameFixedFieldTupleAppender;
 import edu.uci.ics.hyracks.dataflow.common.data.accessors.ITupleReference;
 import edu.uci.ics.hyracks.storage.am.common.api.IIndexCursor;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -44,8 +46,8 @@ public class ExtractLiveVertexIdFunctionFactory implements IUpdateFunctionFactor
 
             // for writing out to alive message channel
             private IFrameWriter writerAlive;
-            private FrameTupleAppender appenderAlive;
-            private ByteBuffer bufferAlive;
+            private IFrameFieldAppender appenderAlive;
+            private IFrame frameAlive;
 
             private MsgList dummyMessageList = new MsgList();
             private Vertex vertex;
@@ -54,9 +56,9 @@ public class ExtractLiveVertexIdFunctionFactory implements IUpdateFunctionFactor
             public void open(IHyracksTaskContext ctx, RecordDescriptor rd, IFrameWriter... writers)
                     throws HyracksDataException {
                 this.writerAlive = writers[0];
-                this.bufferAlive = ctx.allocateFrame();
-                this.appenderAlive = new FrameTupleAppender(ctx.getFrameSize());
-                this.appenderAlive.reset(bufferAlive, true);
+                this.frameAlive = new VSizeFrame(ctx);
+                this.appenderAlive = new FrameFixedFieldTupleAppender(1);
+                this.appenderAlive.reset(frameAlive, true);
             }
 
             @Override

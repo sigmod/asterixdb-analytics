@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,10 +27,10 @@ import java.util.TreeMap;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
-import edu.uci.ics.pregelix.api.datatypes.VLongWritable;
 import edu.uci.ics.pregelix.api.graph.Edge;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.io.VertexWriter;
@@ -60,7 +60,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Update the current maximal cliques
-     * 
+     *
      * @param values
      *            the received adjcency lists
      */
@@ -133,7 +133,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Output a clique with vertex ids.
-     * 
+     *
      * @param clique
      *            the bitmap representation of a clique
      */
@@ -150,7 +150,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * find cliques using the depth-first search
-     * 
+     *
      * @param maxDepth
      *            the maximum search depth
      * @param cliqueSoFar
@@ -189,7 +189,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Update the maximal clique to a larger one if it exists
-     * 
+     *
      * @param cliqueSoFar
      *            the clique so far, in the bitmap representation
      */
@@ -208,7 +208,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Should we test the vertex newVertex?
-     * 
+     *
      * @param newVertex
      *            the vertex to be tested
      * @param cliqueSoFar
@@ -231,7 +231,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Will adding the newVertex yield a bigger clique?
-     * 
+     *
      * @param newVertex
      *            the new vertex id
      * @param cliqueSoFar
@@ -298,7 +298,7 @@ public class MaximalCliqueVertex extends Vertex<VLongWritable, CliquesWritable, 
 
     /**
      * Send the adjacency lists
-     * 
+     *
      * @param edges
      *            the outgoing edges
      */
