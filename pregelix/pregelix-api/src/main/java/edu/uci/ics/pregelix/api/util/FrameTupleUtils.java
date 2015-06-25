@@ -34,8 +34,7 @@ public class FrameTupleUtils {
     public static void flushPointableKeyValueTuple(IFrameFieldAppender appender, IFrameWriter writer, Pointable key,
             Pointable value) throws HyracksDataException {
         if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
-            FrameUtils.flushFrame(appender.getBuffer(), writer);
-            appender.reset(appender.getFrame(), true);
+            appender.flush(writer, true);
             if (!flushPointableKeyValueTupleInternal(appender, key, value)) {
                 throw new IllegalStateException();
             }
@@ -55,8 +54,7 @@ public class FrameTupleUtils {
 
     public static void flushTuplesFinal(IFrameFieldAppender appender, IFrameWriter writer) throws HyracksDataException {
         if (appender.getTupleCount() > 0) {
-            FrameUtils.flushFrame(appender.getBuffer(), writer);
-            appender.reset(appender.getFrame(), true);
+            appender.flush(writer, true);
         }
     }
 }
