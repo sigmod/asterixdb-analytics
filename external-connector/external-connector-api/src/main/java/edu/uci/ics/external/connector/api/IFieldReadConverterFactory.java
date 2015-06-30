@@ -15,10 +15,8 @@
 
 package edu.uci.ics.external.connector.api;
 
-import org.apache.hadoop.io.Writable;
+public interface IFieldReadConverterFactory {
 
-public interface IFieldConverter {
-
-    public Writable convertField(byte[] data, int start, int len);
+    public IFieldReadConverter getFieldReadConverter();
 
 }

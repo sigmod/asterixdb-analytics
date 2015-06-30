@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2013 by The Regents of the University of California
+ * Copyright 2009-2015 by The Regents of the University of California
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
@@ -15,8 +15,12 @@
 
 package edu.uci.ics.external.connector.api;
 
-public interface IFieldConverterFactory {
+import java.io.DataOutput;
 
-    public IFieldConverter getFieldConverter();
+import org.apache.hadoop.io.Writable;
+
+public interface IFieldWriteConverter {
+
+    public void convertField(Writable data, DataOutput output);
 
 }

@@ -15,17 +15,10 @@
 
 package edu.uci.ics.external.connector.api;
 
-import java.util.List;
+import org.apache.hadoop.io.Writable;
 
-import org.apache.hadoop.fs.Path;
+public interface IFieldReadConverter {
 
-public interface IConnector {
+    public Writable convertField(byte[] data, int start, int len);
 
-    public List<Path> getPaths(String... name);
-
-    public IReadOperatorDescriptorFactory getReaderFactory(List<Path> outputPaths);
-
-    public IWriteOperatorDescriptorFactory getWriterFactory(List<Path> inputPaths);
-
-    public IFieldConverterFactory getFieldConverterFactory();
 }
