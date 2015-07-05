@@ -74,7 +74,7 @@ cd $CCTMP_DIR
 
 cmd=( "${PREGELIX_HOME}/bin/pregelixcc" )
 cmd+=( -client-net-ip-address $CCHOST -cluster-net-ip-address $CCHOST
-       -heartbeat-period 5000 -max-heartbeat-lapse-periods 4 
+       -heartbeat-period 10000 -max-heartbeat-lapse-periods 999999
        -default-max-job-attempts 0 )
 
 if [ -n "$CC_CLIENTPORT" ]; then

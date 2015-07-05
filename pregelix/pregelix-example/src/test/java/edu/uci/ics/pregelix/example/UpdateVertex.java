@@ -27,7 +27,7 @@ import edu.uci.ics.pregelix.api.graph.Vertex;
  * @author yingyib
  */
 public class UpdateVertex extends Vertex<VLongWritable, Text, FloatWritable, VLongWritable> {
-    private final int MAX_VALUE_SIZE = 32768 / 4;
+    private final int MAX_VALUE_SIZE = 65536;
     private VLongWritable msg = new VLongWritable();
     private Text tempValue = new Text();
     private Random rand = new Random();
@@ -36,7 +36,7 @@ public class UpdateVertex extends Vertex<VLongWritable, Text, FloatWritable, VLo
     public void compute(Iterator<VLongWritable> msgIterator) throws Exception {
         if (getSuperstep() == 1) {
             updateAndSendMsg();
-        } else if (getSuperstep() > 1 && getSuperstep() < 2) {
+        } else if (getSuperstep() > 1 && getSuperstep() < 3) {
             verifyVertexSize(msgIterator);
             updateAndSendMsg();
         } else {

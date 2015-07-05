@@ -15,9 +15,9 @@
 
 package edu.uci.ics.pregelix.dataflow.std.util;
 
-import edu.uci.ics.hyracks.api.comm.FixedSizeFrame;
 import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameTupleAccessor;
+import edu.uci.ics.hyracks.api.comm.VSizeFrame;
 import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
 import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
@@ -48,7 +48,7 @@ public class UpdateBuffer {
 
     public UpdateBuffer(int sizeLimit, IHyracksTaskContext ctx) throws HyracksDataException {
         this.appender = new FrameTupleAppender();
-        this.frame = new FixedSizeFrame(ctx.allocateFrame());
+        this.frame = new VSizeFrame(ctx);
         this.appender.reset(frame, true);
         this.sizeLimit = sizeLimit;
         this.fta = new FrameTupleAccessor(new RecordDescriptor(new ISerializerDeserializer[] { null, null }));
@@ -60,6 +60,9 @@ public class UpdateBuffer {
     }
 
     public boolean appendTuple(ArrayTupleBuilder tb) throws HyracksDataException {
+        if (frame.getFrameSize() > sizeLimit) {
+            return false;
+        }
         if (!appender.append(tb.getFieldEndOffsets(), tb.getByteArray(), 0, tb.getSize())) {
             return false;
         } else {

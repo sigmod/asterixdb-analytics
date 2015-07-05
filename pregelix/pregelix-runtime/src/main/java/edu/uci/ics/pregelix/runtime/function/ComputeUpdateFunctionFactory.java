@@ -16,6 +16,7 @@ package edu.uci.ics.pregelix.runtime.function;
 
 import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
 import edu.uci.ics.pregelix.dataflow.std.base.IUpdateFunction;
 import edu.uci.ics.pregelix.dataflow.std.base.IUpdateFunctionFactory;
 import edu.uci.ics.pregelix.dataflow.std.util.ResetableByteArrayOutputStream;
+import edu.uci.ics.pregelix.dataflow.util.IterationUtils;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
@@ -111,6 +113,9 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
             private boolean dynamicStateLength;
             private boolean userConfigured;
 
+            private int vertexSizeLimit = -1;
+            private String jobId = "";
+
             @Override
             public void open(IHyracksTaskContext ctx, RecordDescriptor rd, IFrameWriter... writers)
                     throws HyracksDataException {
@@ -170,6 +175,9 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
                 tbs.add(tbInsert);
                 tbs.add(tbDelete);
                 tbs.add(tbAlive);
+
+                vertexSizeLimit = Math.min(IterationUtils.getVFrameSize(ctx) / 2 - 32, ctx.getInitialFrameSize() - 32);
+                jobId = BspUtils.getJobId(conf);
             }
 
             @Override
@@ -306,6 +314,20 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
                             // write the vertex value
                             vertex.write(tbOutput);
                             cloneUpdateTb.addFieldEndOffset();
+
+                            // spill large vertex separately
+                            if (cloneUpdateTb.getSize() >= vertexSizeLimit) {
+                                //spill vertex to HDFS if it cannot fit into a tree storage page
+                                String pathStr = BspUtils.TMP_DIR + jobId + File.separator + vertex.getVertexId();
+                                vertex.setSpilled(pathStr);
+                                cloneUpdateTb.reset();
+                                vertex.getVertexId().write(tbOutput);
+                                cloneUpdateTb.addFieldEndOffset();
+                                //vertex content will be spilled to HDFS
+                                vertex.write(tbOutput);
+                                cloneUpdateTb.addFieldEndOffset();
+                                vertex.setUnSpilled();
+                            }
                         }
                     }
                 } catch (IOException e) {

@@ -80,8 +80,10 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
     private boolean spilled = false;
     /** the spilled path */
     private String pathStr;
-    /** file system handle */
+    /** distributed file system handle */
     private FileSystem dfs;
+    /** local file system handle */
+    private FileSystem lfs;
     /** created new vertex */
     private boolean createdNewLiveVertex = false;
     /** terminate the partition */
@@ -306,10 +308,15 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
             //read file hosted vertex
             if (dfs == null) {
                 dfs = FileSystem.get(getContext().getConfiguration());
+                lfs = FileSystem.getLocal(getContext().getConfiguration());
             }
             pathStr = in.readUTF();
             Path path = new Path(pathStr);
-            FSDataInputStream dataInput = dfs.open(path);
+            if (!lfs.exists(path)) {
+                // cache the dfs file.
+                dfs.copyToLocalFile(path, path);
+            }
+            FSDataInputStream dataInput = lfs.open(path);
             readVertexData(dataInput);
             dataInput.close();
         }
@@ -365,12 +372,16 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
             //write file-hosted vertex
             if (dfs == null) {
                 dfs = FileSystem.get(getContext().getConfiguration());
+                lfs = FileSystem.getLocal(getContext().getConfiguration());
             }
             Path path = new Path(pathStr);
-            if (dfs.exists(path)) {
-                dfs.delete(path, true);
+            FSDataOutputStream dataOutput = null;
+            if (lfs.exists(path)) {
+                // The file has been cached
+                dataOutput = lfs.create(path, true);
+            } else {
+                dataOutput = dfs.create(path, true);
             }
-            FSDataOutputStream dataOutput = dfs.create(path, true);
             writeVertexData(dataOutput);
             dataOutput.flush();
             dataOutput.close();

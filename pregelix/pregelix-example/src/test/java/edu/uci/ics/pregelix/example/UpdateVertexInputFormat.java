@@ -51,8 +51,8 @@ public class UpdateVertexInputFormat extends VertexInputFormat<VLongWritable, Te
 @SuppressWarnings("rawtypes")
 class UpdateVertexReader implements VertexReader<VLongWritable, Text, FloatWritable, DoubleWritable> {
 
-    private final static int MAX_ID = 65536;
-    private final static int MIN_ID = -65536;
+    private final static int MAX_ID = 2048;
+    private final static int MIN_ID = -2048;
     private Vertex vertex;
     private VLongWritable vertexId = new VLongWritable();
     private int currentId = MIN_ID;

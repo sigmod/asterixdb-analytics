@@ -72,7 +72,7 @@ public class Client {
         public int ckpInterval = -1;
 
         @Option(name = "-dyn-opt", usage = "whether to enable dynamic optimization -- for better performance", required = false)
-        public String dynamicOptimization = "false";
+        public String dynamicOptimization = "true";
 
         @Option(name = "-cust-prop", usage = "comma separated customized properties, for example: pregelix.xyz=abc,pregelix.efg=hij", required = false)
         public String customizedProperties = "";

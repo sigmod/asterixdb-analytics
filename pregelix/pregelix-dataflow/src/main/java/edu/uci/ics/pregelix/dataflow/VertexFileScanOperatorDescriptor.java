@@ -82,7 +82,7 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             IRecordDescriptorProvider recordDescProvider, final int partition, final int nPartitions)
-                    throws HyracksDataException {
+            throws HyracksDataException {
         final List<FileSplit> splits = splitsFactory.getSplits();
 
         return new AbstractUnaryOutputSourceOperatorNodePushable() {
@@ -133,7 +133,7 @@ public class VertexFileScanOperatorDescriptor extends AbstractSingleActivityOper
             private void loadVertices(final IHyracksTaskContext ctx, Configuration conf, int splitId)
                     throws IOException, ClassNotFoundException, InterruptedException, InstantiationException,
                     IllegalAccessException, NoSuchFieldException, InvocationTargetException {
-                int treeVertexSizeLimit = IterationUtils.getVFrameSize(ctx) / 2;
+                int treeVertexSizeLimit = IterationUtils.getVFrameSize(ctx) / 2 - 32;
                 IFrame frame = new VSizeFrame(ctx);
                 FrameTupleAppender appender = new FrameTupleAppender();
                 appender.reset(frame, true);
