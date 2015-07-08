@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.external.connector.api;
+package edu.uci.ics.external.connector.asterixdb.api;
 
-public interface IFieldReadConverterFactory {
+public interface IWriteConverterFactory {
 
-    public IFieldReadConverter getFieldReadConverter();
+    public IWriteConverter getFieldWriteConverter();
 
 }

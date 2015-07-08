@@ -15,19 +15,12 @@
 
 package edu.uci.ics.external.connector.api;
 
-import java.util.List;
-
-import org.apache.hadoop.fs.Path;
-
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 
 public interface IWriteConnector {
 
-    public List<Path> getPaths(Object resourceIdentifier);
+    public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 
-    public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, List<Path> outputPaths,
-            Object parameter);
-
-    public IFieldWriteConverterFactory getFieldWriteConverterFactory();
+    public IOperatorDescriptor getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 }

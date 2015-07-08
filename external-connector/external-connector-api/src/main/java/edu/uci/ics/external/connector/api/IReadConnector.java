@@ -15,19 +15,13 @@
 
 package edu.uci.ics.external.connector.api;
 
-import java.util.List;
-
-import org.apache.hadoop.fs.Path;
-
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 
 public interface IReadConnector {
 
-    public List<FilePartition> getPaths(Object resourceIdentifier);
+    public IOperatorDescriptor getReadOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 
-    public IOperatorDescriptor getReadOperatorDescriptor(JobSpecification jobSpec, List<Path> outputPaths,
-            Object parameter);
+    public IOperatorDescriptor getReadTransformOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 
-    public IFieldReadConverterFactory getFieldConverterFactory();
 }

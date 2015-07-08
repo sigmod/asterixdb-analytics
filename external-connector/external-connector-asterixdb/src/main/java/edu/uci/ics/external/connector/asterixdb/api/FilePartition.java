@@ -1,4 +1,4 @@
-package edu.uci.ics.external.connector.api;
+package edu.uci.ics.external.connector.asterixdb.api;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -13,12 +13,10 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.external.connector.api;
+package edu.uci.ics.external.connector.asterixdb.api;
 
-import org.apache.hadoop.io.Writable;
+public interface IReadConverterFactory {
 
-public interface IFieldReadConverter {
-
-    public Writable convertField(byte[] data, int start, int len);
+    public IReadConverter getFieldReadConverter();
 
 }

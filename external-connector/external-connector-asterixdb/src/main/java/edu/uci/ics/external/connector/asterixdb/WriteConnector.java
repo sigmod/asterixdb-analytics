@@ -20,10 +20,10 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import edu.uci.ics.asterix.om.types.ARecordType;
-import edu.uci.ics.external.connector.api.IReadConnector;
+import edu.uci.ics.external.connector.api.IWriteConnector;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
-import edu.uci.ics.external.connector.asterixdb.api.IReadConverterFactory;
-import edu.uci.ics.external.connector.asterixdb.dataflow.ReadTransformOperatorDescriptor;
+import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
+import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
 import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
@@ -42,32 +42,33 @@ import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
 import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
 import edu.uci.ics.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
 
-public class ReadConnector implements IReadConnector {
+public class WriteConnector implements IWriteConnector {
 
     private final StorageParameter storageParameter;
-    private final IReadConverterFactory readConverterFactory;
+    private final IWriteConverterFactory writeConverterFactory;
 
     private ARecordType recordType = null;
     private String[] locations = null;
     private List<FilePartition> filePartitions = null;
 
-    public ReadConnector(StorageParameter storageParameter, IReadConverterFactory readConverterFactory) {
+    public WriteConnector(StorageParameter storageParameter, IWriteConverterFactory writeConverterFactory) {
         this.storageParameter = storageParameter;
-        this.readConverterFactory = readConverterFactory;
+        this.writeConverterFactory = writeConverterFactory;
     }
 
     @SuppressWarnings("rawtypes")
-    public IOperatorDescriptor getReadTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
+    @Override
+    public IOperatorDescriptor getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
         ISerializerDeserializer[] asterixFields = new ISerializerDeserializer[2];
         RecordDescriptor recordDescriptorAsterix = new RecordDescriptor(asterixFields, storageParameter.getTypeTraits());
-        IOperatorDescriptor transformOperator = new ReadTransformOperatorDescriptor(jobSpec, recordDescriptorAsterix,
-                recordType, readConverterFactory);
+        IOperatorDescriptor transformOperator = new WriteTransformOperatorDescriptor(jobSpec, recordDescriptorAsterix,
+                recordType, writeConverterFactory);
         return transformOperator;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public IOperatorDescriptor getReadOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
+    public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
         // Retrieves the record type and the file partitions of the dataset from AsterixDB REST service.
         try {
             retrieveRecordTypeAndPartitions();

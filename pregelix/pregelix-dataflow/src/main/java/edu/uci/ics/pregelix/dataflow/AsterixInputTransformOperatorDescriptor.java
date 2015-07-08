@@ -70,7 +70,7 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             final IRecordDescriptorProvider recordDescProvider, int partition, int nPartitions)
-                    throws HyracksDataException {
+            throws HyracksDataException {
         return new AbstractUnaryInputUnaryOutputOperatorNodePushable() {
 
             private final RecordDescriptor rd0 = recordDescProvider.getInputRecordDescriptor(getActivityId(), 0);
@@ -88,26 +88,18 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
             //private final VLongWritable destId = new VLongWritable();
             private final Writable emptyVertexValue = BspUtils.createVertexValue(conf);
 
-            @Override
-            public void fail() throws HyracksDataException {
-                writer.fail();
-            }
-
             @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
             public void nextFrame(ByteBuffer frame) throws HyracksDataException {
                 accessor.reset(frame);
-
                 for (int tIndex = 0; tIndex < accessor.getTupleCount(); tIndex++) {
-
                     int fldStart = accessor.getTupleStartOffset(tIndex) + accessor.getFieldSlotsLength()
                             + accessor.getFieldStartOffset(tIndex, 0);
                     int fldLen = accessor.getFieldLength(tIndex, 0);
 
                     ARecordPointable recordPointer = (ARecordPointable) new PointableAllocator()
-                    .allocateRecordValue(recordType);
+                            .allocateRecordValue(recordType);
                     recordPointer.set(accessor.getBuffer().array(), fldStart, fldLen);
-
                     Vertex v = convertPointableToVertex(recordPointer, conf);
 
                     if (v.getVertexValue() == null) {
@@ -117,20 +109,14 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                     WritableComparable vertexIdWrite = v.getVertexId();
                     try {
                         tb.reset();
-
                         vertexIdWrite.write(dos);
-
                         tb.addFieldEndOffset();
-
                         v.write(dos);
-
                         tb.addFieldEndOffset();
-
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-
                     FrameUtils.appendToWriter(writer, appender, tb.getFieldEndOffsets(), tb.getByteArray(), 0,
                             tb.getSize());
                 }
@@ -190,7 +176,7 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                     // type of the edge value
                     ATypeTag edgeValueType = EnumDeserializer.ATYPETAGDESERIALIZER.deserialize(edgePointer
                             .getFieldTypeTags().get(1).getByteArray()[edgePointer.getFieldTypeTags().get(1)
-                                                                      .getStartOffset()]);
+                            .getStartOffset()]);
 
                     // @TODO: Look for a better way to handle this hack
                     //if (edgePointer.getFieldValues().get(1).getLength() <= 1) {
@@ -213,6 +199,11 @@ public class AsterixInputTransformOperatorDescriptor extends AbstractSingleActiv
                     FrameUtils.flushFrame(frame.getBuffer(), writer);
                 }
                 writer.close();
+            }
+
+            @Override
+            public void fail() throws HyracksDataException {
+                writer.fail();
             }
 
         };
