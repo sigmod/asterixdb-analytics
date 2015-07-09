@@ -22,6 +22,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.Job;
 
+import edu.uci.ics.pregelix.api.converter.VertexInputConverter;
+import edu.uci.ics.pregelix.api.converter.VertexOutputConverter;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.NormalizedKeyComputer;
 import edu.uci.ics.pregelix.api.graph.Vertex;
@@ -37,6 +39,7 @@ import edu.uci.ics.pregelix.fs.AsterixFileSystem;
 /**
  * This class represents a Pregelix job.
  */
+@SuppressWarnings("deprecation")
 public class PregelixJob extends Job {
     /** Vertex class - required */
     public static final String VERTEX_CLASS = "pregelix.vertexClass";
@@ -98,7 +101,7 @@ public class PregelixJob extends Job {
     public static final String PERIOD_STR = ".";
     /** the names of the aggregator classes active for all vertex types */
     public static final String[] DEFAULT_GLOBAL_AGGREGATOR_CLASSES = { GlobalVertexCountAggregator.class.getName(),
-        GlobalEdgeCountAggregator.class.getName() };
+            GlobalEdgeCountAggregator.class.getName() };
     /** The name of an optional class that aggregates all Vertexes into mapreduce.Counters */
     public static final String COUNTERS_AGGREGATOR_CLASS = "pregelix.aggregatedCountersClass";
     /** the group-by algorithm */
@@ -117,6 +120,26 @@ public class PregelixJob extends Job {
     public static final String MAX_ITERATION = "pregelix.maxiteration";
     /** the AsterixDB output paths */
     public static final String ASTERIX_OUTPUT_PATHS = "pregelix.asterix.outputpath";
+
+    //AsterixDB related properties
+    /** the REST service URL of the target AsterixDB instance */
+    public static final String ASTERIXDB_URL = "pregelix.asterixdb.url";
+    /** whether to use an AsterixDB dataset as an input data source */
+    public static final String ASTERIXDB_INPUT = "pregelix.asterixdb.source";
+    /** the input AsterixDB dataverse name */
+    public static final String ASTERIXDB_INPUT_DATAVERSE = "pregelix.asterixdb.input.dataverse";
+    /** the input AsterixDB dataset name */
+    public static final String ASTERIXDB_INPUT_DATASET = "pregelix.asterixdb.input.dataset";
+    /** whether to use an AsterixDB dataset as an output data sink */
+    public static final String ASTERIXDB_OUTPUT = "pregelix.asterixdb.sink";
+    /** the output AsterixDB dataverse name */
+    public static final String ASTERIXDB_OUTPUT_DATAVERSE = "pregelix.asterixdb.output.dataverse";
+    /** the output AsterixDB dataset name */
+    public static final String ASTERIXDB_OUTPUT_DATASET = "pregelix.asterixdb.output.dataset";
+    /** the input Asterixdb record to vertex converter class */
+    public static final String ASTERIXDB_INPUT_VERTEX_CONVERTER_CLASS = "pregelix.asterixdb.input.converterclass";
+    /** the output vertex to AsterixDB record converter class */
+    public static final String ASTERIXDB_OUTPUT_VERTEX_CONVERTER_CLASS = "pregelix.asterixdb.output.converterclass";
 
     /**
      * Construct a Pregelix job from an existing configuration
@@ -429,6 +452,71 @@ public class PregelixJob extends Job {
             paths[i] = new Path(pathStrs[i]);
         }
         return paths;
+    }
+
+    /**
+     * Sets the URL of the target AsterixDB instance.
+     */
+    final public void setAsterixDBURL(String url) {
+        getConfiguration().set(ASTERIXDB_URL, url);
+    }
+
+    /**
+     * Set whether or not to use the AsterixDB data source.
+     */
+    final public void setUseAsterixDBDataSource(boolean useAsterixDBInput) {
+        getConfiguration().setBoolean(ASTERIXDB_INPUT, useAsterixDBInput);
+    }
+
+    /**
+     * Sets the input AsterixDB dataverse name.
+     */
+    final public void setAsterixDBInputDataverse(String dataverseName) {
+        getConfiguration().set(ASTERIXDB_INPUT_DATAVERSE, dataverseName);
+    }
+
+    /**
+     * Sets the input AsterixDB dataset name.
+     */
+    final public void setAsterixDBInputDataset(String datasetName) {
+        getConfiguration().set(ASTERIXDB_INPUT_DATASET, datasetName);
+    }
+
+    /**
+     * Sets the AsterixDB input converter class.
+     */
+    final public void setAsterixDBInputConverterClass(Class<? extends VertexInputConverter> inputConverterClass) {
+        getConfiguration().setClass(ASTERIXDB_INPUT_VERTEX_CONVERTER_CLASS, inputConverterClass,
+                VertexInputConverter.class);
+    }
+
+    /**
+     * Set whether or not to use the AsterixDB data source.
+     */
+    final public void setUseAsterixDBDataSink(boolean useAsterixDBOutput) {
+        getConfiguration().setBoolean(ASTERIXDB_OUTPUT, useAsterixDBOutput);
+    }
+
+    /**
+     * Sets the input AsterixDB dataverse name.
+     */
+    final public void setAsterixDBOutputDataverse(String dataverseName) {
+        getConfiguration().set(ASTERIXDB_OUTPUT_DATAVERSE, dataverseName);
+    }
+
+    /**
+     * Sets the input AsterixDB dataset name.
+     */
+    final public void setAsterixDBOutputDataset(String datasetName) {
+        getConfiguration().set(ASTERIXDB_OUTPUT_DATASET, datasetName);
+    }
+
+    /**
+     * Sets the output AsterixDB converter.
+     */
+    final public void setAsterixDBOutputConverterClass(Class<? extends VertexOutputConverter> outputConverterClass) {
+        getConfiguration().setClass(ASTERIXDB_OUTPUT_VERTEX_CONVERTER_CLASS, outputConverterClass,
+                VertexOutputConverter.class);
     }
 
     @Override

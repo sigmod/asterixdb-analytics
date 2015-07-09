@@ -32,6 +32,8 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Counters;
 
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import edu.uci.ics.pregelix.api.converter.VertexInputConverter;
+import edu.uci.ics.pregelix.api.converter.VertexOutputConverter;
 import edu.uci.ics.pregelix.api.graph.GlobalAggregator;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -839,6 +841,93 @@ public class BspUtils {
      */
     public static int getMaxIteration(Configuration conf) {
         return conf.getInt(PregelixJob.MAX_ITERATION, Integer.MAX_VALUE);
+    }
+
+    /**
+     * return whether to use AsterixDB data source
+     *
+     * @param conf
+     * @return
+     */
+    public static boolean getUseAsterixDBDataSource(Configuration conf) {
+        return conf.getBoolean(PregelixJob.ASTERIXDB_INPUT, false);
+    }
+
+    /**
+     * Gets AsterixDB input dataverse name.
+     */
+    public static String getAsterixDBInputDataverse(Configuration conf) {
+        return conf.get(PregelixJob.ASTERIXDB_INPUT_DATAVERSE);
+    }
+
+    /**
+     * Gets AsterixDB input dataset name.
+     */
+    public static String getAsterixDBInputDataset(Configuration conf) {
+        return conf.get(PregelixJob.ASTERIXDB_INPUT_DATASET);
+    }
+
+    /**
+     * Returns whether to use AsterixDB data source.
+     */
+    public static boolean getUseAsterixDBDataSink(Configuration conf) {
+        return conf.getBoolean(PregelixJob.ASTERIXDB_OUTPUT, false);
+    }
+
+    /**
+     * Gets AsterixDB output dataverse name.
+     */
+    public static String getAsterixDBOutputDataverse(Configuration conf) {
+        return conf.get(PregelixJob.ASTERIXDB_OUTPUT_DATAVERSE);
+    }
+
+    /**
+     * Gets AsterixDB output dataset name.
+     */
+    public static String getAsterixDBOutputDataset(Configuration conf) {
+        return conf.get(PregelixJob.ASTERIXDB_OUTPUT_DATASET);
+    }
+
+    /**
+     * Gets the AsterixDB input converter class.
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<? extends VertexInputConverter> getAsterixDBInputConverterClass(Configuration conf) {
+        return (Class<? extends VertexInputConverter>) conf.getClass(
+                PregelixJob.ASTERIXDB_INPUT_VERTEX_CONVERTER_CLASS, VertexInputConverter.class);
+    }
+
+    /**
+     * Creates a user vertex input converter instance.
+     */
+    public static VertexInputConverter createVertexInputConverter(Configuration conf) {
+        Class<? extends VertexInputConverter> vertexInputConverter = getAsterixDBInputConverterClass(conf);
+        try {
+            return vertexInputConverter.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * Gets the AsterixDB output converter class.
+     */
+    @SuppressWarnings("unchecked")
+    public static Class<? extends VertexOutputConverter> getAsterixDBOutputConverterClass(Configuration conf) {
+        return (Class<? extends VertexOutputConverter>) conf.getClass(
+                PregelixJob.ASTERIXDB_OUTPUT_VERTEX_CONVERTER_CLASS, VertexOutputConverter.class);
+    }
+
+    /**
+     * Creates a user vertex output converter instance.
+     */
+    public static VertexOutputConverter createVertexOutputConverter(Configuration conf) {
+        Class<? extends VertexOutputConverter> vertexOutputConverter = getAsterixDBOutputConverterClass(conf);
+        try {
+            return vertexOutputConverter.newInstance();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public static Writable readGlobalAggregateValue(Configuration conf, String jobId, String aggClassName)
