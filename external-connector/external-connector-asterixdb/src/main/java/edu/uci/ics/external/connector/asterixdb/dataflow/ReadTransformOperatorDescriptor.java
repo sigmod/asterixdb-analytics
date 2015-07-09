@@ -42,7 +42,7 @@ import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperat
  */
 public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOperatorDescriptor {
     private static final long serialVersionUID = 1L;
-    private final int fieldSize = 2;
+    private final int fieldSize;
     private final ARecordType recordType;
     private final IReadConverterFactory readConverterFacotry;
 
@@ -50,6 +50,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
             IReadConverterFactory recordConverterFactory) {
         super(spec, 1, 1);
         this.recordDescriptors[0] = rDesc;
+        this.fieldSize = rDesc.getFieldCount();
         this.recordType = recordType;
         this.readConverterFacotry = recordConverterFactory;
     }
@@ -81,8 +82,8 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
                 for (int tIndex = 0; tIndex < accessor.getTupleCount(); tIndex++) {
                     // Record is the second field.
                     int fldStart = accessor.getTupleStartOffset(tIndex) + accessor.getFieldSlotsLength()
-                            + accessor.getFieldStartOffset(tIndex, 1);
-                    int fldLen = accessor.getFieldLength(tIndex, 1);
+                            + accessor.getFieldStartOffset(tIndex, fieldSize - 1);
+                    int fldLen = accessor.getFieldLength(tIndex, fieldSize - 1);
                     // Parses the binary input.
                     recordPointable.set(accessor.getBuffer().array(), fldStart, fldLen);
                     // Converts the record into a tuple of a user-defined type.

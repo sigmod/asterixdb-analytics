@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.external.connector.asterixdb;
+package edu.uci.ics.external.connector.asterixdb.data;
 
 import edu.uci.ics.hyracks.api.dataflow.value.ITypeTraits;
 

@@ -39,7 +39,7 @@ import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperat
  */
 public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOperatorDescriptor {
     private static final long serialVersionUID = 1L;
-    private final int fieldSize = 2;
+    private final int fieldSize;
     private final ARecordType recordType;
     private final IWriteConverterFactory writeConverterFactory;
 
@@ -47,6 +47,7 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
             IWriteConverterFactory writeConverterFactory) {
         super(spec, 1, 1);
         this.recordDescriptors[0] = rDesc;
+        this.fieldSize = rDesc.getFieldCount();
         this.recordType = recordType;
         this.writeConverterFactory = writeConverterFactory;
     }
@@ -74,10 +75,10 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
             public void nextFrame(ByteBuffer frame) throws HyracksDataException {
                 accessor.reset(frame);
                 for (int tIndex = 0; tIndex < accessor.getTupleCount(); tIndex++) {
-                    // Record is the second field.
+                    // Record is the last field.
                     int fldStart = accessor.getTupleStartOffset(tIndex) + accessor.getFieldSlotsLength()
-                            + accessor.getFieldStartOffset(tIndex, 1);
-                    int fldLen = accessor.getFieldLength(tIndex, 1);
+                            + accessor.getFieldStartOffset(tIndex, fieldSize - 1);
+                    int fldLen = accessor.getFieldLength(tIndex, fieldSize - 1);
                     // Converts the record into a tuple of a user-defined type.
                     writeConverter.convert(recordType, frame.array(), fldStart, fldLen, outputTb);
                     // Writes the result into the output writer.
