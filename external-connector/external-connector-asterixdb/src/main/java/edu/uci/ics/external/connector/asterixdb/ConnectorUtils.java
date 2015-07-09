@@ -28,7 +28,6 @@ import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +42,7 @@ import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 public class ConnectorUtils {
 
     // Retrieves the type and partition information of the target AsterixDB dataset.
-    public static Pair<ARecordType, String[]> retrieveRecordTypeAndPartitions(StorageParameter storageParameter)
-            throws Exception {
+    public static DatasetInfo retrieveDatasetInfo(StorageParameter storageParameter) throws Exception {
         HttpClient client = new HttpClient();
 
         // Create a method instance.
@@ -72,8 +70,11 @@ public class ConnectorUtils {
             // Extracts record type and file partitions.
             ARecordType recordType = extractRecordType(response);
             List<FilePartition> filePartitions = extractFilePartitions(response);
+            IFileSplitProvider fileSplitProvider = createFileSplitProvider(storageParameter, filePartitions);
             String[] locations = getScanLocationConstraints(filePartitions, storageParameter.getIpToNcNames());
-            return Pair.of(recordType, locations);
+            String[] primaryKeys = response.getString("keys").split(",");
+            DatasetInfo datasetInfo = new DatasetInfo(locations, fileSplitProvider, recordType, primaryKeys);
+            return datasetInfo;
         } catch (HttpException e) {
             System.err.println("Fatal protocol violation: " + e.getMessage());
             e.printStackTrace();
@@ -88,14 +89,9 @@ public class ConnectorUtils {
         }
     }
 
-    /**
-     * Creates file split provider
-     * 
-     * @param inputs
-     *            List<FilePartition>
-     * @return IFileSplitProvider
-     */
-    public static IFileSplitProvider createFileSplitProvider(StorageParameter storageParameter, List<FilePartition> inputs) {
+    // Creates file split provider for BTree operators.
+    private static IFileSplitProvider createFileSplitProvider(StorageParameter storageParameter,
+            List<FilePartition> inputs) {
         FileSplit[] splits = new FileSplit[inputs.size()];
         int i = 0;
         for (FilePartition p : inputs) {

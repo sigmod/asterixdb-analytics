@@ -36,11 +36,14 @@ public class StorageParameter {
 
     private final Map<String, String> ipToNcNames;
 
+    private final int[] sortFields;
+    private final int[] fieldPermutation;
+
     public StorageParameter(IVirtualBufferCacheProvider bufferCacheProvider,
             IStorageManagerInterface storageManagerInterface,
             IIndexLifecycleManagerProvider indexLifecycleManagerProvider, Map<String, String> mergePolicyProperties,
             ITypeTraits[] typeTraits, String serviceURL, String dataverseName, String datasetName,
-            Map<String, String> ipToNcNames) {
+            Map<String, String> ipToNcNames, int[] sortFields, int[] fieldPermutation) {
         this.bufferCacheProvider = bufferCacheProvider;
         this.storageManagerInterface = storageManagerInterface;
         this.indexLifecycleManagerProvider = indexLifecycleManagerProvider;
@@ -50,6 +53,8 @@ public class StorageParameter {
         this.dataverseName = dataverseName;
         this.datasetName = datasetName;
         this.ipToNcNames = ipToNcNames;
+        this.sortFields = sortFields;
+        this.fieldPermutation = fieldPermutation;
     }
 
     public IVirtualBufferCacheProvider getVirtualBufferCacheProvider() {
@@ -86,6 +91,14 @@ public class StorageParameter {
 
     public Map<String, String> getIpToNcNames() {
         return ipToNcNames;
+    }
+
+    public int[] getSortFields() {
+        return sortFields;
+    }
+
+    public int[] getFieldPermutation() {
+        return fieldPermutation;
     }
 
 }
