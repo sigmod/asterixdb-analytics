@@ -15,8 +15,12 @@
 
 package edu.uci.ics.external.connector.asterixdb.api;
 
-public interface IWriteConverterFactory {
+import java.io.Serializable;
 
-    public IWriteConverter getFieldWriteConverter();
+import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+
+public interface IWriteConverterFactory extends Serializable {
+
+    public IWriteConverter getFieldWriteConverter() throws HyracksDataException;
 
 }

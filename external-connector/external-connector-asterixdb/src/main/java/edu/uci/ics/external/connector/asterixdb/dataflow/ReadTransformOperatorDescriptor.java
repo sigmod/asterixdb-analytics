@@ -68,7 +68,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
             private final FrameTupleAccessor accessor = new FrameTupleAccessor(rd0);
             private final ARecordPointable recordPointable = (ARecordPointable) new PointableAllocator()
                     .allocateRecordValue(recordType);
-            private final IReadConverter readConverter = readConverterFacotry.getFieldReadConverter();
+            private final IReadConverter readConverter = readConverterFacotry.getReadConverter();
 
             @Override
             public void open() throws HyracksDataException {
