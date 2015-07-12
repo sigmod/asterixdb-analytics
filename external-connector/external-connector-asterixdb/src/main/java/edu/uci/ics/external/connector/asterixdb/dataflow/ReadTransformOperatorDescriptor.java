@@ -74,6 +74,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
             public void open() throws HyracksDataException {
                 writer.open();
                 appender.reset(frame, true);
+                readConverter.open(recordType);
             }
 
             @Override
@@ -87,7 +88,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
                     // Parses the binary input.
                     recordPointable.set(accessor.getBuffer().array(), fldStart, fldLen);
                     // Converts the record into a tuple of a user-defined type.
-                    readConverter.convert(recordType, recordPointable, outputTb);
+                    readConverter.convert(recordPointable, outputTb);
                     // Writes the result into the output writer.
                     FrameUtils.appendToWriter(writer, appender, outputTb.getFieldEndOffsets(), outputTb.getByteArray(),
                             0, outputTb.getSize());
@@ -99,6 +100,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
                 if (appender.getTupleCount() > 0) {
                     FrameUtils.flushFrame(frame.getBuffer(), writer);
                 }
+                readConverter.close();
                 writer.close();
             }
 

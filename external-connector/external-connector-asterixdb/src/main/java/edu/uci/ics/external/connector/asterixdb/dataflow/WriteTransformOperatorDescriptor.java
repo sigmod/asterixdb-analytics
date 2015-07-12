@@ -69,6 +69,7 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
             public void open() throws HyracksDataException {
                 writer.open();
                 appender.reset(frame, true);
+                writeConverter.open(recordType);
             }
 
             @Override
@@ -80,7 +81,7 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
                             + accessor.getFieldStartOffset(tIndex, fieldSize - 1);
                     int fldLen = accessor.getFieldLength(tIndex, fieldSize - 1);
                     // Converts the record into a tuple of a user-defined type.
-                    writeConverter.convert(recordType, frame.array(), fldStart, fldLen, outputTb);
+                    writeConverter.convert(frame.array(), fldStart, fldLen, outputTb);
                     // Writes the result into the output writer.
                     FrameUtils.appendToWriter(writer, appender, outputTb.getFieldEndOffsets(), outputTb.getByteArray(),
                             0, outputTb.getSize());
@@ -92,6 +93,7 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
                 if (appender.getTupleCount() > 0) {
                     FrameUtils.flushFrame(frame.getBuffer(), writer);
                 }
+                writeConverter.close();
                 writer.close();
             }
 

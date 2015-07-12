@@ -21,6 +21,8 @@ import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 
 public interface IWriteConverter {
 
+    public void open(ARecordType recordType) throws HyracksDataException;
+
     /**
      * Converts the binary data into AsterixDB format.
      *
@@ -35,7 +37,8 @@ public interface IWriteConverter {
      * @param outputTb
      *            , the output tuple builder
      */
-    public void convert(ARecordType recordType, byte[] data, int start, int len, ArrayTupleBuilder outputTb)
-            throws HyracksDataException;
+    public void convert(byte[] data, int start, int len, ArrayTupleBuilder outputTb) throws HyracksDataException;
+
+    public void close() throws HyracksDataException;
 
 }

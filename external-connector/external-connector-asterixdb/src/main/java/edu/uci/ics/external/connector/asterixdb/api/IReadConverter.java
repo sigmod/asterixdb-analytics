@@ -22,7 +22,10 @@ import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 
 public interface IReadConverter {
 
-    public void convert(ARecordType recordType, ARecordPointable recordPointable, ArrayTupleBuilder outputTb)
-            throws HyracksDataException;
+    public void open(ARecordType recordType) throws HyracksDataException;
+
+    public void convert(ARecordPointable recordPointable, ArrayTupleBuilder outputTb) throws HyracksDataException;
+
+    public void close() throws HyracksDataException;
 
 }

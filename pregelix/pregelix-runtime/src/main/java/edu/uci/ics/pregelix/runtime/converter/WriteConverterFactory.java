@@ -51,25 +51,36 @@ public class WriteConverterFactory implements IWriteConverterFactory {
         final RecordBuilder recordBuilder = new RecordBuilder();
 
         return new IWriteConverter() {
-            private boolean first = true;
 
             @Override
-            public void convert(ARecordType recordType, byte[] data, int start, int len, ArrayTupleBuilder outputTb)
+            public void open(ARecordType recordType) throws HyracksDataException {
+                recordBuilder.reset(recordType);
+                outputConverter.open(recordType);
+            }
+
+            @Override
+            public void convert(byte[] data, int start, int len, ArrayTupleBuilder outputTb)
                     throws HyracksDataException {
                 try {
-                    if (first) {
-                        first = false;
-                        recordBuilder.reset(recordType);
-                    }
                     inputStream.setByteArray(data, start);
                     vertex.readFields(dataInput);
                     recordBuilder.init();
-                    outputConverter.convert(recordType, vertex, recordBuilder);
+                    outputTb.reset();
+                    outputConverter.convert(vertex.getVertexId(), outputTb.getDataOutput());
+                    outputTb.addFieldEndOffset();
+                    outputConverter.convert(vertex, recordBuilder);
+                    // By default, the record type tag is stored in AsterixDB.
+                    recordBuilder.write(outputTb.getDataOutput(), true);
+                    outputTb.addFieldEndOffset();
                 } catch (Exception e) {
                     throw new HyracksDataException(e);
                 }
             }
 
+            @Override
+            public void close() throws HyracksDataException {
+                outputConverter.close();
+            }
         };
     }
 }

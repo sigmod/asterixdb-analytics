@@ -15,13 +15,23 @@
 
 package edu.uci.ics.pregelix.api.converter;
 
+import java.io.DataOutput;
+
+import org.apache.hadoop.io.Writable;
+
 import edu.uci.ics.asterix.builders.RecordBuilder;
 import edu.uci.ics.asterix.om.types.ARecordType;
+import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 
 public interface VertexOutputConverter {
 
-    @SuppressWarnings("rawtypes")
-    public void convert(ARecordType recordType, Vertex vertex, RecordBuilder recordBuilder);
+    public void open(ARecordType recordType) throws HyracksDataException;
 
+    public void convert(Writable vid, DataOutput output) throws HyracksDataException;
+
+    @SuppressWarnings("rawtypes")
+    public void convert(Vertex vertex, RecordBuilder recordBuilder) throws HyracksDataException;
+
+    public void close() throws HyracksDataException;
 }

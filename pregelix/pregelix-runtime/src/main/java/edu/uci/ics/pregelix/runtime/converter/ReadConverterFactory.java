@@ -49,12 +49,17 @@ public class ReadConverterFactory implements IReadConverterFactory {
         return new IReadConverter() {
 
             @Override
-            public void convert(ARecordType recordType, ARecordPointable recordPointable, ArrayTupleBuilder outputTb)
+            public void open(ARecordType recordType) throws HyracksDataException {
+                inputConverter.open(recordType);
+            }
+
+            @Override
+            public void convert(ARecordPointable recordPointable, ArrayTupleBuilder outputTb)
                     throws HyracksDataException {
                 try {
                     // Converts an input AsterixDB record into an vertex object.
                     vertex.reset();
-                    inputConverter.convert(recordType, recordPointable, vertex);
+                    inputConverter.convert(recordPointable, vertex);
 
                     // Outputs a tuple of <vertexId, vertex>.
                     outputTb.reset();
@@ -67,6 +72,11 @@ public class ReadConverterFactory implements IReadConverterFactory {
                 } catch (Exception e) {
                     throw new HyracksDataException(e);
                 }
+            }
+
+            @Override
+            public void close() throws HyracksDataException {
+                inputConverter.close();
             }
 
         };

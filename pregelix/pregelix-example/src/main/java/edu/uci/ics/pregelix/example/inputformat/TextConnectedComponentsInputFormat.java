@@ -15,8 +15,6 @@
 package edu.uci.ics.pregelix.example.inputformat;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.io.FloatWritable;
@@ -32,6 +30,7 @@ import edu.uci.ics.pregelix.api.io.VertexReader;
 import edu.uci.ics.pregelix.api.io.text.TextVertexInputFormat;
 import edu.uci.ics.pregelix.api.io.text.TextVertexInputFormat.TextVertexReader;
 import edu.uci.ics.pregelix.api.util.BspUtils;
+import edu.uci.ics.pregelix.example.data.VLongWritablePool;
 
 public class TextConnectedComponentsInputFormat extends
         TextVertexInputFormat<VLongWritable, VLongWritable, FloatWritable, VLongWritable> {
@@ -49,8 +48,7 @@ class TextConnectedComponentsGraphReader extends
 
     private Vertex vertex;
     private VLongWritable vertexId = new VLongWritable();
-    private List<VLongWritable> pool = new ArrayList<VLongWritable>();
-    private int used = 0;
+    private VLongWritablePool pool = new VLongWritablePool();
 
     public TextConnectedComponentsGraphReader(RecordReader<LongWritable, Text> lineRecordReader) {
         super(lineRecordReader);
@@ -65,7 +63,7 @@ class TextConnectedComponentsGraphReader extends
     @Override
     public Vertex<VLongWritable, VLongWritable, FloatWritable, VLongWritable> getCurrentVertex() throws IOException,
             InterruptedException {
-        used = 0;
+        pool.reset();
         if (vertex == null) {
             vertex = BspUtils.createVertex(getContext().getConfiguration());
         }
@@ -91,7 +89,7 @@ class TextConnectedComponentsGraphReader extends
              */
             while (tokenizer.hasMoreTokens()) {
                 dest = Long.parseLong(tokenizer.nextToken());
-                VLongWritable destId = allocate();
+                VLongWritable destId = pool.allocate();
                 destId.set(dest);
                 vertex.addEdge(destId, null);
             }
@@ -103,18 +101,5 @@ class TextConnectedComponentsGraphReader extends
         }
         // vertex.sortEdges();
         return vertex;
-    }
-
-    private VLongWritable allocate() {
-        if (used >= pool.size()) {
-            VLongWritable value = new VLongWritable();
-            pool.add(value);
-            used++;
-            return value;
-        } else {
-            VLongWritable value = pool.get(used);
-            used++;
-            return value;
-        }
     }
 }

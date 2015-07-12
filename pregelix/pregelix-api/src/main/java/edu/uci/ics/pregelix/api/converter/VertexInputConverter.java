@@ -17,11 +17,16 @@ package edu.uci.ics.pregelix.api.converter;
 
 import edu.uci.ics.asterix.om.pointables.ARecordPointable;
 import edu.uci.ics.asterix.om.types.ARecordType;
+import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 
 public interface VertexInputConverter {
 
+    public void open(ARecordType recordType) throws HyracksDataException;
+
     @SuppressWarnings("rawtypes")
-    public void convert(ARecordType recordType, ARecordPointable recordPointable, Vertex vertex);
+    public void convert(ARecordPointable recordPointable, Vertex vertex) throws HyracksDataException;
+
+    public void close() throws HyracksDataException;
 
 }
