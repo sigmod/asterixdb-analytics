@@ -21,8 +21,6 @@ import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorD
 import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
@@ -45,42 +43,28 @@ public class WriteConnector implements IWriteConnector {
     public WriteConnector(StorageParameter storageParameter, IWriteConverterFactory writeConverterFactory) {
         this.storageParameter = storageParameter;
         this.writeConverterFactory = writeConverterFactory;
+        try {
+            // Retrieve dataset info from the AsterixDB REST service.
+            datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public IBinaryComparatorFactory[] getComparatorFactories() {
-        try {
-            retrieveRecordTypeAndPartitions();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
         return datasetInfo.getPrimaryKeyComparatorFactories();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public IOperatorDescriptor getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
-        try {
-            retrieveRecordTypeAndPartitions();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-        ISerializerDeserializer[] asterixFields = new ISerializerDeserializer[2];
-        RecordDescriptor recordDescriptorAsterix = new RecordDescriptor(asterixFields, storageParameter.getTypeTraits());
-        IOperatorDescriptor transformOperator = new WriteTransformOperatorDescriptor(jobSpec, recordDescriptorAsterix,
-                datasetInfo.getRecordType(), writeConverterFactory);
+        IOperatorDescriptor transformOperator = new WriteTransformOperatorDescriptor(jobSpec,
+                datasetInfo.getRecordDescriptor(), datasetInfo.getRecordType(), writeConverterFactory);
         return transformOperator;
     }
 
     @Override
     public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
-        // Retrieves the record type and the file partitions of the dataset from AsterixDB REST service.
-        try {
-            retrieveRecordTypeAndPartitions();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
         IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
@@ -97,14 +81,4 @@ public class WriteConnector implements IWriteConnector {
         PartitionConstraintHelper.addAbsoluteLocationConstraint(jobSpec, writer, datasetInfo.getLocationConstraints());
         return null;
     }
-
-    // Retrieves the type and partition information of the target AsterixDB dataset.
-    private void retrieveRecordTypeAndPartitions() throws Exception {
-        if (datasetInfo == null) {
-            return;
-        }
-        // Extracts record type and file partitions.
-        datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
-    }
-
 }

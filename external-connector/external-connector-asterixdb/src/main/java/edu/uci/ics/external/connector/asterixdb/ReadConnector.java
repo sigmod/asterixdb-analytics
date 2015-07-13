@@ -20,8 +20,6 @@ import edu.uci.ics.external.connector.asterixdb.api.IReadConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.ReadTransformOperatorDescriptor;
 import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 import edu.uci.ics.hyracks.storage.am.btree.dataflow.BTreeSearchOperatorDescriptor;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
@@ -41,26 +39,23 @@ public class ReadConnector implements IReadConnector {
     public ReadConnector(StorageParameter storageParameter, IReadConverterFactory readConverterFactory) {
         this.storageParameter = storageParameter;
         this.readConverterFactory = readConverterFactory;
+        try {
+            // Retrieve dataset info from the AsterixDB REST service.
+            datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    @SuppressWarnings("rawtypes")
+    @Override
     public IOperatorDescriptor getReadTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
-        ISerializerDeserializer[] asterixFields = new ISerializerDeserializer[2];
-        RecordDescriptor recordDescriptorAsterix = new RecordDescriptor(asterixFields, storageParameter.getTypeTraits());
-        IOperatorDescriptor transformOperator = new ReadTransformOperatorDescriptor(jobSpec, recordDescriptorAsterix,
-                datasetInfo.getRecordType(), readConverterFactory);
+        IOperatorDescriptor transformOperator = new ReadTransformOperatorDescriptor(jobSpec,
+                datasetInfo.getRecordDescriptor(), datasetInfo.getRecordType(), readConverterFactory);
         return transformOperator;
     }
 
     @Override
     public IOperatorDescriptor getReadOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
-        // Retrieves the record type and the file partitions of the dataset from AsterixDB REST service.
-        try {
-            retrieveRecordTypeAndPartitions();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-
         IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
@@ -77,15 +72,6 @@ public class ReadConnector implements IReadConnector {
         PartitionConstraintHelper.addAbsoluteLocationConstraint(jobSpec, btreeSearchOp,
                 datasetInfo.getLocationConstraints());
         return btreeSearchOp;
-    }
-
-    // Retrieves the type and partition information of the target AsterixDB dataset.
-    private void retrieveRecordTypeAndPartitions() throws Exception {
-        if (datasetInfo == null) {
-            return;
-        }
-        // Retrieve dataset info from the AsterixDB REST service.
-        datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
     }
 
 }
