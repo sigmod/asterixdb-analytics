@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import edu.uci.ics.asterix.om.types.ARecordType;
+import edu.uci.ics.asterix.om.util.JSONDeserializerForTypes;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
 import edu.uci.ics.hyracks.dataflow.std.file.ConstantFileSplitProvider;
 import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
@@ -108,7 +109,7 @@ public class ConnectorUtils {
 
     // Extracts the record type of a dataset from the AsterixDB REST response.
     private static ARecordType extractRecordType(JSONObject response) throws Exception {
-        return (ARecordType) ARecordType.convertFromJSON((JSONObject) response.get("type"));
+        return (ARecordType) JSONDeserializerForTypes.convertFromJSON((JSONObject) response.get("type"));
     }
 
     // Extracts the file partitions of a dataset from the AsterixDB REST response.
@@ -124,7 +125,7 @@ public class ConnectorUtils {
         return partitions;
     }
 
-    // Gets location constraints for dataset scans.    
+    // Gets location constraints for dataset scans.
     private static String[] getScanLocationConstraints(List<FilePartition> filePartitions,
             Map<String, String> ipToNcNames) {
         String[] locations = new String[filePartitions.size()];
