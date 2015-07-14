@@ -919,6 +919,13 @@ public class BspUtils {
     }
 
     /**
+     * Gets AsterixDB URL
+     */
+    public static String getAsterixDBURL(Configuration conf) {
+        return conf.get(PregelixJob.ASTERIXDB_URL);
+    }
+
+    /**
      * Creates a user vertex output converter instance.
      */
     public static VertexOutputConverter createVertexOutputConverter(Configuration conf) {

@@ -15,12 +15,24 @@
 
 package edu.uci.ics.external.connector.api;
 
-import edu.uci.ics.hyracks.api.job.JobSpecification;
+import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 
-public interface IReadConnector {
+public class ParallelOperator {
 
-    public ParallelOperator getReadOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
+    private final IOperatorDescriptor operatorDescriptor;
+    private final String[] locations;
 
-    public ParallelOperator getReadTransformOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
+    public ParallelOperator(IOperatorDescriptor operatorDescriptor, String[] locations) {
+        this.operatorDescriptor = operatorDescriptor;
+        this.locations = locations;
+    }
+
+    public IOperatorDescriptor getOperatorDescriptor() {
+        return this.operatorDescriptor;
+    }
+
+    public String[] getLocationConstraints() {
+        return locations;
+    }
 
 }

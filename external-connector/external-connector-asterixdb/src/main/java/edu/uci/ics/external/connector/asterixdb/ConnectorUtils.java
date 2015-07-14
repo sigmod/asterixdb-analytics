@@ -101,7 +101,8 @@ public class ConnectorUtils {
             if (!path.endsWith("/")) {
                 path += "/";
             }
-            String ncName = storageParameter.getIpToNcNames().get(p.getIPAddress());
+            List<String> ncNames = storageParameter.getIpToNcNames().get(p.getIPAddress());
+            String ncName = ncNames.get(0);
             splits[i++] = new FileSplit(ncName, path);
         }
         return new ConstantFileSplitProvider(splits);
@@ -127,11 +128,12 @@ public class ConnectorUtils {
 
     // Gets location constraints for dataset scans.
     private static String[] getScanLocationConstraints(List<FilePartition> filePartitions,
-            Map<String, String> ipToNcNames) {
+            Map<String, List<String>> ipToNcNames) {
         String[] locations = new String[filePartitions.size()];
         for (int i = 0; i < locations.length; i++) {
             String ipAddress = filePartitions.get(i).getIPAddress();
-            locations[i] = ipToNcNames.get(ipAddress);
+            List<String> ncNames = ipToNcNames.get(ipAddress);
+            locations[i] = ncNames.get(0);
         }
         return locations;
     }

@@ -111,4 +111,8 @@ public class DatasetInfo {
         return recordDescriptor;
     }
 
+    public ITypeTraits[] getTypeTraits() {
+        return recordDescriptor.getTypeTraits();
+    }
+
 }

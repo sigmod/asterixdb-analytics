@@ -27,6 +27,7 @@ import junit.framework.Assert;
 
 import org.json.JSONObject;
 import org.junit.Test;
+import org.mortbay.util.SingletonList;
 
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.ATypeTag;
@@ -50,8 +51,8 @@ public class ConnectorUtilsTest {
                 "extractFilePartitions(org.json.JSONObject)", response);
         Assert.assertTrue(partitions.get(0).getPath().toString().endsWith("Metadata/Dataset_idx_Dataset"));
 
-        Map<String, String> mockMapping = mock(Map.class);
-        when(mockMapping.get(anyString())).thenReturn("nc1");
+        Map<String, List<String>> mockMapping = mock(Map.class);
+        when(mockMapping.get(anyString())).thenReturn(SingletonList.newSingletonList("nc1"));
         String[] locations = (String[]) PA.invokeMethod(ConnectorUtils.class,
                 "getScanLocationConstraints(java.util.List," + "java.util.Map)", partitions, mockMapping);
         Assert.assertEquals(locations[0], "nc1");

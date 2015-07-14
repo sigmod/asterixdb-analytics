@@ -15,7 +15,6 @@
 
 package edu.uci.ics.external.connector.api;
 
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 
@@ -23,8 +22,7 @@ public interface IWriteConnector {
 
     public IBinaryComparatorFactory[] getComparatorFactories();
 
-    public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
+    public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 
-    public IOperatorDescriptor getWriteTransformOperatorDescriptor(JobSpecification jobSpec,
-            String[] locationConstraints);
+    public ParallelOperator getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 }

@@ -30,7 +30,7 @@
     <jvm.extraargs />
     <hanging.pregelix.tests>**/pregelix/**/FailureRecovery*.java</hanging.pregelix.tests>
     <global.test.includes>**/*TestSuite.java,**/*Test.java</global.test.includes>
-    <global.test.excludes>**/Abstract*.java,${hanging.pregelix.tests},${hivesterix.perf.tests}</global.test.excludes>
+    <global.test.excludes>${hanging.pregelix.tests},**/AsterixDataLoad*.java</global.test.excludes>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <hyracks.version>0.2.16-SNAPSHOT</hyracks.version>
     <pregelix.version>0.2.16-SNAPSHOT</pregelix.version>

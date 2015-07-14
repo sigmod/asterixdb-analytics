@@ -16,9 +16,9 @@
 package edu.uci.ics.external.connector.asterixdb;
 
 import edu.uci.ics.external.connector.api.IWriteConnector;
+import edu.uci.ics.external.connector.api.ParallelOperator;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
-import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
@@ -57,28 +57,27 @@ public class WriteConnector implements IWriteConnector {
     }
 
     @Override
-    public IOperatorDescriptor getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
+    public ParallelOperator getWriteTransformOperatorDescriptor(JobSpecification jobSpec, String[] locations) {
         IOperatorDescriptor transformOperator = new WriteTransformOperatorDescriptor(jobSpec,
                 datasetInfo.getRecordDescriptor(), datasetInfo.getRecordType(), writeConverterFactory);
-        return transformOperator;
+        return new ParallelOperator(transformOperator, datasetInfo.getLocationConstraints());
     }
 
     @Override
-    public IOperatorDescriptor getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
+    public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
         IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
                 SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true,
-                storageParameter.getTypeTraits(), null, null, null, false);
+                datasetInfo.getTypeTraits(), null, null, null, false);
 
         // BTree bulkload operator.
         TreeIndexBulkLoadOperatorDescriptor writer = new TreeIndexBulkLoadOperatorDescriptor(jobSpec,
                 datasetInfo.getRecordDescriptor(), storageParameter.getStorageManagerInterface(),
                 storageParameter.getIndexLifecycleManagerProvider(), datasetInfo.getFileSplitProvider(),
-                storageParameter.getTypeTraits(), getComparatorFactories(), storageParameter.getSortFields(),
-                storageParameter.getFieldPermutation(), DEFAULT_BTREE_FILL_FACTOR, true, BF_HINT, false,
+                datasetInfo.getTypeTraits(), getComparatorFactories(), datasetInfo.getSortFields(),
+                datasetInfo.getFieldPermutation(), DEFAULT_BTREE_FILL_FACTOR, true, BF_HINT, false,
                 asterixDataflowHelperFactory);
-        PartitionConstraintHelper.addAbsoluteLocationConstraint(jobSpec, writer, datasetInfo.getLocationConstraints());
-        return null;
+        return new ParallelOperator(writer, datasetInfo.getLocationConstraints());
     }
 }

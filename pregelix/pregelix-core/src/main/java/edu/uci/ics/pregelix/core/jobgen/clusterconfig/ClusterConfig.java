@@ -60,6 +60,13 @@ public class ClusterConfig {
     private static final int DEFAULT_CC_HTTP_PORT = 16001;
 
     /**
+     * @return IP to NC list mapping
+     */
+    public static Map<String, List<String>> getIpToNcMapping() {
+        return ipToNcMapping;
+    }
+
+    /**
      * let tests set config path to be whatever
      *
      * @param propertiesPath
@@ -241,6 +248,7 @@ public class ClusterConfig {
                 count++;
             }
         }
+        Arrays.sort(locations);
         return locations;
     }
 
