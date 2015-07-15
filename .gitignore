@@ -6,6 +6,7 @@ target
 .idea
 *.iml
 
+rttest
 ClusterControllerService
 actual
 build

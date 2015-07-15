@@ -1,0 +1,18 @@
+use dataverse graph;
+
+load dataset rawweb 
+using "edu.uci.ics.asterix.external.dataset.adapter.NCFileSystemAdapter"
+(("path"="nc1://data/webmap_json/webmap_link.adm"),("format"="adm")) pre-sorted;
+
+insert into dataset webmap(
+	let $count := count(for $r in dataset("rawweb") return 1)
+	let $initvalue := 1.0/$count
+
+	for $w in dataset("rawweb")
+	order by $w.id
+	return {
+   		"vertexid": $w.id,
+   		"value": $initvalue,
+   		"edgelist": $w.edges
+	}
+);

@@ -1,0 +1,26 @@
+drop dataverse graph if exists;
+create dataverse graph;
+
+use dataverse graph;
+
+create type RawWebmap as closed {
+  id: int64,
+  edges: [int64]
+}
+
+create type Webmap as closed {
+  vertexid: int64,
+  value: double,
+  edgelist: [int64]
+}
+
+create type Rank as closed {
+  vertexid: int64,
+  value: double
+}
+
+create dataset rawweb(RawWebmap) primary key id;
+
+create temporary dataset webmap(Webmap) primary key vertexid;
+
+create temporary dataset ranks(Rank) primary key vertexid;

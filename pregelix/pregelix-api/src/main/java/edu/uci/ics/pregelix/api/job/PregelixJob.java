@@ -159,7 +159,8 @@ public class PregelixJob extends Job {
      * @throws IOException
      */
     public PregelixJob(String jobName) throws IOException {
-        super(new Configuration(), jobName);
+        super(new Configuration());
+        super.setJobName(jobName);
         conf.setClass("fs.asterix.impl", AsterixFileSystem.class, org.apache.hadoop.fs.FileSystem.class);
     }
 

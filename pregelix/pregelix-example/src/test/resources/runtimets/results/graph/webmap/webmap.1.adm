@@ -1,0 +1,21 @@
+[ { "vertexid": 0, "value": 0.05d, "edgelist": [ 1 ] }
+, { "vertexid": 1, "value": 0.05d, "edgelist": [ 1, 2 ] }
+, { "vertexid": 2, "value": 0.05d, "edgelist": [ 1, 2, 3 ] }
+, { "vertexid": 3, "value": 0.05d, "edgelist": [ 1, 2, 3, 4 ] }
+, { "vertexid": 4, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5 ] }
+, { "vertexid": 5, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5, 6 ] }
+, { "vertexid": 6, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5, 6, 7 ] }
+, { "vertexid": 7, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5, 6, 7, 8 ] }
+, { "vertexid": 8, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] }
+, { "vertexid": 9, "value": 0.05d, "edgelist": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] }
+, { "vertexid": 10, "value": 0.05d, "edgelist": [ 11 ] }
+, { "vertexid": 11, "value": 0.05d, "edgelist": [ 11, 12 ] }
+, { "vertexid": 12, "value": 0.05d, "edgelist": [ 11, 12, 13 ] }
+, { "vertexid": 13, "value": 0.05d, "edgelist": [ 11, 12, 13, 14 ] }
+, { "vertexid": 14, "value": 0.05d, "edgelist": [ 11, 12, 13, 14, 15 ] }
+, { "vertexid": 15, "value": 0.05d, "edgelist": [ 11, 12, 13, 14, 15, 16 ] }
+, { "vertexid": 16, "value": 0.05d, "edgelist": [ 11, 12, 13, 14, 15, 16, 17 ] }
+, { "vertexid": 17, "value": 0.05d, "edgelist": [ 11, 12, 13, 14, 15, 16, 17, 18 ] }
+, { "vertexid": 18, "value": 0.05d, "edgelist": [ 11, 12, 13, 14, 15, 16, 17, 18, 19 ] }
+, { "vertexid": 19, "value": 0.05d, "edgelist": [ 0, 11, 12, 13, 14, 15, 16, 17, 18, 19 ] }
+ ]
