@@ -63,7 +63,7 @@ public class WriteTransformOperatorDescriptor extends AbstractSingleActivityOper
             private final ArrayTupleBuilder outputTb = new ArrayTupleBuilder(fieldSize);
             private final IFrame frame = new VSizeFrame(ctx);
             private final FrameTupleAccessor accessor = new FrameTupleAccessor(rd0);
-            private final IWriteConverter writeConverter = writeConverterFactory.getFieldWriteConverter();
+            private final IWriteConverter writeConverter = writeConverterFactory.getFieldWriteConverter(ctx, partition);
 
             @Override
             public void open() throws HyracksDataException {

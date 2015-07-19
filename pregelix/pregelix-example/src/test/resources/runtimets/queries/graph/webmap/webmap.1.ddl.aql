@@ -5,13 +5,13 @@ use dataverse graph;
 
 create type RawWebmap as closed {
   id: int64,
-  edges: [int64]
+  edges: {{int64}}
 }
 
 create type Webmap as closed {
   vertexid: int64,
   value: double,
-  edgelist: [int64]
+  edgelist: {{int64}}
 }
 
 create type Rank as closed {
@@ -21,6 +21,6 @@ create type Rank as closed {
 
 create dataset rawweb(RawWebmap) primary key id;
 
-create temporary dataset webmap(Webmap) primary key vertexid;
+create dataset webmap(Webmap) primary key vertexid;
 
-create temporary dataset ranks(Rank) primary key vertexid;
+create dataset ranks(Rank) primary key vertexid;

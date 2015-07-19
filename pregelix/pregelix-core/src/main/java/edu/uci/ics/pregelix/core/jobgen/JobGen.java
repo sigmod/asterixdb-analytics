@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -254,7 +253,7 @@ public abstract class JobGen implements IJobGen {
         IFileSplitProvider fileSplitProvider = getFileSplitProvider(jobId, PRIMARY_INDEX);
         TreeIndexCreateOperatorDescriptor btreeCreate = new TreeIndexCreateOperatorDescriptor(spec,
                 storageManagerInterface, lcManagerProvider, fileSplitProvider, typeTraits, comparatorFactories,
-                keyFields, getIndexDataflowHelperFactory(), new TransientLocalResourceFactoryProvider(),
+                keyFields, getIndexDataflowHelperFactory(), TransientLocalResourceFactoryProvider.INSTANCE,
                 NoOpOperationCallbackFactory.INSTANCE);
         setLocationConstraint(spec, btreeCreate);
         spec.setFrameSize(frameSize);
@@ -629,16 +628,16 @@ public abstract class JobGen implements IJobGen {
         IOperatorDescriptor scanOperator = scan.getOperatorDescriptor();
         // The B-tree scan constraints.
         String[] scanLocations = scan.getLocationConstraints();
-        Arrays.sort(locations);
-        Arrays.sort(scanLocations);
-        boolean repartition = !Arrays.equals(locations, scanLocations);
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, sourceOperator, scanLocations);
+        PartitionConstraintHelper.addPartitionCountConstraint(spec, sourceOperator, scanLocations.length);
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, scanOperator, scanLocations);
+        PartitionConstraintHelper.addPartitionCountConstraint(spec, scanOperator, scanLocations.length);
 
         // The AsterixDB record to vertex transformation operator.
-        ParallelOperator transform = readConnector.getReadTransformOperatorDescriptor(spec, locations);
+        ParallelOperator transform = readConnector.getReadTransformOperatorDescriptor(spec, scanLocations);
         IOperatorDescriptor transformOperator = transform.getOperatorDescriptor();
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, transformOperator, scanLocations);
+        PartitionConstraintHelper.addPartitionCountConstraint(spec, transformOperator, scanLocations.length);
 
         // File split provider for the vertex B-tree.
         IFileSplitProvider fileSplitProvider = getFileSplitProvider(jobId, PRIMARY_INDEX);
@@ -651,13 +650,9 @@ public abstract class JobGen implements IJobGen {
         INormalizedKeyComputerFactory nkmFactory = JobGenUtil.getINormalizedKeyComputerFactory(conf);
         IBinaryComparatorFactory[] comparatorFactories = new IBinaryComparatorFactory[1];
         comparatorFactories[0] = JobGenUtil.getIBinaryComparatorFactory(0, vertexIdClass);;
-        IOperatorDescriptor sortOperator = null;
-        if (repartition) {
-            // Sort is only needed when there is a repartitoning.
-            sortOperator = new ExternalSortOperatorDescriptor(spec, maxFrameNumber, sortFields, nkmFactory,
-                    comparatorFactories, recordDescriptor);
-            setLocationConstraint(spec, sortOperator);
-        }
+        IOperatorDescriptor sortOperator = new ExternalSortOperatorDescriptor(spec, maxFrameNumber, sortFields,
+                nkmFactory, comparatorFactories, recordDescriptor);
+        setLocationConstraint(spec, sortOperator);
 
         // B-tree bulk load.
         int[] fieldPermutation = new int[2];
@@ -679,16 +674,11 @@ public abstract class JobGen implements IJobGen {
         // Connects operator descriptors.
         spec.connect(new OneToOneConnectorDescriptor(spec), sourceOperator, 0, scanOperator, 0);
         spec.connect(new OneToOneConnectorDescriptor(spec), scanOperator, 0, transformOperator, 0);
-        if (repartition) {
-            ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
-            spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory),
-                    transformOperator, 0, sortOperator, 0);
-            spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, buklLoadOperator, 0);
-        } else {
-            spec.connect(new OneToOneConnectorDescriptor(spec), transformOperator, 0, buklLoadOperator, 0);
-        }
+        ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
+        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), transformOperator, 0,
+                sortOperator, 0);
+        spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, buklLoadOperator, 0);
         spec.connect(new OneToOneConnectorDescriptor(spec), buklLoadOperator, 0, sink, 0);
-        spec.setFrameSize(frameSize);
         return spec;
     }
 
@@ -805,8 +795,8 @@ public abstract class JobGen implements IJobGen {
          * construct write file operator
          */
         String serviceURL = BspUtils.getAsterixDBURL(conf);
-        String dataverseName = BspUtils.getAsterixDBInputDataverse(conf);
-        String datasetName = BspUtils.getAsterixDBInputDataset(conf);
+        String dataverseName = BspUtils.getAsterixDBOutputDataverse(conf);
+        String datasetName = BspUtils.getAsterixDBOutputDataset(conf);
         // Storage info.
         StorageParameter storageParameter = new StorageParameter(new VirtualBufferCacheProvider(),
                 storageManagerInterface, lcManagerProvider, MERGE_POLICY_PROPERTIES, serviceURL, dataverseName,
@@ -820,9 +810,6 @@ public abstract class JobGen implements IJobGen {
         ParallelOperator transform = writeConnector.getWriteTransformOperatorDescriptor(spec, locations);
         IOperatorDescriptor transformOperator = transform.getOperatorDescriptor();
         String[] writeLocations = transform.getLocationConstraints();
-        Arrays.sort(locations);
-        Arrays.sort(writeLocations);
-        boolean repartition = !Arrays.equals(locations, writeLocations);
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, transformOperator, writeLocations);
 
         // Write Operator.
@@ -831,31 +818,30 @@ public abstract class JobGen implements IJobGen {
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, writeOperator, writeLocations);
 
         // Sort operator (only used when repartitioning is necessary).
-        ExternalSortOperatorDescriptor sortOperator = null;
-        if (!ckpointing) {
-            int[] keyFields = new int[] { 0 };
-            INormalizedKeyComputerFactory nkmFactory = JobGenUtil.getFinalNormalizedKeyComputerFactory(conf);
-            IBinaryComparatorFactory[] sortCmpFactories = new IBinaryComparatorFactory[1];
-            sortCmpFactories[0] = JobGenUtil.getFinalBinaryComparatorFactory(vertexIdClass);
-            sortOperator = new ExternalSortOperatorDescriptor(spec, maxFrameNumber, keyFields, nkmFactory,
-                    sortCmpFactories, recordDescriptor);
-            setLocationConstraint(spec, scanOperator);
-        }
+        int[] keyFields = new int[] { 0 };
+        INormalizedKeyComputerFactory nkmFactory = JobGenUtil.getFinalNormalizedKeyComputerFactory(conf);
+        IBinaryComparatorFactory[] sortCmpFactories = new IBinaryComparatorFactory[1];
+        sortCmpFactories[0] = JobGenUtil.getFinalBinaryComparatorFactory(vertexIdClass);
+        ExternalSortOperatorDescriptor sortOperator = new ExternalSortOperatorDescriptor(spec, maxFrameNumber,
+                keyFields, nkmFactory, sortCmpFactories, recordDescriptor);
+        PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, sortOperator, writeLocations);
+
+        /**
+         * construct empty sink operator
+         */
+        EmptySinkOperatorDescriptor sinkOperator = new EmptySinkOperatorDescriptor(spec);
+        PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, sinkOperator, writeLocations);
 
         /**
          * connect operator descriptors
          */
         spec.connect(new OneToOneConnectorDescriptor(spec), emptyTupleSource, 0, scanOperator, 0);
-        if (repartition) {
-            ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
-            spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), scanOperator, 0,
-                    sortOperator, 0);
-            spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, transformOperator, 0);
-        } else {
-            spec.connect(new OneToOneConnectorDescriptor(spec), scanOperator, 0, transformOperator, 0);
-        }
+        ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
+        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), scanOperator, 0,
+                sortOperator, 0);
+        spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, transformOperator, 0);
         spec.connect(new OneToOneConnectorDescriptor(spec), transformOperator, 0, writeOperator, 0);
-        spec.setFrameSize(frameSize);
+        spec.connect(new OneToOneConnectorDescriptor(spec), writeOperator, 0, sinkOperator, 0);
         return spec;
     }
 

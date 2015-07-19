@@ -34,8 +34,8 @@ import edu.uci.ics.asterix.dataflow.data.nontagged.serde.AInt32SerializerDeseria
 import edu.uci.ics.asterix.dataflow.data.nontagged.serde.AInt64SerializerDeserializer;
 import edu.uci.ics.asterix.dataflow.data.nontagged.serde.AInt8SerializerDeserializer;
 import edu.uci.ics.asterix.om.pointables.AFlatValuePointable;
-import edu.uci.ics.asterix.om.pointables.AListPointable;
-import edu.uci.ics.asterix.om.pointables.ARecordPointable;
+import edu.uci.ics.asterix.om.pointables.AListVisitablePointable;
+import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
 import edu.uci.ics.asterix.om.pointables.base.IVisitablePointable;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.ATypeTag;
@@ -75,11 +75,11 @@ public class VLongIdInputVertexConverter implements VertexInputConverter {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public void convert(ARecordPointable recordPointable, Vertex vertex) throws HyracksDataException {
+    public void convert(ARecordVisitablePointable recordPointable, Vertex vertex) throws HyracksDataException {
         List<IVisitablePointable> fieldValues = recordPointable.getFieldValues();
         AFlatValuePointable vertexIdPointable = (AFlatValuePointable) fieldValues.get(vertexIdFieldIndex);
         AFlatValuePointable vertexValuePointable = (AFlatValuePointable) fieldValues.get(vertexValueFieldIndex);
-        AListPointable edgeListPointable = (AListPointable) fieldValues.get(edgeListIndex);
+        AListVisitablePointable edgeListPointable = (AListVisitablePointable) fieldValues.get(edgeListIndex);
 
         // Resets the vertex.
         vertex.getMsgList().clear();
@@ -178,7 +178,7 @@ public class VLongIdInputVertexConverter implements VertexInputConverter {
     private void setVertexValue(AFlatValuePointable vertexIdPointable, Writable v) throws HyracksDataException {
         byte[] data = vertexIdPointable.getByteArray();
         int start = vertexIdPointable.getStartOffset() + 1; // Considers the AsterixDB type tag.
-        switch (vertexIdTypeTag) {
+        switch (vertexValueTypeTag) {
             case INT8: {
                 long value = AInt8SerializerDeserializer.getByte(data, start);
                 ((VLongWritable) v).set(value);
@@ -226,7 +226,7 @@ public class VLongIdInputVertexConverter implements VertexInputConverter {
 
     // Sets the edge list from an AsterixDB AListPointable.
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public void setEdgeList(AListPointable edgeListPointable, Vertex vertex) throws HyracksDataException {
+    public void setEdgeList(AListVisitablePointable edgeListPointable, Vertex vertex) throws HyracksDataException {
         pool.reset();
         List<IVisitablePointable> items = edgeListPointable.getItems();
         for (int i = 0; i < items.size(); i++) {

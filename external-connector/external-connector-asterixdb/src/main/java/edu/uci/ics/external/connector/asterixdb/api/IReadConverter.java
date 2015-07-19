@@ -15,7 +15,7 @@
 
 package edu.uci.ics.external.connector.asterixdb.api;
 
-import edu.uci.ics.asterix.om.pointables.ARecordPointable;
+import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
@@ -24,7 +24,8 @@ public interface IReadConverter {
 
     public void open(ARecordType recordType) throws HyracksDataException;
 
-    public void convert(ARecordPointable recordPointable, ArrayTupleBuilder outputTb) throws HyracksDataException;
+    public void convert(ARecordVisitablePointable recordPointable, ArrayTupleBuilder outputTb)
+            throws HyracksDataException;
 
     public void close() throws HyracksDataException;
 

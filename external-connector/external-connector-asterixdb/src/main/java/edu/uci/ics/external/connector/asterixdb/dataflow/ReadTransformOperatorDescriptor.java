@@ -16,7 +16,7 @@ package edu.uci.ics.external.connector.asterixdb.dataflow;
 
 import java.nio.ByteBuffer;
 
-import edu.uci.ics.asterix.om.pointables.ARecordPointable;
+import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
 import edu.uci.ics.asterix.om.pointables.PointableAllocator;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.external.connector.asterixdb.api.IReadConverter;
@@ -57,7 +57,7 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
 
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
-            final IRecordDescriptorProvider recordDescProvider, int partition, int nPartitions)
+            final IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
             throws HyracksDataException {
         return new AbstractUnaryInputUnaryOutputOperatorNodePushable() {
 
@@ -66,9 +66,9 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
             private final ArrayTupleBuilder outputTb = new ArrayTupleBuilder(fieldSize);
             private final IFrame frame = new VSizeFrame(ctx);
             private final FrameTupleAccessor accessor = new FrameTupleAccessor(rd0);
-            private final ARecordPointable recordPointable = (ARecordPointable) new PointableAllocator()
+            private final ARecordVisitablePointable recordPointable = (ARecordVisitablePointable) new PointableAllocator()
                     .allocateRecordValue(recordType);
-            private final IReadConverter readConverter = readConverterFacotry.getReadConverter();
+            private final IReadConverter readConverter = readConverterFacotry.getReadConverter(ctx, partition);
 
             @Override
             public void open() throws HyracksDataException {
@@ -82,11 +82,11 @@ public class ReadTransformOperatorDescriptor extends AbstractSingleActivityOpera
                 accessor.reset(frame);
                 for (int tIndex = 0; tIndex < accessor.getTupleCount(); tIndex++) {
                     // Record is the second field.
-                    int fldStart = accessor.getTupleStartOffset(tIndex) + accessor.getFieldSlotsLength()
-                            + accessor.getFieldStartOffset(tIndex, fieldSize - 1);
+                    int fldStart = accessor.getAbsoluteFieldStartOffset(tIndex, fieldSize - 1);
                     int fldLen = accessor.getFieldLength(tIndex, fieldSize - 1);
                     // Parses the binary input.
                     recordPointable.set(accessor.getBuffer().array(), fldStart, fldLen);
+
                     // Converts the record into a tuple of a user-defined type.
                     readConverter.convert(recordPointable, outputTb);
                     // Writes the result into the output writer.

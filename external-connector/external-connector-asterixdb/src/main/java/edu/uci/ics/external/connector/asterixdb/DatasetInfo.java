@@ -17,9 +17,11 @@ package edu.uci.ics.external.connector.asterixdb;
 
 import edu.uci.ics.asterix.formats.nontagged.AqlBinaryComparatorFactoryProvider;
 import edu.uci.ics.asterix.formats.nontagged.AqlNormalizedKeyComputerFactoryProvider;
+import edu.uci.ics.asterix.formats.nontagged.AqlSerializerDeserializerProvider;
+import edu.uci.ics.asterix.formats.nontagged.AqlTypeTraitProvider;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.ATypeTag;
-import edu.uci.ics.external.connector.asterixdb.data.TypeTraits;
+import edu.uci.ics.asterix.om.types.IAType;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
 import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
@@ -31,6 +33,8 @@ public class DatasetInfo {
 
     private final AqlBinaryComparatorFactoryProvider binaryComparatorFactoryProvider = AqlBinaryComparatorFactoryProvider.INSTANCE;
     private final AqlNormalizedKeyComputerFactoryProvider normalizedKeyComputerProvider = AqlNormalizedKeyComputerFactoryProvider.INSTANCE;
+    private final AqlTypeTraitProvider typeTraitProvider = AqlTypeTraitProvider.INSTANCE;
+    private final AqlSerializerDeserializerProvider serdeProvider = AqlSerializerDeserializerProvider.INSTANCE;
 
     private final String[] locationConstraints;
     private final IFileSplitProvider fileSplitProvider;
@@ -57,9 +61,9 @@ public class DatasetInfo {
             primaryKeyBinaryComparatorFactories[i] = binaryComparatorFactoryProvider.getBinaryComparatorFactory(
                     fieldTypeTag, true);
         }
-        ATypeTag fieldTypeTag = recordType.getFieldType(primaryKeyFields[0]).getTypeTag();
+        IAType fieldType = recordType.getFieldType(primaryKeyFields[0]);
         primaryKeyNormalizedKeyComputerFactory = normalizedKeyComputerProvider.getNormalizedKeyComputerFactory(
-                fieldTypeTag, true);
+                fieldType, true);
         // Initializes sort fields.
         sortFields = new int[primaryKeyFields.length];
         for (int i = 0; i < sortFields.length; i++) {
@@ -73,9 +77,13 @@ public class DatasetInfo {
         //Initializes record descriptor.
         ISerializerDeserializer[] serdes = new ISerializerDeserializer[primaryKeyFields.length + 1];
         ITypeTraits[] typeTraits = new ITypeTraits[primaryKeyFields.length + 1];
-        for (int i = 0; i < typeTraits.length; i++) {
-            typeTraits[i] = new TypeTraits(false);
+        for (int i = 0; i < primaryKeyFields.length; i++) {
+            IAType type = recordType.getFieldType(primaryKeyFields[i]);
+            typeTraits[i] = typeTraitProvider.getTypeTrait(type);
+            serdes[i] = serdeProvider.getNonTaggedSerializerDeserializer(type);
         }
+        typeTraits[primaryKeyFields.length] = typeTraitProvider.getTypeTrait(recordType);
+        serdes[primaryKeyFields.length] = serdeProvider.getNonTaggedSerializerDeserializer(recordType);
         this.recordDescriptor = new RecordDescriptor(serdes, typeTraits);
     }
 

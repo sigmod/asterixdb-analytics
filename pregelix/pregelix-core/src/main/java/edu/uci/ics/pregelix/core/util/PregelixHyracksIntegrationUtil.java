@@ -37,9 +37,9 @@ public class PregelixHyracksIntegrationUtil {
     public static final String NC1_ID = "nc1";
     public static final String NC2_ID = "nc2";
 
-    public static final int DEFAULT_HYRACKS_CC_PORT = 1099;
-    public static final int TEST_HYRACKS_CC_PORT = 1099;
-    public static final int TEST_HYRACKS_CC_CLIENT_PORT = 2099;
+    public static final int DEFAULT_HYRACKS_CC_PORT = 2099;
+    public static final int TEST_HYRACKS_CC_PORT = 2099;
+    public static final int TEST_HYRACKS_CC_CLIENT_PORT = 3099;
     public static final String CC_HOST = "localhost";
 
     public static final int FRAME_SIZE = 65536;
@@ -59,6 +59,7 @@ public class PregelixHyracksIntegrationUtil {
         ccConfig.clusterNetIpAddress = CC_HOST;
         ccConfig.clusterNetPort = TEST_HYRACKS_CC_PORT;
         ccConfig.clientNetPort = TEST_HYRACKS_CC_CLIENT_PORT;
+        ccConfig.httpPort = 12001;
         ccConfig.defaultMaxJobAttempts = 0;
         ccConfig.jobHistorySize = 1;
         ccConfig.profileDumpPeriod = -1;

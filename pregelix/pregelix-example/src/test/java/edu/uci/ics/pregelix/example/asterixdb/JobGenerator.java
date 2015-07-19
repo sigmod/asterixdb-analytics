@@ -48,7 +48,8 @@ public class JobGenerator {
         job.setFrameSize(1024);
 
         //lets the job use asterixdb for data source and data sink.
-        job.setUseAsterixDBDataSink(true);
+        job.setAsterixDBURL("http://localhost:19002");
+        job.setUseAsterixDBDataSource(true);
         job.setUseAsterixDBDataSink(true);
         job.setAsterixDBInputDataverse(DATAVERSE);
         job.setAsterixDBInputDataset(INPUT_DATASET);

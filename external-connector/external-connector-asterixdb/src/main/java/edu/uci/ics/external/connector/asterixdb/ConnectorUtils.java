@@ -47,12 +47,11 @@ public class ConnectorUtils {
         HttpClient client = new HttpClient();
 
         // Create a method instance.
-        GetMethod method = new GetMethod(storageParameter.getServiceURL());
+        GetMethod method = new GetMethod(storageParameter.getServiceURL() + "?dataverseName="
+                + storageParameter.getDataverseName() + "&datasetName=" + storageParameter.getDatasetName());
 
         // Provide custom retry handler is necessary
         method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
-        method.getParams().setParameter("dataverseName", storageParameter.getDataverseName());
-        method.getParams().setParameter("datasetName", storageParameter.getDatasetName());
 
         try {
             // Executes the method.
@@ -103,7 +102,7 @@ public class ConnectorUtils {
             }
             List<String> ncNames = storageParameter.getIpToNcNames().get(p.getIPAddress());
             String ncName = ncNames.get(0);
-            splits[i++] = new FileSplit(ncName, path);
+            splits[i++] = new FileSplit(ncName, path, p.getIODeviceId());
         }
         return new ConstantFileSplitProvider(splits);
     }
@@ -121,7 +120,8 @@ public class ConnectorUtils {
         for (int i = 0; i < splits.length(); i++) {
             String ipAddress = ((JSONObject) splits.get(i)).getString("ip");
             String path = ((JSONObject) splits.get(i)).getString("path");
-            partitions.add(new FilePartition(ipAddress, path));
+            int ioDeviceId = ((JSONObject) splits.get(i)).getInt("ioDeviceId");
+            partitions.add(new FilePartition(ipAddress, path, ioDeviceId));
         }
         return partitions;
     }

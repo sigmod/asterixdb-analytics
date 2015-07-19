@@ -17,10 +17,11 @@ package edu.uci.ics.external.connector.asterixdb.api;
 
 import java.io.Serializable;
 
+import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 
 public interface IWriteConverterFactory extends Serializable {
 
-    public IWriteConverter getFieldWriteConverter() throws HyracksDataException;
+    public IWriteConverter getFieldWriteConverter(IHyracksTaskContext ctx, int partitionId) throws HyracksDataException;
 
 }

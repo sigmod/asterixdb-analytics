@@ -60,6 +60,8 @@ public class VLongIdOutputVertexConverter implements VertexOutputConverter {
     private void outputVertexId(Writable vid, DataOutput dataOutput) throws HyracksDataException {
         long id = ((VLongWritable) vid).get();
         try {
+            // Writes the type tag
+            dataOutput.writeByte(vertexIdTypeTag.ordinal());
             switch (vertexIdTypeTag) {
                 case INT8: {
                     dataOutput.writeByte((int) id);
@@ -92,6 +94,8 @@ public class VLongIdOutputVertexConverter implements VertexOutputConverter {
 
     private void outputVertexValue(Writable value, DataOutput dataOutput) throws HyracksDataException {
         try {
+            // Writes the type tag
+            dataOutput.writeByte(vertexValueTypeTag.ordinal());
             switch (vertexValueTypeTag) {
                 case INT8: {
                     long v = ((VLongWritable) value).get();

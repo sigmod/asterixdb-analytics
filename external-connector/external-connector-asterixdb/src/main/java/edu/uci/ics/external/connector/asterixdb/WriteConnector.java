@@ -69,7 +69,7 @@ public class WriteConnector implements IWriteConnector {
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
                 SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true,
-                datasetInfo.getTypeTraits(), null, null, null, false);
+                datasetInfo.getTypeTraits(), null, null, null, true);
 
         // BTree bulkload operator.
         TreeIndexBulkLoadOperatorDescriptor writer = new TreeIndexBulkLoadOperatorDescriptor(jobSpec,

@@ -200,6 +200,7 @@ public class Driver implements IDriver {
             LOG.info(counterBuffer.toString());
             counterContext.stop();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new HyracksException(e);
         } finally {
             /** clear temporary directories */

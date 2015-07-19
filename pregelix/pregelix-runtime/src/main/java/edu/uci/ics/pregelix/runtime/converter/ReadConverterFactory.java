@@ -19,17 +19,21 @@ import java.io.DataOutput;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
-import edu.uci.ics.asterix.om.pointables.ARecordPointable;
+import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.external.connector.asterixdb.api.IReadConverter;
 import edu.uci.ics.external.connector.asterixdb.api.IReadConverterFactory;
+import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import edu.uci.ics.hyracks.hdfs.ContextFactory;
 import edu.uci.ics.pregelix.api.converter.VertexInputConverter;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
+import edu.uci.ics.pregelix.dataflow.util.IterationUtils;
 
 public class ReadConverterFactory implements IReadConverterFactory {
     private static final long serialVersionUID = 1L;
@@ -41,9 +45,18 @@ public class ReadConverterFactory implements IReadConverterFactory {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public IReadConverter getReadConverter() throws HyracksDataException {
+    public IReadConverter getReadConverter(IHyracksTaskContext ctx, int partitionId) throws HyracksDataException {
         final Configuration conf = confFactory.createConfiguration();
+        // Set context properly
+        ContextFactory ctxFactory = new ContextFactory();
+        TaskAttemptContext mapperContext = ctxFactory.createContext(conf, partitionId);
+        mapperContext.getConfiguration().setClassLoader(ctx.getJobletContext().getClassLoader());
+        IterationUtils.setJobContext(BspUtils.getJobId(conf), ctx, mapperContext);
+        Vertex.taskContext = mapperContext;
+
         final Vertex vertex = BspUtils.createVertex(conf);
+        vertex.setVertexContext(IterationUtils.getVertexContext(BspUtils.getJobId(conf), ctx));
+
         final VertexInputConverter inputConverter = BspUtils.createVertexInputConverter(conf);
 
         return new IReadConverter() {
@@ -54,7 +67,7 @@ public class ReadConverterFactory implements IReadConverterFactory {
             }
 
             @Override
-            public void convert(ARecordPointable recordPointable, ArrayTupleBuilder outputTb)
+            public void convert(ARecordVisitablePointable recordPointable, ArrayTupleBuilder outputTb)
                     throws HyracksDataException {
                 try {
                     // Converts an input AsterixDB record into an vertex object.

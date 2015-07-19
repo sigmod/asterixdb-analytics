@@ -19,18 +19,22 @@ import java.io.DataInput;
 import java.io.DataInputStream;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import edu.uci.ics.asterix.builders.RecordBuilder;
 import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverter;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
+import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import edu.uci.ics.hyracks.hdfs.ContextFactory;
 import edu.uci.ics.pregelix.api.converter.VertexOutputConverter;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.api.util.ResetableByteArrayInputStream;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
+import edu.uci.ics.pregelix.dataflow.util.IterationUtils;
 
 public class WriteConverterFactory implements IWriteConverterFactory {
     private static final long serialVersionUID = 1L;
@@ -42,9 +46,18 @@ public class WriteConverterFactory implements IWriteConverterFactory {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public IWriteConverter getFieldWriteConverter() throws HyracksDataException {
+    public IWriteConverter getFieldWriteConverter(IHyracksTaskContext ctx, int partitionId) throws HyracksDataException {
         final Configuration conf = confFactory.createConfiguration();
+        // Set context properly
+        ContextFactory ctxFactory = new ContextFactory();
+        TaskAttemptContext mapperContext = ctxFactory.createContext(conf, partitionId);
+        mapperContext.getConfiguration().setClassLoader(ctx.getJobletContext().getClassLoader());
+        IterationUtils.setJobContext(BspUtils.getJobId(conf), ctx, mapperContext);
+        Vertex.taskContext = mapperContext;
+
         final Vertex vertex = BspUtils.createVertex(conf);
+        vertex.setVertexContext(IterationUtils.getVertexContext(BspUtils.getJobId(conf), ctx));
+
         final VertexOutputConverter outputConverter = BspUtils.createVertexOutputConverter(conf);
         final ResetableByteArrayInputStream inputStream = new ResetableByteArrayInputStream();
         final DataInput dataInput = new DataInputStream(inputStream);
@@ -72,6 +85,8 @@ public class WriteConverterFactory implements IWriteConverterFactory {
                     // By default, the record type tag is stored in AsterixDB.
                     recordBuilder.write(outputTb.getDataOutput(), true);
                     outputTb.addFieldEndOffset();
+
+                    System.out.println("output " + vertex.getVertexId() + " " + vertex.getVertexValue());
                 } catch (Exception e) {
                     throw new HyracksDataException(e);
                 }

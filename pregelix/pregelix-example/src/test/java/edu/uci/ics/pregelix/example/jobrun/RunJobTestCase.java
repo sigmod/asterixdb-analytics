@@ -101,9 +101,14 @@ public class RunJobTestCase extends TestCase {
             driver.runJob(job, plan, PregelixHyracksIntegrationUtil.CC_HOST,
                     PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT, false);
             compareResults();
+
+            job.setMergeConnector(false);
+            driver.runJob(job, plan, PregelixHyracksIntegrationUtil.CC_HOST,
+                    PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT, false);
+            compareResults();
         }
         tearDown();
-        waitawhile();
+        //waitawhile();
     }
 
     private void compareResults() throws Exception {
