@@ -18,6 +18,10 @@
     QueryOffsetPath="queries"
     QueryFileExtension=".aql">
     <test-group name="debug">
-
+		<test-case FilePath="graph">
+            <compilation-unit name="cc">
+                <output-dir compare="Text">cc</output-dir>
+            </compilation-unit>
+        </test-case>
     </test-group>
 </test-suite>

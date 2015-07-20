@@ -10,13 +10,13 @@ create type RawWebmap as closed {
 
 create type Webmap as closed {
   vertexid: int64,
-  value: double,
+  value: int64,
   edgelist: {{int64}}
 }
 
 create type Result as closed {
   vertexid: int64,
-  value: double
+  value: int64
 }
 
 create dataset rawweb(RawWebmap) primary key id;

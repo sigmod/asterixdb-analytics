@@ -53,9 +53,9 @@ import edu.uci.ics.pregelix.example.util.AsterixDBTestsExecutor;
  * Runs the runtime test cases under 'asterix-app/src/test/resources/runtimets'.
  */
 @RunWith(Parameterized.class)
-public class JobTest {
+public class ConnectorTest {
 
-    private static final Logger LOGGER = Logger.getLogger(JobTest.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ConnectorTest.class.getName());
 
     private static final String PATH_ACTUAL = "rttest" + File.separator;
     private static final String PATH_BASE = StringUtils.join(new String[] { "src", "test", "resources", "runtimets" },
@@ -188,7 +188,7 @@ public class JobTest {
 
     private TestCaseContext tcCtx;
 
-    public JobTest(TestCaseContext tcCtx) {
+    public ConnectorTest(TestCaseContext tcCtx) {
         this.tcCtx = tcCtx;
     }
 

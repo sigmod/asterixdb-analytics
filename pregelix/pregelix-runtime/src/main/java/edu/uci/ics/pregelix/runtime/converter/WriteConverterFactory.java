@@ -85,8 +85,6 @@ public class WriteConverterFactory implements IWriteConverterFactory {
                     // By default, the record type tag is stored in AsterixDB.
                     recordBuilder.write(outputTb.getDataOutput(), true);
                     outputTb.addFieldEndOffset();
-
-                    System.out.println("output " + vertex.getVertexId() + " " + vertex.getVertexValue());
                 } catch (Exception e) {
                     throw new HyracksDataException(e);
                 }

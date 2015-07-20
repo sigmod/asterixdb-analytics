@@ -135,7 +135,9 @@ public class ShortestPathsVertex extends Vertex<VLongWritable, DoubleWritable, F
             tmpVertexValue.set(minDist);
             setVertexValue(tmpVertexValue);
             for (Edge<VLongWritable, FloatWritable> edge : getEdges()) {
-                outputValue.set(minDist + edge.getEdgeValue().get());
+                FloatWritable edgeValue = edge.getEdgeValue();
+                float edgeWeight = edgeValue == null ? 1.0f : edgeValue.get();
+                outputValue.set(minDist + edgeWeight);
                 sendMsg(edge.getDestVertexId(), outputValue);
             }
         }

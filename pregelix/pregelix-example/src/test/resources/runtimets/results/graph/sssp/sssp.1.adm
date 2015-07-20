@@ -1,0 +1,21 @@
+[ { "vertexid": 0, "value": 0.0d }
+, { "vertexid": 1, "value": 1.0d }
+, { "vertexid": 2, "value": 2.0d }
+, { "vertexid": 3, "value": 3.0d }
+, { "vertexid": 4, "value": 4.0d }
+, { "vertexid": 5, "value": 5.0d }
+, { "vertexid": 6, "value": 6.0d }
+, { "vertexid": 7, "value": 7.0d }
+, { "vertexid": 8, "value": 8.0d }
+, { "vertexid": 9, "value": 9.0d }
+, { "vertexid": 10, "value": 10.0d }
+, { "vertexid": 11, "value": 11.0d }
+, { "vertexid": 12, "value": 12.0d }
+, { "vertexid": 13, "value": 13.0d }
+, { "vertexid": 14, "value": 14.0d }
+, { "vertexid": 15, "value": 15.0d }
+, { "vertexid": 16, "value": 16.0d }
+, { "vertexid": 17, "value": 17.0d }
+, { "vertexid": 18, "value": 18.0d }
+, { "vertexid": 19, "value": 19.0d }
+ ]
