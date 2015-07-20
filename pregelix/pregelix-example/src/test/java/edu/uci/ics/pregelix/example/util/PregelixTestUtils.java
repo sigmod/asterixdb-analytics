@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.junit.Assert;
 
-public class TestUtils {
+public class PregelixTestUtils {
 
     private static final String PREFIX = "part";
 

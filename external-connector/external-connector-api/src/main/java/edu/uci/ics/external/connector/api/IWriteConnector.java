@@ -15,12 +15,11 @@
 
 package edu.uci.ics.external.connector.api;
 
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 
 public interface IWriteConnector {
 
-    public IBinaryComparatorFactory[] getComparatorFactories();
+    public PhysicalProperties getPhysicalProperties();
 
     public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints);
 

@@ -40,7 +40,7 @@ import edu.uci.ics.pregelix.core.optimizer.NoOpOptimizer;
 import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
 import edu.uci.ics.pregelix.example.PageRankVertex;
 import edu.uci.ics.pregelix.example.PageRankVertex.SimulatedPageRankVertexInputFormat;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 @SuppressWarnings("deprecation")
 public class DataLoadTest {
@@ -177,7 +177,7 @@ public class DataLoadTest {
 
     private void compareResults() throws Exception {
         PregelixJob job = new PregelixJob(GIRAPH_JOB_NAME);
-        TestUtils.compareWithResult(new File(EXPECT_RESULT_DIR + File.separator + job.getJobName()), new File(
+        PregelixTestUtils.compareWithResult(new File(EXPECT_RESULT_DIR + File.separator + job.getJobName()), new File(
                 ACTUAL_RESULT_DIR + File.separator + job.getJobName()));
     }
 }

@@ -47,6 +47,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
 import edu.uci.ics.external.connector.api.ParallelOperator;
+import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.ReadConnector;
 import edu.uci.ics.external.connector.asterixdb.StorageParameter;
 import edu.uci.ics.external.connector.asterixdb.WriteConnector;
@@ -65,6 +66,7 @@ import edu.uci.ics.hyracks.api.io.FileReference;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 import edu.uci.ics.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
+import edu.uci.ics.hyracks.dataflow.common.data.partition.FieldHashPartitionComputerFactory;
 import edu.uci.ics.hyracks.dataflow.std.connectors.MToNPartitioningConnectorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.connectors.MToNPartitioningMergingConnectorDescriptor;
 import edu.uci.ics.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
@@ -805,6 +807,7 @@ public abstract class JobGen implements IJobGen {
         // The default location constraint.
         String[] locations = ClusterConfig.getLocationConstraint();
         WriteConnector writeConnector = new WriteConnector(storageParameter, new WriteConverterFactory(confFactory));
+        PhysicalProperties physicalProperties = writeConnector.getPhysicalProperties();
 
         // Transform operator
         ParallelOperator transform = writeConnector.getWriteTransformOperatorDescriptor(spec, locations);
@@ -819,11 +822,8 @@ public abstract class JobGen implements IJobGen {
 
         // Sort operator (only used when repartitioning is necessary).
         int[] keyFields = new int[] { 0 };
-        INormalizedKeyComputerFactory nkmFactory = JobGenUtil.getFinalNormalizedKeyComputerFactory(conf);
-        IBinaryComparatorFactory[] sortCmpFactories = new IBinaryComparatorFactory[1];
-        sortCmpFactories[0] = JobGenUtil.getFinalBinaryComparatorFactory(vertexIdClass);
         ExternalSortOperatorDescriptor sortOperator = new ExternalSortOperatorDescriptor(spec, maxFrameNumber,
-                keyFields, nkmFactory, sortCmpFactories, recordDescriptor);
+                keyFields, null, physicalProperties.getComparatorFactories(), recordDescriptor);
         PartitionConstraintHelper.addAbsoluteLocationConstraint(spec, sortOperator, writeLocations);
 
         /**
@@ -836,11 +836,12 @@ public abstract class JobGen implements IJobGen {
          * connect operator descriptors
          */
         spec.connect(new OneToOneConnectorDescriptor(spec), emptyTupleSource, 0, scanOperator, 0);
-        ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
-        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), scanOperator, 0,
+        spec.connect(new OneToOneConnectorDescriptor(spec), scanOperator, 0, transformOperator, 0);
+        ITuplePartitionComputerFactory hashPartitionComputerFactory = new FieldHashPartitionComputerFactory(keyFields,
+                physicalProperties.getBinaryHashFunctionFactories());
+        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), transformOperator, 0,
                 sortOperator, 0);
-        spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, transformOperator, 0);
-        spec.connect(new OneToOneConnectorDescriptor(spec), transformOperator, 0, writeOperator, 0);
+        spec.connect(new OneToOneConnectorDescriptor(spec), sortOperator, 0, writeOperator, 0);
         spec.connect(new OneToOneConnectorDescriptor(spec), writeOperator, 0, sinkOperator, 0);
         return spec;
     }

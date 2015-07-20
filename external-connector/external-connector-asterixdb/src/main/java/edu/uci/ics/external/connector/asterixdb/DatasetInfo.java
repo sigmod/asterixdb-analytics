@@ -16,6 +16,7 @@
 package edu.uci.ics.external.connector.asterixdb;
 
 import edu.uci.ics.asterix.formats.nontagged.AqlBinaryComparatorFactoryProvider;
+import edu.uci.ics.asterix.formats.nontagged.AqlBinaryHashFunctionFactoryProvider;
 import edu.uci.ics.asterix.formats.nontagged.AqlNormalizedKeyComputerFactoryProvider;
 import edu.uci.ics.asterix.formats.nontagged.AqlSerializerDeserializerProvider;
 import edu.uci.ics.asterix.formats.nontagged.AqlTypeTraitProvider;
@@ -23,6 +24,7 @@ import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.types.ATypeTag;
 import edu.uci.ics.asterix.om.types.IAType;
 import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
+import edu.uci.ics.hyracks.api.dataflow.value.IBinaryHashFunctionFactory;
 import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
 import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
 import edu.uci.ics.hyracks.api.dataflow.value.ITypeTraits;
@@ -32,6 +34,7 @@ import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 public class DatasetInfo {
 
     private final AqlBinaryComparatorFactoryProvider binaryComparatorFactoryProvider = AqlBinaryComparatorFactoryProvider.INSTANCE;
+    private final AqlBinaryHashFunctionFactoryProvider binaryHashFunctionProvider = AqlBinaryHashFunctionFactoryProvider.INSTANCE;
     private final AqlNormalizedKeyComputerFactoryProvider normalizedKeyComputerProvider = AqlNormalizedKeyComputerFactoryProvider.INSTANCE;
     private final AqlTypeTraitProvider typeTraitProvider = AqlTypeTraitProvider.INSTANCE;
     private final AqlSerializerDeserializerProvider serdeProvider = AqlSerializerDeserializerProvider.INSTANCE;
@@ -42,6 +45,7 @@ public class DatasetInfo {
     private final int[] sortFields;
     private final int[] fieldPermutation;
 
+    private final IBinaryHashFunctionFactory[] primaryKeyBinaryHashFunctionFactories;
     private final IBinaryComparatorFactory[] primaryKeyBinaryComparatorFactories;
     private final INormalizedKeyComputerFactory primaryKeyNormalizedKeyComputerFactory;
     private final RecordDescriptor recordDescriptor;
@@ -53,13 +57,17 @@ public class DatasetInfo {
         this.fileSplitProvider = fileSplitProvider;
         this.recordType = recordType;
         this.primaryKeyBinaryComparatorFactories = new IBinaryComparatorFactory[primaryKeyFields.length];
+        this.primaryKeyBinaryHashFunctionFactories = new IBinaryHashFunctionFactory[primaryKeyFields.length];
 
         // Initializes comparator factories and normalized key.
         for (int i = 0; i < primaryKeyFields.length; i++) {
             String fieldName = primaryKeyFields[i];
-            ATypeTag fieldTypeTag = recordType.getFieldType(fieldName).getTypeTag();
+            IAType fieldType = recordType.getFieldType(fieldName);
+            ATypeTag fieldTypeTag = fieldType.getTypeTag();
             primaryKeyBinaryComparatorFactories[i] = binaryComparatorFactoryProvider.getBinaryComparatorFactory(
                     fieldTypeTag, true);
+            primaryKeyBinaryHashFunctionFactories[i] = binaryHashFunctionProvider
+                    .getBinaryHashFunctionFactory(fieldType);
         }
         IAType fieldType = recordType.getFieldType(primaryKeyFields[0]);
         primaryKeyNormalizedKeyComputerFactory = normalizedKeyComputerProvider.getNormalizedKeyComputerFactory(
@@ -101,6 +109,10 @@ public class DatasetInfo {
 
     public IBinaryComparatorFactory[] getPrimaryKeyComparatorFactories() {
         return primaryKeyBinaryComparatorFactories;
+    }
+
+    public IBinaryHashFunctionFactory[] getPrimaryKeyHashFunctionFactories() {
+        return primaryKeyBinaryHashFunctionFactories;
     }
 
     public INormalizedKeyComputerFactory getPrimaryKeyNormalizedKeyComputerFactory() {

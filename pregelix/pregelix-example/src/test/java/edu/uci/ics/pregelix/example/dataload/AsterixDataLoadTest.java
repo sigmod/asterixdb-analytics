@@ -35,7 +35,7 @@ import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
 import edu.uci.ics.pregelix.example.ConnectedComponentsVertex;
 import edu.uci.ics.pregelix.example.ConnectedComponentsVertex.SimpleConnectedComponentsVertexOutputFormat;
 import edu.uci.ics.pregelix.example.inputformat.TextConnectedComponentsInputFormat;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 public class AsterixDataLoadTest {
     private static final String EXPECT_RESULT_DIR = "src/test/resources/asterixLoading/";
@@ -158,7 +158,7 @@ public class AsterixDataLoadTest {
 
     private void compareResults() throws Exception {
         PregelixJob job = new PregelixJob(JOB_NAME);
-        TestUtils.compareWithResult(new File(EXPECT_RESULT_DIR + File.separator + job.getJobName()), new File(
+        PregelixTestUtils.compareWithResult(new File(EXPECT_RESULT_DIR + File.separator + job.getJobName()), new File(
                 ACTUAL_RESULT_DIR + File.separator + job.getJobName()));
     }
 }

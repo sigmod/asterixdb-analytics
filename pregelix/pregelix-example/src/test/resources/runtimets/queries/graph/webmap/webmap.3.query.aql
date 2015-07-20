@@ -1,5 +1,0 @@
-use dataverse graph;
-
-for $m in dataset("webmap")
-order by $m.vertexid
-return $m;

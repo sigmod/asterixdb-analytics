@@ -30,7 +30,7 @@ import edu.uci.ics.pregelix.api.job.PregelixJob;
 import edu.uci.ics.pregelix.core.base.IDriver.Plan;
 import edu.uci.ics.pregelix.core.driver.Driver;
 import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 public class RunJobTestCase extends TestCase {
     private static String HDFS_INPUTPATH = "/webmap";
@@ -85,12 +85,6 @@ public class RunJobTestCase extends TestCase {
         this.dfs = dfs;
     }
 
-    private void waitawhile() throws InterruptedException {
-        synchronized (this) {
-            this.wait(20);
-        }
-    }
-
     @Test
     public void test() throws Exception {
         setUp();
@@ -108,13 +102,12 @@ public class RunJobTestCase extends TestCase {
             compareResults();
         }
         tearDown();
-        //waitawhile();
     }
 
     private void compareResults() throws Exception {
         FileUtils.deleteQuietly(new File(resultFileDir));
         dfs.copyToLocalFile(FileOutputFormat.getOutputPath(job), new Path(resultFileDir));
-        TestUtils.compareWithResultDir(new File(expectedFileDir), new File(resultFileDir));
+        PregelixTestUtils.compareWithResultDir(new File(expectedFileDir), new File(resultFileDir));
     }
 
     @Override

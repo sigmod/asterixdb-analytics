@@ -34,7 +34,7 @@ import edu.uci.ics.pregelix.example.aggregator.OverflowAggregator;
 import edu.uci.ics.pregelix.example.data.VLongNormalizedKeyComputer;
 import edu.uci.ics.pregelix.example.inputformat.TextPageRankInputFormat;
 import edu.uci.ics.pregelix.example.util.TestCluster;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 /**
  * @author yingyib
@@ -65,7 +65,7 @@ public class OverflowAggregatorTest {
             Driver driver = new Driver(PageRankVertex.class);
             driver.runJob(job, "127.0.0.1", PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT);
 
-            TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
+            PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
             Text text = (Text) IterationUtils.readGlobalAggregateValue(job.getConfiguration(),
                     BspUtils.getJobId(job.getConfiguration()), OverflowAggregator.class.getName());
             Assert.assertEquals(text.getLength(), 20 * 32767);

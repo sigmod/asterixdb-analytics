@@ -19,8 +19,8 @@
         QueryFileExtension=".aql">
         <test-group name="graph">
         <test-case FilePath="graph">
-            <compilation-unit name="webmap">
-                <output-dir compare="Text">webmap</output-dir>
+            <compilation-unit name="pagerank">
+                <output-dir compare="Text">pagerank</output-dir>
             </compilation-unit>
         </test-case>    
     </test-group>

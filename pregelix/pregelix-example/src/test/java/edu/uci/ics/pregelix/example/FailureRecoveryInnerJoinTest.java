@@ -30,7 +30,7 @@ import edu.uci.ics.pregelix.example.PageRankVertex.SimplePageRankVertexOutputFor
 import edu.uci.ics.pregelix.example.data.VLongNormalizedKeyComputer;
 import edu.uci.ics.pregelix.example.inputformat.TextPageRankInputFormat;
 import edu.uci.ics.pregelix.example.util.TestCluster;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 /**
  * @author yingyib
@@ -63,7 +63,7 @@ public class FailureRecoveryInnerJoinTest {
             driver.runJob(job, Plan.INNER_JOIN, "127.0.0.1",
                     PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT, false);
 
-            TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
+            PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
         } catch (Exception e) {
             PregelixHyracksIntegrationUtil.shutdownNC2();
             testCluster.cleanupHDFS();

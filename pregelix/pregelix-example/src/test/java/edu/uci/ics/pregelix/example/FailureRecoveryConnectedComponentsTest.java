@@ -30,7 +30,7 @@ import edu.uci.ics.pregelix.example.ConnectedComponentsVertex.SimpleConnectedCom
 import edu.uci.ics.pregelix.example.data.VLongNormalizedKeyComputer;
 import edu.uci.ics.pregelix.example.inputformat.TextConnectedComponentsInputFormat;
 import edu.uci.ics.pregelix.example.util.TestCluster;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 /**
  * @author yingyib
@@ -63,7 +63,7 @@ public class FailureRecoveryConnectedComponentsTest {
             Driver driver = new Driver(PageRankVertex.class);
             driver.runJob(job, "127.0.0.1", PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT);
 
-            TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
+            PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
         } catch (Exception e) {
             PregelixHyracksIntegrationUtil.shutdownNC2();
             testCluster.cleanupHDFS();

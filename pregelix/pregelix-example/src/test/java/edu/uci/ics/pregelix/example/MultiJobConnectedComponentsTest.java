@@ -31,7 +31,7 @@ import edu.uci.ics.pregelix.example.ConnectedComponentsVertex.SimpleConnectedCom
 import edu.uci.ics.pregelix.example.data.VLongNormalizedKeyComputer;
 import edu.uci.ics.pregelix.example.inputformat.TextConnectedComponentsInputFormat;
 import edu.uci.ics.pregelix.example.util.TestCluster;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 /**
  * This test case tests multi-user workload, using ConnectedComponents.
@@ -87,7 +87,7 @@ public class MultiJobConnectedComponentsTest {
                         job2.getConfiguration().setLong(PregelixJob.NUM_VERTICE, 23);
                         job2.setCheckpointHook(ConservativeCheckpointHook.class);
                         driver.runJob(job2, "127.0.0.1", PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT);
-                        TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH2));
+                        PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH2));
                     } catch (Exception e) {
                         throw new IllegalStateException(e);
                     }
@@ -96,7 +96,7 @@ public class MultiJobConnectedComponentsTest {
             thread.start();
             Driver driver = new Driver(PageRankVertex.class);
             driver.runJob(job, "127.0.0.1", PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT);
-            TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
+            PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
             thread.join();
         } catch (Exception e) {
             PregelixHyracksIntegrationUtil.deinit();

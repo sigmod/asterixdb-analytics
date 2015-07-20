@@ -43,13 +43,11 @@ import edu.uci.ics.asterix.common.config.AsterixTransactionProperties;
 import edu.uci.ics.asterix.common.config.GlobalConfig;
 import edu.uci.ics.asterix.external.dataset.adapter.FileSystemBasedAdapter;
 import edu.uci.ics.asterix.external.util.IdentitiyResolverFactory;
-import edu.uci.ics.asterix.test.aql.TestsUtils;
+import edu.uci.ics.asterix.test.aql.TestsExecutor;
 import edu.uci.ics.asterix.testframework.context.TestCaseContext;
-import edu.uci.ics.pregelix.api.job.PregelixJob;
-import edu.uci.ics.pregelix.core.base.IDriver.Plan;
-import edu.uci.ics.pregelix.core.driver.Driver;
 import edu.uci.ics.pregelix.core.jobgen.clusterconfig.ClusterConfig;
 import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
+import edu.uci.ics.pregelix.example.util.AsterixDBTestsExecutor;
 
 /**
  * Runs the runtime test cases under 'asterix-app/src/test/resources/runtimets'.
@@ -71,15 +69,14 @@ public class JobTest {
     private static final String ACTUAL_RESULT_DIR = "actual";
     private static final String PATH_TO_HADOOP_CONF = "src/test/resources/hadoop/conf";
     private static final String HADOOP_CONF_PATH = ACTUAL_RESULT_DIR + File.separator + "conf.xml";
-    private static final String PATH_TO_JOBS = "src/test/resources/jobs-asterixdb/";
     private static MiniDFSCluster dfsCluster;
     private static JobConf conf = new JobConf();
     private static int numberOfNC = 2;
 
-    private static final Driver driver = new Driver(JobTest.class);
-
     private static final String PATH_TO_CLUSTER_STORE = "src/test/resources/cluster/stores.properties";
     private static final String PATH_TO_CLUSTER_PROPERTIES = "src/test/resources/cluster/cluster.properties";
+
+    private static final TestsExecutor testsExecutor = new AsterixDBTestsExecutor();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -105,13 +102,16 @@ public class JobTest {
             LOGGER.info("initializing HDFS");
         }
 
-        // Set the node resolver to be the identity resolver that expects node names
+        // Set the node resol ver to be the identity resolver that expects node names
         // to be node controller ids; a valid assumption in test environment.
         System.setProperty(FileSystemBasedAdapter.NODE_RESOLVER_FACTORY_PROPERTY,
                 IdentitiyResolverFactory.class.getName());
 
         // Starts HDFS
         setUpPregelix();
+
+        ClusterConfig.setClusterPropertiesPath(PATH_TO_CLUSTER_PROPERTIES);
+        ClusterConfig.setStorePath(PATH_TO_CLUSTER_STORE);
     }
 
     private static void setUpPregelix() throws Exception {
@@ -144,11 +144,6 @@ public class JobTest {
 
     @AfterClass
     public static void tearDown() throws Exception {
-        ClusterConfig.setClusterPropertiesPath(PATH_TO_CLUSTER_PROPERTIES);
-        ClusterConfig.setStorePath(PATH_TO_CLUSTER_STORE);
-        // Run all Pregel jobs.
-        runPregelAll(PATH_TO_JOBS);
-
         AsterixHyracksIntegrationUtil.deinit();
         File outdir = new File(PATH_ACTUAL);
         File[] files = outdir.listFiles();
@@ -157,7 +152,7 @@ public class JobTest {
         }
         // clean up the files written by the ASTERIX storage manager
         for (String d : ASTERIX_DATA_DIRS) {
-            TestsUtils.deleteRec(new File(d));
+            testsExecutor.deleteRec(new File(d));
         }
         // Cleans up HDFS
         tearDownPregelix();
@@ -199,7 +194,7 @@ public class JobTest {
 
     @Test
     public void test() throws Exception {
-        TestsUtils.executeTest(PATH_ACTUAL, tcCtx, null, false);
+        testsExecutor.executeTest(PATH_ACTUAL, tcCtx, null, false);
     }
 
     @SuppressWarnings("deprecation")
@@ -222,29 +217,5 @@ public class JobTest {
      */
     private static void cleanupHDFS() throws Exception {
         dfsCluster.shutdown();
-    }
-
-    private static void runPregelAll(String jobFilePath) throws Exception {
-        File jobFileDirectory = new File(jobFilePath);
-        if (!jobFileDirectory.isDirectory()) {
-            throw new IllegalStateException(jobFilePath + " is not a directory.");
-        }
-        File[] files = jobFileDirectory.listFiles();
-        for (File file : files) {
-            runPregelTest(file.getAbsolutePath());
-        }
-    }
-
-    private static void runPregelTest(String jobFile) throws Exception {
-        System.out.println("TEST: " + jobFile);
-        PregelixJob job = new PregelixJob("test");
-        job.getConfiguration().addResource(new Path(jobFile));
-        job.getConfiguration().addResource(new Path(HADOOP_CONF_PATH));
-        Plan[] plans = new Plan[] { Plan.OUTER_JOIN };
-        for (Plan plan : plans) {
-            job.setMergeConnector(true);
-            driver.runJob(job, plan, PregelixHyracksIntegrationUtil.CC_HOST,
-                    PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT, false);
-        }
     }
 }

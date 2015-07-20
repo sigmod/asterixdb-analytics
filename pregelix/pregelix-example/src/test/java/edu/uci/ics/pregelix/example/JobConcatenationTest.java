@@ -31,7 +31,7 @@ import edu.uci.ics.pregelix.example.PageRankVertex.SimplePageRankVertexOutputFor
 import edu.uci.ics.pregelix.example.data.VLongNormalizedKeyComputer;
 import edu.uci.ics.pregelix.example.inputformat.TextPageRankInputFormat;
 import edu.uci.ics.pregelix.example.util.TestCluster;
-import edu.uci.ics.pregelix.example.util.TestUtils;
+import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
 
 /**
  * @author yingyib
@@ -75,7 +75,7 @@ public class JobConcatenationTest {
             Driver driver = new Driver(PageRankVertex.class);
             driver.runJobs(jobs, "127.0.0.1", PregelixHyracksIntegrationUtil.TEST_HYRACKS_CC_CLIENT_PORT);
 
-            TestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
+            PregelixTestUtils.compareWithResultDir(new File(EXPECTEDPATH), new File(OUTPUTPAH));
         } catch (Exception e) {
             throw e;
         } finally {

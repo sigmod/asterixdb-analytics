@@ -17,10 +17,10 @@ package edu.uci.ics.external.connector.asterixdb;
 
 import edu.uci.ics.external.connector.api.IWriteConnector;
 import edu.uci.ics.external.connector.api.ParallelOperator;
+import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
@@ -52,8 +52,10 @@ public class WriteConnector implements IWriteConnector {
     }
 
     @Override
-    public IBinaryComparatorFactory[] getComparatorFactories() {
-        return datasetInfo.getPrimaryKeyComparatorFactories();
+    public PhysicalProperties getPhysicalProperties() {
+        return new PhysicalProperties(datasetInfo.getPrimaryKeyComparatorFactories(),
+                datasetInfo.getPrimaryKeyHashFunctionFactories(),
+                datasetInfo.getPrimaryKeyNormalizedKeyComputerFactory(), datasetInfo.getRecordDescriptor());
     }
 
     @Override
@@ -75,9 +77,9 @@ public class WriteConnector implements IWriteConnector {
         TreeIndexBulkLoadOperatorDescriptor writer = new TreeIndexBulkLoadOperatorDescriptor(jobSpec,
                 datasetInfo.getRecordDescriptor(), storageParameter.getStorageManagerInterface(),
                 storageParameter.getIndexLifecycleManagerProvider(), datasetInfo.getFileSplitProvider(),
-                datasetInfo.getTypeTraits(), getComparatorFactories(), datasetInfo.getSortFields(),
-                datasetInfo.getFieldPermutation(), DEFAULT_BTREE_FILL_FACTOR, true, BF_HINT, false,
-                asterixDataflowHelperFactory);
+                datasetInfo.getTypeTraits(), datasetInfo.getPrimaryKeyComparatorFactories(),
+                datasetInfo.getSortFields(), datasetInfo.getFieldPermutation(), DEFAULT_BTREE_FILL_FACTOR, true,
+                BF_HINT, false, asterixDataflowHelperFactory);
         return new ParallelOperator(writer, datasetInfo.getLocationConstraints());
     }
 }
