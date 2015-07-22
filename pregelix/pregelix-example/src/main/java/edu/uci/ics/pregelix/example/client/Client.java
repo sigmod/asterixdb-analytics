@@ -35,12 +35,6 @@ import edu.uci.ics.pregelix.example.ShortestPathsVertex;
 public class Client {
 
     private static class Options {
-        @Option(name = "-inputpaths", usage = "comma seprated input paths", required = true)
-        public String inputPaths;
-
-        @Option(name = "-outputpath", usage = "output path", required = true)
-        public String outputPath;
-
         @Option(name = "-ip", usage = "ip address of cluster controller", required = true)
         public String ipAddress;
 
@@ -76,6 +70,13 @@ public class Client {
 
         @Option(name = "-cust-prop", usage = "comma separated customized properties, for example: pregelix.xyz=abc,pregelix.efg=hij", required = false)
         public String customizedProperties = "";
+
+        @Option(name = "-inputpaths", usage = "comma seprated input paths", required = false)
+        public String inputPaths;
+
+        @Option(name = "-outputpath", usage = "output path", required = false)
+        public String outputPath;
+
     }
 
     public static void run(String[] args, PregelixJob job) throws Exception {
