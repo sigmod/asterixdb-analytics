@@ -21,6 +21,6 @@ create type Result as closed {
 
 create dataset rawweb(RawWebmap) primary key id;
 
-create dataset webmap(Webmap) primary key vertexid;
+create temporary dataset webmap(Webmap) primary key vertexid;
 
-create temporary dataset results(Result) primary key vertexid;
+create dataset results(Result) primary key vertexid;

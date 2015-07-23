@@ -1,0 +1,6 @@
+use dataverse graph;
+
+drop dataset webmap;
+drop dataset results;
+drop dataset rawweb;
+drop dataverse graph;

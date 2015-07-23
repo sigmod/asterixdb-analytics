@@ -49,6 +49,12 @@ public class WriteConnector implements IWriteConnector {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+        // The write connector can ONLY write to a temporary dataset.
+        // Otherwise, the transactional properties of permanent datasets will be borken.
+        if (!datasetInfo.getTemp()) {
+            throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
+                    + storageParameter.getDatasetName() + " is not a temporary dataset");
+        }
     }
 
     @Override

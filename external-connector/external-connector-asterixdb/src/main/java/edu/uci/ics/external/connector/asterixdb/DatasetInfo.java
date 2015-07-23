@@ -42,6 +42,7 @@ public class DatasetInfo {
     private final String[] locationConstraints;
     private final IFileSplitProvider fileSplitProvider;
     private final ARecordType recordType;
+    private final boolean temp;
     private final int[] sortFields;
     private final int[] fieldPermutation;
 
@@ -52,10 +53,11 @@ public class DatasetInfo {
 
     @SuppressWarnings("rawtypes")
     public DatasetInfo(String[] locationConstraints, IFileSplitProvider fileSplitProvider, ARecordType recordType,
-            String[] primaryKeyFields) throws Exception {
+            String[] primaryKeyFields, boolean temp) throws Exception {
         this.locationConstraints = locationConstraints;
         this.fileSplitProvider = fileSplitProvider;
         this.recordType = recordType;
+        this.temp = temp;
         this.primaryKeyBinaryComparatorFactories = new IBinaryComparatorFactory[primaryKeyFields.length];
         this.primaryKeyBinaryHashFunctionFactories = new IBinaryHashFunctionFactory[primaryKeyFields.length];
 
@@ -133,6 +135,10 @@ public class DatasetInfo {
 
     public ITypeTraits[] getTypeTraits() {
         return recordDescriptor.getTypeTraits();
+    }
+
+    public boolean getTemp() {
+        return temp;
     }
 
 }

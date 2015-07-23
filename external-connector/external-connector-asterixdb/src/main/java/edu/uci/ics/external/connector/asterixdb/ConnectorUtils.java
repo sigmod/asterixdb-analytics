@@ -71,13 +71,20 @@ public class ConnectorUtils {
             JSONTokener tokener = new JSONTokener(new InputStreamReader(new ByteArrayInputStream(responseBody)));
             JSONObject response = new JSONObject(tokener);
 
+            // Checks if there are errors.
+            String error = "error";
+            if (response.has(error)) {
+                throw new IllegalStateException("AsterixDB returned errors: " + response.getString(error));
+            }
+
             // Extracts record type and file partitions.
+            boolean temp = extractTempInfo(response);
             ARecordType recordType = extractRecordType(response);
             List<FilePartition> filePartitions = extractFilePartitions(response);
             IFileSplitProvider fileSplitProvider = createFileSplitProvider(storageParameter, filePartitions);
             String[] locations = getScanLocationConstraints(filePartitions, storageParameter.getIpToNcNames());
             String[] primaryKeys = response.getString("keys").split(",");
-            DatasetInfo datasetInfo = new DatasetInfo(locations, fileSplitProvider, recordType, primaryKeys);
+            DatasetInfo datasetInfo = new DatasetInfo(locations, fileSplitProvider, recordType, primaryKeys, temp);
             return datasetInfo;
         } catch (HttpException e) {
             System.err.println("Fatal protocol violation: " + e.getMessage());
@@ -109,6 +116,11 @@ public class ConnectorUtils {
             splits[i++] = new FileSplit(ncName, path, p.getIODeviceId());
         }
         return new ConstantFileSplitProvider(splits);
+    }
+
+    // Extracts the info indicating whether the dataset is temp or not
+    private static boolean extractTempInfo(JSONObject response) throws Exception {
+        return response.has("temp") ? response.getBoolean("temp") : false;
     }
 
     // Extracts the record type of a dataset from the AsterixDB REST response.

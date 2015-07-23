@@ -33,5 +33,17 @@
                 <output-dir compare="Text">cc</output-dir>
             </compilation-unit>
         </test-case>
+        <test-case FilePath="graph">
+            <compilation-unit name="sssp-fail">
+                <output-dir compare="Text">sssp-fail</output-dir>
+                <expected-error>java.lang.IllegalStateException</expected-error>
+            </compilation-unit>
+        </test-case>
+        <test-case FilePath="graph">
+            <compilation-unit name="cc-fail">
+                <output-dir compare="Text">cc-fail</output-dir>
+                <expected-error>java.lang.IllegalStateException</expected-error>
+            </compilation-unit>
+        </test-case>
     </test-group>
 </test-suite>
