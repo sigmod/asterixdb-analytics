@@ -97,13 +97,17 @@ public class Client {
         CmdLineParser parser = new CmdLineParser(options);
         parser.parseArgument(args);
 
-        String[] inputs = options.inputPaths.split(",");
+        if (options.inputPaths != null) {
+            String[] inputs = options.inputPaths.split(",");
 
-        FileInputFormat.setInputPaths(job, inputs[0]);
-        for (int i = 1; i < inputs.length; i++) {
-            FileInputFormat.addInputPaths(job, inputs[i]);
+            FileInputFormat.setInputPaths(job, inputs[0]);
+            for (int i = 1; i < inputs.length; i++) {
+                FileInputFormat.addInputPaths(job, inputs[i]);
+            }
         }
-        FileOutputFormat.setOutputPath(job, new Path(options.outputPath));
+        if (options.outputPath != null) {
+            FileOutputFormat.setOutputPath(job, new Path(options.outputPath));
+        }
         setJobSpecificSettings(job, options);
         return options;
     }

@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -41,14 +42,17 @@ import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
 import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 
 public class ConnectorUtils {
+    private static final Logger LOGGER = Logger.getLogger(ConnectorUtils.class.getName());
 
     // Retrieves the type and partition information of the target AsterixDB dataset.
     public static DatasetInfo retrieveDatasetInfo(StorageParameter storageParameter) throws Exception {
         HttpClient client = new HttpClient();
 
+        String requestStr = storageParameter.getServiceURL() + "?dataverseName=" + storageParameter.getDataverseName()
+                + "&datasetName=" + storageParameter.getDatasetName();
+        LOGGER.info("REST requesting " + requestStr);
         // Create a method instance.
-        GetMethod method = new GetMethod(storageParameter.getServiceURL() + "?dataverseName="
-                + storageParameter.getDataverseName() + "&datasetName=" + storageParameter.getDatasetName());
+        GetMethod method = new GetMethod(requestStr);
 
         // Provide custom retry handler is necessary
         method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));

@@ -71,7 +71,7 @@ public class JobGenerator {
         job.setUseAsterixDBDataSource(true);
         job.setUseAsterixDBDataSink(true);
         job.setAsterixDBInputDataverse(DATAVERSE);
-        job.setAsterixDBInputDataset(INPUT_DATASET);
+        job.setAsterixDBInputDataset("webmap2");
         job.setAsterixDBInputConverterClass(VLongIdInputVertexConverter.class);
         job.setAsterixDBOutputDataverse(DATAVERSE);
         job.setAsterixDBOutputDataset(OUTPUT_DATASET);

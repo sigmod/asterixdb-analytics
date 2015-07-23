@@ -20,11 +20,11 @@ import edu.uci.ics.external.connector.api.ParallelOperator;
 import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
+import edu.uci.ics.external.connector.asterixdb.dataflow.helper.AsterixDBLSMBTreeDataflowHelperFactory;
 import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
 import edu.uci.ics.hyracks.api.job.JobSpecification;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
 import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.lsm.btree.dataflow.LSMBTreeDataflowHelperFactory;
 import edu.uci.ics.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
 import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
 import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
@@ -67,7 +67,7 @@ public class WriteConnector implements IWriteConnector {
 
     @Override
     public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
-        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
+        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new AsterixDBLSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
                 SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true,

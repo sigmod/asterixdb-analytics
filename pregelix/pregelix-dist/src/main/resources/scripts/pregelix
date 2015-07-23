@@ -89,6 +89,8 @@ then
   REPO="$BASEDIR"/lib
 fi
 
+zip -d $1 META-INF/LICENSE &> /dev/null
+
 CLASSPATH=$CLASSPATH_PREFIX:"$HADOOP_HOME"/conf:/etc/hadoop/conf:"$BASEDIR"/etc:$1
 
 # For Cygwin, switch paths to Windows format before running java

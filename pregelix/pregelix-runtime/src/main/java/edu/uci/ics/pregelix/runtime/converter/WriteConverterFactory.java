@@ -52,6 +52,7 @@ public class WriteConverterFactory implements IWriteConverterFactory {
         ContextFactory ctxFactory = new ContextFactory();
         TaskAttemptContext mapperContext = ctxFactory.createContext(conf, partitionId);
         mapperContext.getConfiguration().setClassLoader(ctx.getJobletContext().getClassLoader());
+        conf.setClassLoader(ctx.getJobletContext().getClassLoader());
         IterationUtils.setJobContext(BspUtils.getJobId(conf), ctx, mapperContext);
         Vertex.taskContext = mapperContext;
 

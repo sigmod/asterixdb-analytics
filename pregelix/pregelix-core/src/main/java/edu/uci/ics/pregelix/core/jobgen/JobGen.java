@@ -345,6 +345,7 @@ public abstract class JobGen implements IJobGen {
         JobSpecification spec = new JobSpecification(frameSize);
 
         ConstantTupleSourceOperatorDescriptor emptyTupleSource = getEmptyTupleSourceOperatorDescriptor(spec);
+        setLocationConstraint(spec, emptyTupleSource);
 
         /**
          * construct btree search operator
@@ -691,6 +692,7 @@ public abstract class JobGen implements IJobGen {
         JobSpecification spec = new JobSpecification(frameSize);
 
         ConstantTupleSourceOperatorDescriptor emptyTupleSource = getEmptyTupleSourceOperatorDescriptor(spec);
+        setLocationConstraint(spec, emptyTupleSource);
 
         /**
          * construct btree search operator
@@ -761,7 +763,6 @@ public abstract class JobGen implements IJobGen {
         RecordDescriptor keyRecDesc = new RecordDescriptor(keyRecDescSers);
         ConstantTupleSourceOperatorDescriptor emptyTupleSource = new ConstantTupleSourceOperatorDescriptor(spec,
                 keyRecDesc, tb.getFieldEndOffsets(), tb.getByteArray(), tb.getSize());
-        setLocationConstraint(spec, emptyTupleSource);
         return emptyTupleSource;
     }
 
@@ -772,6 +773,7 @@ public abstract class JobGen implements IJobGen {
         JobSpecification spec = new JobSpecification(frameSize);
 
         ConstantTupleSourceOperatorDescriptor emptyTupleSource = getEmptyTupleSourceOperatorDescriptor(spec);
+        setLocationConstraint(spec, emptyTupleSource);
 
         /**
          * construct btree search operator
