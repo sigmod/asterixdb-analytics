@@ -1,0 +1,5 @@
+use dataverse graph;
+
+for $r in dataset results
+order by $r.vertexid
+return $r;

@@ -15,19 +15,18 @@
 
 package edu.uci.ics.external.connector.asterixdb;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,33 +41,28 @@ import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
 import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 
 public class ConnectorUtils {
-    private static final Logger LOGGER = Logger.getLogger(ConnectorUtils.class.getName());
 
     // Retrieves the type and partition information of the target AsterixDB dataset.
     public static DatasetInfo retrieveDatasetInfo(StorageParameter storageParameter) throws Exception {
         HttpClient client = new HttpClient();
-
-        String requestStr = storageParameter.getServiceURL() + "?dataverseName=" + storageParameter.getDataverseName()
-                + "&datasetName=" + storageParameter.getDatasetName();
-        LOGGER.info("REST requesting " + requestStr);
+        String requestStr = storageParameter.getServiceURL() + "/connector" + "?dataverseName="
+                + storageParameter.getDataverseName() + "&datasetName=" + storageParameter.getDatasetName();
         // Create a method instance.
         GetMethod method = new GetMethod(requestStr);
 
         // Provide custom retry handler is necessary
         method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
 
+        // Deals with the response.
+        // Executes the method.
         try {
-            // Executes the method.
             int statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
                 System.err.println("Method failed: " + method.getStatusLine());
             }
 
-            // Reads the response body.
-            byte[] responseBody = method.getResponseBody();
-
             // Deals with the response.
-            JSONTokener tokener = new JSONTokener(new InputStreamReader(new ByteArrayInputStream(responseBody)));
+            JSONTokener tokener = new JSONTokener(new InputStreamReader(method.getResponseBodyAsStream()));
             JSONObject response = new JSONObject(tokener);
 
             // Checks if there are errors.
@@ -86,18 +80,50 @@ public class ConnectorUtils {
             String[] primaryKeys = response.getString("keys").split(",");
             DatasetInfo datasetInfo = new DatasetInfo(locations, fileSplitProvider, recordType, primaryKeys, temp);
             return datasetInfo;
-        } catch (HttpException e) {
-            System.err.println("Fatal protocol violation: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } catch (IOException e) {
-            System.err.println("Fatal transport error: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception e) {
             throw e;
         } finally {
-            // Release the connection.
             method.releaseConnection();
         }
+    }
+
+    public static void cleanDataset(StorageParameter storageParameter, DatasetInfo datasetInfo) throws Exception {
+        // DDL service URL.
+        String url = storageParameter.getServiceURL() + "/ddl";
+        // Builds the DDL string to delete and (re-)create the sink datset.
+        StringBuilder ddlBuilder = new StringBuilder();
+        // use dataverse statement.
+        ddlBuilder.append("use dataverse ");
+        ddlBuilder.append(storageParameter.getDataverseName());
+        ddlBuilder.append(";");
+
+        // drop dataset statement.
+        ddlBuilder.append("drop dataset ");
+        ddlBuilder.append(storageParameter.getDatasetName());
+        ddlBuilder.append(";");
+
+        // create datset statement.
+        ddlBuilder.append("create temporary dataset ");
+        ddlBuilder.append(storageParameter.getDatasetName());
+        ddlBuilder.append("(");
+        ddlBuilder.append(datasetInfo.getRecordType().getTypeName());
+        ddlBuilder.append(")");
+        ddlBuilder.append(" primary key ");
+        for (String primaryKey : datasetInfo.getPrimaryKeyFields()) {
+            ddlBuilder.append(primaryKey);
+            ddlBuilder.append(",");
+        }
+        ddlBuilder.delete(ddlBuilder.length() - 1, ddlBuilder.length());
+        ddlBuilder.append(";");
+
+        // Create a method instance.
+        PostMethod method = new PostMethod(url);
+        method.setRequestEntity(new StringRequestEntity(ddlBuilder.toString()));
+        // Provide custom retry handler is necessary
+        method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new DefaultHttpMethodRetryHandler(3, false));
+
+        // Execute the method.
+        executeHttpMethod(method);
     }
 
     // Creates file split provider for BTree operators.
@@ -152,5 +178,29 @@ public class ConnectorUtils {
             locations[i] = ncNames.get(0);
         }
         return locations;
+    }
+
+    // Executes a HTTP method.
+    private static int executeHttpMethod(HttpMethod method) throws Exception {
+        HttpClient client = new HttpClient();
+        int statusCode;
+        try {
+            statusCode = client.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK) {
+                JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(
+                        method.getResponseBodyAsStream())));
+                if (result.has("error-code")) {
+                    String[] errors = { result.getJSONArray("error-code").getString(0), result.getString("summary"),
+                            result.getString("stacktrace") };
+                    throw new Exception("HTTP operation failed: " + errors[0] + "\nSTATUS LINE: "
+                            + method.getStatusLine() + "\nSUMMARY: " + errors[1] + "\nSTACKTRACE: " + errors[2]);
+                }
+            }
+            return statusCode;
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            method.releaseConnection();
+        }
     }
 }

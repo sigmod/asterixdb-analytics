@@ -43,7 +43,7 @@ public class StorageParameter {
         this.storageManagerInterface = storageManagerInterface;
         this.indexLifecycleManagerProvider = indexLifecycleManagerProvider;
         this.mergePolicyProperties = mergePolicyProperties;
-        this.serviceURL = serviceURL + "/connector";
+        this.serviceURL = serviceURL;
         this.dataverseName = dataverseName;
         this.datasetName = datasetName;
         this.ipToNcNames = ipToNcNames;

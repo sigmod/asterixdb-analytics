@@ -46,15 +46,25 @@ public class WriteConnector implements IWriteConnector {
         try {
             // Retrieve dataset info from the AsterixDB REST service.
             datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
+
+            // The write connector can ONLY write to a temporary dataset.
+            // Otherwise, the transactional properties of permanent datasets will be borken.
+            if (!datasetInfo.getTemp()) {
+                throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
+                        + storageParameter.getDatasetName() + " is not a temporary dataset");
+            }
+            // Cleans up the dataset to write.
+            ConnectorUtils.cleanDataset(storageParameter, datasetInfo);
+            // Retrieves the new dataset info again in case the physical file locations are changed.
+            datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
+            if (!datasetInfo.getTemp()) {
+                throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
+                        + storageParameter.getDatasetName() + " is not a temporary dataset");
+            }
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
-        // The write connector can ONLY write to a temporary dataset.
-        // Otherwise, the transactional properties of permanent datasets will be borken.
-        if (!datasetInfo.getTemp()) {
-            throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
-                    + storageParameter.getDatasetName() + " is not a temporary dataset");
-        }
+
     }
 
     @Override
