@@ -808,7 +808,8 @@ public abstract class JobGen implements IJobGen {
 
         // The default location constraint.
         String[] locations = ClusterConfig.getLocationConstraint();
-        WriteConnector writeConnector = new WriteConnector(storageParameter, new WriteConverterFactory(confFactory));
+        WriteConnector writeConnector = new WriteConnector(storageParameter, new WriteConverterFactory(confFactory),
+                BspUtils.getAsterixDBOutputCleanup(conf));
         PhysicalProperties physicalProperties = writeConnector.getPhysicalProperties();
 
         // Transform operator

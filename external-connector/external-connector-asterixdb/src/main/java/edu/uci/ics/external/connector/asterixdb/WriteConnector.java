@@ -40,7 +40,8 @@ public class WriteConnector implements IWriteConnector {
 
     private DatasetInfo datasetInfo = null;
 
-    public WriteConnector(StorageParameter storageParameter, IWriteConverterFactory writeConverterFactory) {
+    public WriteConnector(StorageParameter storageParameter, IWriteConverterFactory writeConverterFactory,
+            boolean cleanup) {
         this.storageParameter = storageParameter;
         this.writeConverterFactory = writeConverterFactory;
         try {
@@ -53,13 +54,15 @@ public class WriteConnector implements IWriteConnector {
                 throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
                         + storageParameter.getDatasetName() + " is not a temporary dataset");
             }
-            // Cleans up the dataset to write.
-            ConnectorUtils.cleanDataset(storageParameter, datasetInfo);
-            // Retrieves the new dataset info again in case the physical file locations are changed.
-            datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
-            if (!datasetInfo.getTemp()) {
-                throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
-                        + storageParameter.getDatasetName() + " is not a temporary dataset");
+            if (cleanup) {
+                // Cleans up the dataset to write.
+                ConnectorUtils.cleanDataset(storageParameter, datasetInfo);
+                // Retrieves the new dataset info again in case the physical file locations are changed.
+                datasetInfo = ConnectorUtils.retrieveDatasetInfo(storageParameter);
+                if (!datasetInfo.getTemp()) {
+                    throw new IllegalStateException("The result dataset " + storageParameter.getDataverseName() + "."
+                            + storageParameter.getDatasetName() + " is not a temporary dataset");
+                }
             }
         } catch (Exception e) {
             throw new IllegalStateException(e);

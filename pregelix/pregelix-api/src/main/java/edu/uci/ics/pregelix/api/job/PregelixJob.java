@@ -140,6 +140,8 @@ public class PregelixJob extends Job {
     public static final String ASTERIXDB_INPUT_VERTEX_CONVERTER_CLASS = "pregelix.asterixdb.input.converterclass";
     /** the output vertex to AsterixDB record converter class */
     public static final String ASTERIXDB_OUTPUT_VERTEX_CONVERTER_CLASS = "pregelix.asterixdb.output.converterclass";
+    /** whether to clean up the target AsterixDB dataset */
+    public static final String ASTERIXDB_CLEAN_OUTPUT_DATASET = "pregelix.asterixdb.output.cleanup";
 
     /**
      * Construct a Pregelix job from an existing configuration
@@ -518,6 +520,15 @@ public class PregelixJob extends Job {
     final public void setAsterixDBOutputConverterClass(Class<? extends VertexOutputConverter> outputConverterClass) {
         getConfiguration().setClass(ASTERIXDB_OUTPUT_VERTEX_CONVERTER_CLASS, outputConverterClass,
                 VertexOutputConverter.class);
+    }
+
+    /**
+     * Sets whether to cleanup the output AsterixDB dataset.
+     *
+     * @param cleanup
+     */
+    final public void setAsterixDBOutputCleanup(boolean cleanup) {
+        getConfiguration().setBoolean(ASTERIXDB_CLEAN_OUTPUT_DATASET, cleanup);
     }
 
     @Override

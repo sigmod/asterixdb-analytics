@@ -937,6 +937,13 @@ public class BspUtils {
         }
     }
 
+    /**
+     * Gets whether to cleanup the AsterixDB output dataset.
+     */
+    public static boolean getAsterixDBOutputCleanup(Configuration conf) {
+        return conf.getBoolean(PregelixJob.ASTERIXDB_CLEAN_OUTPUT_DATASET, true);
+    }
+
     public static Writable readGlobalAggregateValue(Configuration conf, String jobId, String aggClassName)
             throws HyracksDataException {
         try {
