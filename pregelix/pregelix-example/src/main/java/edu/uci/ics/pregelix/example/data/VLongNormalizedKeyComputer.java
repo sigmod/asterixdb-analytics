@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ public class VLongNormalizedKeyComputer implements NormalizedKeyComputer {
         try {
             long value = SerDeUtils.readVLong(bytes, start, length);
             int highValue = (int) (value >> 32);
-            if (highValue > 0) {
+            if (value > Integer.MAX_VALUE) {
                 /**
                  * larger than Integer.MAX
                  */
@@ -39,7 +39,7 @@ public class VLongNormalizedKeyComputer implements NormalizedKeyComputer {
                 highNmk >>= 2;
                 highNmk |= POSTIVE_LONG_MASK;
                 return highNmk;
-            } else if (highValue == 0) {
+            } else if (value >= 0 && value <= Integer.MAX_VALUE) {
                 /**
                  * smaller than Integer.MAX but >=0
                  */
@@ -62,8 +62,8 @@ public class VLongNormalizedKeyComputer implements NormalizedKeyComputer {
     }
 
     private int getKey(int value) {
-        long unsignedFirstValue = (long) value;
-        int nmk = (int) ((unsignedFirstValue - ((long) Integer.MIN_VALUE)) & 0xffffffffL);
+        long unsignedFirstValue = value;
+        int nmk = (int) ((unsignedFirstValue - (Integer.MIN_VALUE)) & 0xffffffffL);
         return nmk;
     }
 
