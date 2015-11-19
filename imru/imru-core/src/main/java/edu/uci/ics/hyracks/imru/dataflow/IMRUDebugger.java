@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

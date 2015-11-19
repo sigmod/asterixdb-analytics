@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.hdfs;
+package org.apache.hyracks.imru.example.hdfs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,12 +21,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-import edu.uci.ics.hyracks.imru.api.DataWriter;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.api.IMRUDataException;
-import edu.uci.ics.hyracks.imru.api.IMRUReduceContext;
-import edu.uci.ics.hyracks.imru.example.utils.Client;
+import org.apache.hyracks.imru.api.DataWriter;
+import org.apache.hyracks.imru.api.IIMRUJob;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.api.IMRUDataException;
+import org.apache.hyracks.imru.api.IMRUReduceContext;
+import org.apache.hyracks.imru.example.utils.Client;
 
 /**
  * This example demonstrate how data flows through IMRU.

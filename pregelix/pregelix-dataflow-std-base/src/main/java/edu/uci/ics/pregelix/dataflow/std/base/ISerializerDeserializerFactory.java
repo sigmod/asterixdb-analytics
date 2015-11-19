@@ -18,7 +18,7 @@ import java.io.Serializable;
 
 import org.apache.hadoop.conf.Configuration;
 
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
 
 public interface ISerializerDeserializerFactory<T> extends Serializable {
 

@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.data;
+package org.apache.hyracks.imru.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -6,14 +6,14 @@ import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
-import edu.uci.ics.hyracks.api.comm.FrameHelper;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.dataflow.IMRUDebugger;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.comm.FrameHelper;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.comm.util.FrameUtils;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.dataflow.IMRUDebugger;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * Split binary data into many data frames

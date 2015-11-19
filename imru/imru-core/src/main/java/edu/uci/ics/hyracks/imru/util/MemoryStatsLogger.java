@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.util;
+package org.apache.hyracks.imru.util;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

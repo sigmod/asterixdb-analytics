@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -24,31 +24,31 @@ import java.util.Vector;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.io.FileReference;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.common.io.RunFileWriter;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractOperatorNodePushable;
-import edu.uci.ics.hyracks.imru.api.ASyncIO;
-import edu.uci.ics.hyracks.imru.api.ASyncInputStream;
-import edu.uci.ics.hyracks.imru.api.DataWriter;
-import edu.uci.ics.hyracks.imru.api.FrameWriter;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.api.TupleReader;
-import edu.uci.ics.hyracks.imru.data.RunFileContext;
-import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
-import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.MapTaskState;
-import edu.uci.ics.hyracks.imru.util.IterationUtils;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.io.FileReference;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.common.io.RunFileWriter;
+import org.apache.hyracks.dataflow.std.base.AbstractOperatorNodePushable;
+import org.apache.hyracks.imru.api.ASyncIO;
+import org.apache.hyracks.imru.api.ASyncInputStream;
+import org.apache.hyracks.imru.api.DataWriter;
+import org.apache.hyracks.imru.api.FrameWriter;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.api.TupleReader;
+import org.apache.hyracks.imru.data.RunFileContext;
+import org.apache.hyracks.imru.file.ConfigurationFactory;
+import org.apache.hyracks.imru.file.IMRUFileSplit;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
+import org.apache.hyracks.imru.runtime.bootstrap.MapTaskState;
+import org.apache.hyracks.imru.util.IterationUtils;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * Parses input data from files in HDFS and caches it on the local

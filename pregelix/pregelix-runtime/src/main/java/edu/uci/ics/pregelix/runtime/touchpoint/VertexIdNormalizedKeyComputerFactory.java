@@ -14,8 +14,8 @@
  */
 package edu.uci.ics.pregelix.runtime.touchpoint;
 
-import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputer;
-import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
+import org.apache.hyracks.api.dataflow.value.INormalizedKeyComputer;
+import org.apache.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
 import edu.uci.ics.pregelix.api.graph.NormalizedKeyComputer;
 
 /**

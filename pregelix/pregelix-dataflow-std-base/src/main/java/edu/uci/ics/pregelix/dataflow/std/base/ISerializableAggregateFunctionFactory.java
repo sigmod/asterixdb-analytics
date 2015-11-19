@@ -16,9 +16,9 @@ package edu.uci.ics.pregelix.dataflow.std.base;
 
 import java.io.Serializable;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksException;
 
 public interface ISerializableAggregateFunctionFactory extends Serializable {
     public ISerializableAggregateFunction createAggregateFunction(IHyracksTaskContext ctx, IFrameWriter writer)

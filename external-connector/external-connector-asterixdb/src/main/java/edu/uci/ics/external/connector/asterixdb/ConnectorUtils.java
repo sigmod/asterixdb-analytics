@@ -33,12 +33,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import edu.uci.ics.asterix.om.types.ARecordType;
-import edu.uci.ics.asterix.om.util.JSONDeserializerForTypes;
+import org.apache.asterix.om.types.ARecordType;
+import org.apache.asterix.om.util.JSONDeserializerForTypes;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
-import edu.uci.ics.hyracks.dataflow.std.file.ConstantFileSplitProvider;
-import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
-import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
+import org.apache.hyracks.dataflow.std.file.ConstantFileSplitProvider;
+import org.apache.hyracks.dataflow.std.file.FileSplit;
+import org.apache.hyracks.dataflow.std.file.IFileSplitProvider;
 
 public class ConnectorUtils {
 

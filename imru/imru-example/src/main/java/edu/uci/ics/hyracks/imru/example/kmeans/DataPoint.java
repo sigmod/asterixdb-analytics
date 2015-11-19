@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.kmeans;
+package org.apache.hyracks.imru.example.kmeans;
 
 import java.io.Serializable;
 

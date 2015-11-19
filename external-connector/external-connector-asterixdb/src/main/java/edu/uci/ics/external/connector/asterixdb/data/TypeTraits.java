@@ -15,7 +15,7 @@
 
 package edu.uci.ics.external.connector.asterixdb.data;
 
-import edu.uci.ics.hyracks.api.dataflow.value.ITypeTraits;
+import org.apache.hyracks.api.dataflow.value.ITypeTraits;
 
 public class TypeTraits implements ITypeTraits {
 

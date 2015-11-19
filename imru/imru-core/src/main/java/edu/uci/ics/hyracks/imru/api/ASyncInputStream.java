@@ -1,9 +1,9 @@
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.io.IOException;
 import java.util.Iterator;
 
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.imru.util.Rt;
 
 public class ASyncInputStream extends java.io.InputStream {
     private ASyncIO<byte[]> io;

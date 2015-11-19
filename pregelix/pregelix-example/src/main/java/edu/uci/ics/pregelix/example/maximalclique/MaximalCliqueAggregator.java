@@ -17,7 +17,7 @@ package edu.uci.ics.pregelix.example.maximalclique;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.VLongWritable;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.GlobalAggregator;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 

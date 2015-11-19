@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.file;
+package org.apache.hyracks.imru.file;
 
 import java.io.IOException;
 import java.io.InputStream;

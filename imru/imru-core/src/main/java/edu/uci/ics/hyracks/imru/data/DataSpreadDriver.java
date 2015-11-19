@@ -1,19 +1,19 @@
-package edu.uci.ics.hyracks.imru.data;
+package org.apache.hyracks.imru.data;
 
 import java.io.File;
 import java.util.EnumSet;
 import java.util.logging.Logger;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.client.IHyracksClientConnection;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobFlag;
-import edu.uci.ics.hyracks.api.job.JobId;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.api.job.JobStatus;
-import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.client.IHyracksClientConnection;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobFlag;
+import org.apache.hyracks.api.job.JobId;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobStatus;
+import org.apache.hyracks.imru.jobgen.IMRUJobFactory;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRUConnection;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * Distribute data to the cluster in logN steps

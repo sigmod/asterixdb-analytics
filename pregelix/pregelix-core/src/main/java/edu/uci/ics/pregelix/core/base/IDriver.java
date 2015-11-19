@@ -17,7 +17,7 @@ package edu.uci.ics.pregelix.core.base;
 
 import java.util.List;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.exceptions.HyracksException;
 import edu.uci.ics.pregelix.api.job.PregelixJob;
 
 public interface IDriver {

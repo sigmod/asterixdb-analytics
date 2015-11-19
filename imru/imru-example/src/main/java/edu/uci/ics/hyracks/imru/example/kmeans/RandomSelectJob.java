@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.kmeans;
+package org.apache.hyracks.imru.example.kmeans;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,10 +21,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-import edu.uci.ics.hyracks.imru.api.DataWriter;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.api.IMRUDataException;
+import org.apache.hyracks.imru.api.DataWriter;
+import org.apache.hyracks.imru.api.IIMRUJob;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.api.IMRUDataException;
 
 /**
  * Random select data examples as centroids

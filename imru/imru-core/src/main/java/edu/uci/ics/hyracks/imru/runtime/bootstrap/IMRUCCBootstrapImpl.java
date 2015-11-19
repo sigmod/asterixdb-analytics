@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.uci.ics.hyracks.imru.runtime.bootstrap;
+package org.apache.hyracks.imru.runtime.bootstrap;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +35,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import edu.uci.ics.hyracks.api.application.ICCApplicationContext;
-import edu.uci.ics.hyracks.api.application.ICCApplicationEntryPoint;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.application.ICCApplicationContext;
+import org.apache.hyracks.api.application.ICCApplicationEntryPoint;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * The bootstrap class of the application that will manage its life cycle at the

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.utils;
+package org.apache.hyracks.imru.example.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,7 +27,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.imru.util.Rt;
 
 public class CreateHar {
     public static void copy(InputStream in, OutputStream out)

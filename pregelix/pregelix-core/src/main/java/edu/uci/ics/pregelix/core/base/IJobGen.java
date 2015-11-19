@@ -15,8 +15,8 @@
 
 package edu.uci.ics.pregelix.core.base;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.job.JobSpecification;
 
 public interface IJobGen {
 

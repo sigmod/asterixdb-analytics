@@ -20,8 +20,8 @@ import java.io.File;
 
 import org.apache.hadoop.fs.Path;
 
-import edu.uci.ics.asterix.test.aql.TestsExecutor;
-import edu.uci.ics.asterix.testframework.context.TestFileContext;
+import org.apache.asterix.test.aql.TestsExecutor;
+import org.apache.asterix.testframework.context.TestFileContext;
 import edu.uci.ics.pregelix.api.job.PregelixJob;
 import edu.uci.ics.pregelix.core.base.IDriver.Plan;
 import edu.uci.ics.pregelix.core.driver.Driver;

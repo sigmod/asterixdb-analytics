@@ -24,14 +24,14 @@ import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.data.accessors.ITupleReference;
-import edu.uci.ics.hyracks.dataflow.common.util.ReflectionUtils;
-import edu.uci.ics.hyracks.hdfs.ContextFactory;
-import edu.uci.ics.hyracks.hdfs.api.ITupleWriter;
-import edu.uci.ics.hyracks.hdfs.api.ITupleWriterFactory;
-import edu.uci.ics.hyracks.hdfs2.dataflow.ConfFactory;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.data.accessors.ITupleReference;
+import org.apache.hyracks.dataflow.common.util.ReflectionUtils;
+import org.apache.hyracks.hdfs.ContextFactory;
+import org.apache.hyracks.hdfs.api.ITupleWriter;
+import org.apache.hyracks.hdfs.api.ITupleWriterFactory;
+import org.apache.hyracks.hdfs2.dataflow.ConfFactory;
 import edu.uci.ics.pregelix.api.util.ResetableByteArrayInputStream;
 
 /**

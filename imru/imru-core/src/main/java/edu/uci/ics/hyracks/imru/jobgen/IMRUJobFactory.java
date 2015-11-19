@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.jobgen;
+package org.apache.hyracks.imru.jobgen;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,42 +29,42 @@ import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.TextInputFormat;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IConnectorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
-import edu.uci.ics.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.connectors.MToNReplicatingConnectorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
-import edu.uci.ics.hyracks.hdfs.api.IKeyValueParser;
-import edu.uci.ics.hyracks.hdfs.api.IKeyValueParserFactory;
-import edu.uci.ics.hyracks.hdfs.dataflow.HDFSReadOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.api.TupleWriter;
-import edu.uci.ics.hyracks.imru.dataflow.DataGeneratorOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.DataLoadOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.HDFSBlockFormat;
-import edu.uci.ics.hyracks.imru.dataflow.HDFSBlockWriter;
-import edu.uci.ics.hyracks.imru.dataflow.HDFSOD;
-import edu.uci.ics.hyracks.imru.dataflow.IMRUOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.MapOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.ReduceOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.SpreadConnectorDescriptor;
-import edu.uci.ics.hyracks.imru.dataflow.SpreadOD;
-import edu.uci.ics.hyracks.imru.dataflow.UpdateOperatorDescriptor;
-import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
-import edu.uci.ics.hyracks.imru.file.IMRUInputSplitProvider;
-import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.constraints.PartitionConstraintHelper;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IConnectorDescriptor;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
+import org.apache.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
+import org.apache.hyracks.dataflow.std.connectors.MToNReplicatingConnectorDescriptor;
+import org.apache.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
+import org.apache.hyracks.hdfs.api.IKeyValueParser;
+import org.apache.hyracks.hdfs.api.IKeyValueParserFactory;
+import org.apache.hyracks.hdfs.dataflow.HDFSReadOperatorDescriptor;
+import org.apache.hyracks.imru.api.IIMRUDataGenerator;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.api.TupleWriter;
+import org.apache.hyracks.imru.dataflow.DataGeneratorOperatorDescriptor;
+import org.apache.hyracks.imru.dataflow.DataLoadOperatorDescriptor;
+import org.apache.hyracks.imru.dataflow.HDFSBlockFormat;
+import org.apache.hyracks.imru.dataflow.HDFSBlockWriter;
+import org.apache.hyracks.imru.dataflow.HDFSOD;
+import org.apache.hyracks.imru.dataflow.IMRUOperatorDescriptor;
+import org.apache.hyracks.imru.dataflow.MapOperatorDescriptor;
+import org.apache.hyracks.imru.dataflow.ReduceOperatorDescriptor;
+import org.apache.hyracks.imru.dataflow.SpreadConnectorDescriptor;
+import org.apache.hyracks.imru.dataflow.SpreadOD;
+import org.apache.hyracks.imru.dataflow.UpdateOperatorDescriptor;
+import org.apache.hyracks.imru.file.ConfigurationFactory;
+import org.apache.hyracks.imru.file.IMRUInputSplitProvider;
+import org.apache.hyracks.imru.file.IMRUFileSplit;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRUConnection;
 
 /**
  * Generates JobSpecifications for iterations of iterative map reduce

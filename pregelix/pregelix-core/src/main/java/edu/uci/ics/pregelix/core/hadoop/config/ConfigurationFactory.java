@@ -17,8 +17,8 @@ package edu.uci.ics.pregelix.core.hadoop.config;
 
 import org.apache.hadoop.conf.Configuration;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.util.SerDeUtils;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
 

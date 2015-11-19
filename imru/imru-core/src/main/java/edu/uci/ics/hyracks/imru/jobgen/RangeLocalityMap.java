@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.jobgen;
+package org.apache.hyracks.imru.jobgen;
 
-import edu.uci.ics.hyracks.dataflow.std.connectors.ILocalityMap;
+import org.apache.hyracks.dataflow.std.connectors.ILocalityMap;
 
 class RangeLocalityMap implements ILocalityMap {
 

@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.kmeans;
+package org.apache.hyracks.imru.example.kmeans;
 
-import edu.uci.ics.hyracks.imru.example.utils.Client;
+import org.apache.hyracks.imru.example.utils.Client;
 
 /**
  * Start a local cluster within the process and run the kmeans example.

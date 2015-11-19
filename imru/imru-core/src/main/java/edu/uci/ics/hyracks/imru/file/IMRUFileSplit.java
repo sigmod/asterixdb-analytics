@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.file;
+package org.apache.hyracks.imru.file;
 
 import java.io.BufferedReader;
 import java.io.DataInput;

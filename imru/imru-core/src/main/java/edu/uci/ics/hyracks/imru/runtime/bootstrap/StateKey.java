@@ -12,9 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.uci.ics.hyracks.imru.runtime.bootstrap;
+package org.apache.hyracks.imru.runtime.bootstrap;
 
-import edu.uci.ics.hyracks.api.job.JobId;
+import org.apache.hyracks.api.job.JobId;
 
 public class StateKey {
     private final JobId jobId;
