@@ -12,24 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputSinkOperatorNodePushable;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.api.TupleReader;
-import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
-import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryInputSinkOperatorNodePushable;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.api.TupleReader;
+import org.apache.hyracks.imru.file.ConfigurationFactory;
+import org.apache.hyracks.imru.file.IMRUFileSplit;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * @author Rui Wang

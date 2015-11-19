@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.io.IOException;
 import java.io.OutputStream;

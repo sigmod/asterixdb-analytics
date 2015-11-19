@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.data;
+package org.apache.hyracks.imru.data;
 
 import java.nio.ByteBuffer;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.imru.util.DelegateHyracksTaskContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.imru.util.DelegateHyracksTaskContext;
 
 /**
  * Allows the run file to use large frames.

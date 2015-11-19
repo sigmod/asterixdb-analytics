@@ -31,7 +31,7 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapred.JobConf;
 import org.junit.Test;
 
-import edu.uci.ics.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobSpecification;
 import edu.uci.ics.pregelix.api.job.PregelixJob;
 import edu.uci.ics.pregelix.core.jobgen.JobGenOuterJoin;
 import edu.uci.ics.pregelix.core.jobgen.clusterconfig.ClusterConfig;

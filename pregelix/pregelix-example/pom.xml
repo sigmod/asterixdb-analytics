@@ -15,7 +15,7 @@
 	<name>pregelix-example</name>
 
 	<parent>
-		<groupId>edu.uci.ics.hyracks</groupId>
+		<groupId>org.apache.hyracks</groupId>
 		<artifactId>pregelix</artifactId>
 		<version>0.2.16-SNAPSHOT</version>
 	</parent>
@@ -100,34 +100,34 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>pregelix-core</artifactId>
 			<version>${pregelix.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.asterix</groupId>
+			<groupId>org.apache.asterix</groupId>
 			<artifactId>asterix-app</artifactId>
 			<version>${asterix.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.asterix</groupId>
+			<groupId>org.apache.asterix</groupId>
 			<artifactId>asterix-app</artifactId>
 			<version>${asterix.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.asterix</groupId>
+			<groupId>org.apache.asterix</groupId>
 			<artifactId>asterix-common</artifactId>
 			<version>${asterix.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.asterix</groupId>
+			<groupId>org.apache.asterix</groupId>
 			<artifactId>asterix-test-framework</artifactId>
 			<version>${asterix.version}</version>
 			<scope>test</scope>

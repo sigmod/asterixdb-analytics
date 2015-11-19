@@ -15,7 +15,7 @@
 
 package edu.uci.ics.external.connector.api;
 
-import edu.uci.ics.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobSpecification;
 
 public interface IWriteConnector {
 

@@ -30,10 +30,10 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.state.IStateObject;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.state.IStateObject;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.VertexContext;
 import edu.uci.ics.pregelix.api.job.PregelixJob;
 import edu.uci.ics.pregelix.api.util.BspUtils;

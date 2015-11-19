@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,14 +21,14 @@ import java.io.Serializable;
 
 import org.kohsuke.args4j.Option;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobStatus;
-import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
-import edu.uci.ics.hyracks.imru.jobgen.ClusterConfig;
-import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;
-import edu.uci.ics.hyracks.imru.runtime.IMRUDriver;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobStatus;
+import org.apache.hyracks.imru.file.ConfigurationFactory;
+import org.apache.hyracks.imru.jobgen.ClusterConfig;
+import org.apache.hyracks.imru.jobgen.IMRUJobFactory;
+import org.apache.hyracks.imru.runtime.IMRUDriver;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRUConnection;
 
 public class IMRUJobControl<Model extends Serializable, Data extends Serializable> {
     public HyracksConnection hcc;

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,32 +28,32 @@ import java.util.logging.Logger;
 
 import org.eclipse.jetty.util.log.Log;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.comm.IFrame;
-import edu.uci.ics.hyracks.api.comm.VSizeFrame;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.common.io.RunFileReader;
-import edu.uci.ics.hyracks.dataflow.common.io.RunFileWriter;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
-import edu.uci.ics.hyracks.imru.api.ASyncIO;
-import edu.uci.ics.hyracks.imru.api.DataWriter;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.data.ChunkFrameHelper;
-import edu.uci.ics.hyracks.imru.data.MergedFrames;
-import edu.uci.ics.hyracks.imru.data.RunFileContext;
-import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.MapTaskState;
-import edu.uci.ics.hyracks.imru.util.IterationUtils;
-import edu.uci.ics.hyracks.imru.util.MemoryStatsLogger;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.comm.IFrame;
+import org.apache.hyracks.api.comm.VSizeFrame;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.common.io.RunFileReader;
+import org.apache.hyracks.dataflow.common.io.RunFileWriter;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
+import org.apache.hyracks.imru.api.ASyncIO;
+import org.apache.hyracks.imru.api.DataWriter;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.data.ChunkFrameHelper;
+import org.apache.hyracks.imru.data.MergedFrames;
+import org.apache.hyracks.imru.data.RunFileContext;
+import org.apache.hyracks.imru.file.IMRUFileSplit;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
+import org.apache.hyracks.imru.runtime.bootstrap.MapTaskState;
+import org.apache.hyracks.imru.util.IterationUtils;
+import org.apache.hyracks.imru.util.MemoryStatsLogger;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * Evaluates the map function in an iterative map reduce update job.

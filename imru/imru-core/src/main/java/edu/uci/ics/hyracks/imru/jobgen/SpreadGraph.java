@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.jobgen;
+package org.apache.hyracks.imru.jobgen;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Vector;
 
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * Distribute data out to every node in the cluster

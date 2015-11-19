@@ -18,8 +18,8 @@ import java.io.Serializable;
 
 import org.apache.hadoop.conf.Configuration;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 public interface IConfigurationFactory extends Serializable {
 

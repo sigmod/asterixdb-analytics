@@ -21,14 +21,14 @@ import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
 import edu.uci.ics.external.connector.asterixdb.dataflow.helper.AsterixDBLSMBTreeDataflowHelperFactory;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
+import org.apache.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
+import org.apache.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
+import org.apache.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
 
 public class WriteConnector implements IWriteConnector {
 

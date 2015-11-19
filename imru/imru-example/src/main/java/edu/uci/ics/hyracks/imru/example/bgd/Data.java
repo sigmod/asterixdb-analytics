@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.example.bgd;
+package org.apache.hyracks.imru.example.bgd;
 
 import java.io.Serializable;
 

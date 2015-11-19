@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.utils;
+package org.apache.hyracks.imru.example.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,23 +39,23 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.client.NodeControllerInfo;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobFlag;
-import edu.uci.ics.hyracks.api.job.JobId;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.api.job.JobStatus;
-import edu.uci.ics.hyracks.control.cc.ClusterControllerService;
-import edu.uci.ics.hyracks.control.common.controllers.CCConfig;
-import edu.uci.ics.hyracks.control.common.controllers.NCConfig;
-import edu.uci.ics.hyracks.control.nc.NodeControllerService;
-import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.api.IMRUJobControl;
-import edu.uci.ics.hyracks.imru.data.DataSpreadDriver;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.client.NodeControllerInfo;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobFlag;
+import org.apache.hyracks.api.job.JobId;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobStatus;
+import org.apache.hyracks.control.cc.ClusterControllerService;
+import org.apache.hyracks.control.common.controllers.CCConfig;
+import org.apache.hyracks.control.common.controllers.NCConfig;
+import org.apache.hyracks.control.nc.NodeControllerService;
+import org.apache.hyracks.imru.api.IIMRUDataGenerator;
+import org.apache.hyracks.imru.api.IIMRUJob;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.api.IMRUJobControl;
+import org.apache.hyracks.imru.data.DataSpreadDriver;
+import org.apache.hyracks.imru.util.Rt;
 
 /**
  * This class wraps IMRU common functions.
@@ -346,7 +346,7 @@ public class Client<Model extends Serializable, Data extends Serializable> {
         ccConfig.clientNetPort = clientNetPort;
         ccConfig.defaultMaxJobAttempts = 0;
         ccConfig.jobHistorySize = 10;
-        ccConfig.appCCMainClass = "edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUCCBootstrapImpl";
+        ccConfig.appCCMainClass = "org.apache.hyracks.imru.runtime.bootstrap.IMRUCCBootstrapImpl";
 
         // cluster controller
         cc = new ClusterControllerService(ccConfig);
@@ -369,7 +369,7 @@ public class Client<Model extends Serializable, Data extends Serializable> {
         ncConfig1.ccPort = clusterNetPort;
         ncConfig1.dataIPAddress = "127.0.0.1";
         ncConfig1.resultIPAddress = "127.0.0.1";
-        ncConfig1.appNCMainClass = "edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUNCBootstrapImpl";
+        ncConfig1.appNCMainClass = "org.apache.hyracks.imru.runtime.bootstrap.IMRUNCBootstrapImpl";
         ncConfig1.nodeId = NC1_ID;
         File file = new File("/tmp/cache/tmp/" + NC1_ID);
         file.mkdirs();

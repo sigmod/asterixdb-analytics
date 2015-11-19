@@ -1,6 +1,6 @@
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.exceptions.HyracksException;
 
 public class IMRUException extends HyracksException {
     public IMRUException() {

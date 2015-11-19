@@ -1,10 +1,10 @@
-package edu.uci.ics.hyracks.imru.test.jobgen;
+package org.apache.hyracks.imru.test.jobgen;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import edu.uci.ics.hyracks.imru.jobgen.ReduceAggregationTreeFactory;
+import org.apache.hyracks.imru.jobgen.ReduceAggregationTreeFactory;
 
 
 public class NAryAggregationIMRUJobFactoryTest {

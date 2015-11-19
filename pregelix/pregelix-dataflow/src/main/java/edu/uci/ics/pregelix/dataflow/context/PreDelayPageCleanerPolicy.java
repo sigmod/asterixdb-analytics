@@ -15,8 +15,8 @@
 
 package edu.uci.ics.pregelix.dataflow.context;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.storage.common.buffercache.IPageCleanerPolicy;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.storage.common.buffercache.IPageCleanerPolicy;
 
 public class PreDelayPageCleanerPolicy implements IPageCleanerPolicy {
     private long delay;

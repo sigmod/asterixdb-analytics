@@ -18,9 +18,9 @@ package edu.uci.ics.external.connector.asterixdb;
 import java.util.List;
 import java.util.Map;
 
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
-import edu.uci.ics.hyracks.storage.am.lsm.common.api.IVirtualBufferCacheProvider;
-import edu.uci.ics.hyracks.storage.common.IStorageManagerInterface;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
+import org.apache.hyracks.storage.am.lsm.common.api.IVirtualBufferCacheProvider;
+import org.apache.hyracks.storage.common.IStorageManagerInterface;
 
 public class StorageParameter {
 

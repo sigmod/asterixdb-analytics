@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.File;
 import java.io.Serializable;
@@ -7,25 +7,25 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.job.IJobSerializerDeserializer;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractSingleActivityOperatorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputSinkOperatorNodePushable;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperatorNodePushable;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.data.MergedFrames;
-import edu.uci.ics.hyracks.imru.jobgen.SpreadGraph;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.job.IJobSerializerDeserializer;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.std.base.AbstractSingleActivityOperatorDescriptor;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryInputSinkOperatorNodePushable;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryInputUnaryOutputOperatorNodePushable;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.data.MergedFrames;
+import org.apache.hyracks.imru.jobgen.SpreadGraph;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRUConnection;
+import org.apache.hyracks.imru.util.Rt;
 
 public class SpreadOD extends AbstractSingleActivityOperatorDescriptor {
     private static Logger LOG = Logger.getLogger(SpreadOD.class.getName());

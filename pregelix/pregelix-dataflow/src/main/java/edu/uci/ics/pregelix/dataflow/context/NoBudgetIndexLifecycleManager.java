@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.lifecycle.ILifeCycleComponent;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndex;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManager;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.lifecycle.ILifeCycleComponent;
+import org.apache.hyracks.storage.am.common.api.IIndex;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManager;
 
 public class NoBudgetIndexLifecycleManager implements IIndexLifecycleManager, ILifeCycleComponent {
 

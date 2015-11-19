@@ -17,7 +17,7 @@ package edu.uci.ics.pregelix.runtime.touchpoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
 
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
 import edu.uci.ics.pregelix.dataflow.std.base.ISerializerDeserializerFactory;
 
 public class WritableSerializerDeserializerFactory<T extends Writable> implements ISerializerDeserializerFactory<T> {

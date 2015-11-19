@@ -14,9 +14,9 @@
  */
 package edu.uci.ics.pregelix.runtime.bootstrap;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManager;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManager;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
 import edu.uci.ics.pregelix.dataflow.context.RuntimeContext;
 
 public class IndexLifeCycleManagerProvider implements IIndexLifecycleManagerProvider {

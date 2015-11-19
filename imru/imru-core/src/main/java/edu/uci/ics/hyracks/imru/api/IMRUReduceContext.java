@@ -1,6 +1,6 @@
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
 
 public class IMRUReduceContext extends IMRUContext {
     private int level;

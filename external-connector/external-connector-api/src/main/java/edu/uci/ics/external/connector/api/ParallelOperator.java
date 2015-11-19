@@ -15,7 +15,7 @@
 
 package edu.uci.ics.external.connector.api;
 
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
 
 public class ParallelOperator {
 

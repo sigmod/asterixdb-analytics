@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.uci.ics.hyracks.imru.runtime.bootstrap;
+package org.apache.hyracks.imru.runtime.bootstrap;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.state.IStateObject;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.io.FileReference;
-import edu.uci.ics.hyracks.api.io.IWorkspaceFileFactory;
-import edu.uci.ics.hyracks.api.resources.IDeallocatable;
-import edu.uci.ics.hyracks.control.nc.io.IOManager;
-import edu.uci.ics.hyracks.control.nc.resources.DefaultDeallocatableRegistry;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.state.IStateObject;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.io.FileReference;
+import org.apache.hyracks.api.io.IWorkspaceFileFactory;
+import org.apache.hyracks.api.resources.IDeallocatable;
+import org.apache.hyracks.control.nc.io.IOManager;
+import org.apache.hyracks.control.nc.resources.DefaultDeallocatableRegistry;
 
 /**
  * Provides context that is shared between all operators in the IMRU

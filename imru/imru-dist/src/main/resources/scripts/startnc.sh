@@ -71,5 +71,5 @@ $CUR_DIR/hyracksnc\
  -result-ip-address $IPADDR\
  -node-id $NODEID\
  -iodevices "${IO_DIRS}"\
- -app-nc-main-class edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUNCBootstrapImpl\
+ -app-nc-main-class org.apache.hyracks.imru.runtime.bootstrap.IMRUNCBootstrapImpl\
  &> $NCLOGS_DIR/$NODEID.log &

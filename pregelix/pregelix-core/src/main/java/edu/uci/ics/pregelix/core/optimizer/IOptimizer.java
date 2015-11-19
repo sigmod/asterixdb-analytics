@@ -15,9 +15,9 @@
 
 package edu.uci.ics.pregelix.core.optimizer;
 
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.std.file.IFileSplitProvider;
 import edu.uci.ics.pregelix.core.jobgen.JobGen;
 
 public interface IOptimizer {

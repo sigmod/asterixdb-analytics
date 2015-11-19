@@ -13,13 +13,13 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Vector;
 
-import edu.uci.ics.hyracks.api.util.JavaSerializationUtils;
+import org.apache.hyracks.api.util.JavaSerializationUtils;
 
 public class DataWriter<Data extends Serializable> {
     TupleWriter tupleWriter;

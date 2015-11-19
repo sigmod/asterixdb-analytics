@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 public class ASyncIO<Data> {
     private int size = 32;

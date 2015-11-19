@@ -12,16 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package edu.uci.ics.hyracks.imru.util;
+package org.apache.hyracks.imru.util;
 
 import java.util.Map;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.state.IStateObject;
-import edu.uci.ics.hyracks.api.job.JobId;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.StateKey;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.state.IStateObject;
+import org.apache.hyracks.api.job.JobId;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRURuntimeContext;
+import org.apache.hyracks.imru.runtime.bootstrap.StateKey;
 
 public class IterationUtils {
 

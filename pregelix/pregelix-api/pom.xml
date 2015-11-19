@@ -15,7 +15,7 @@
 	<name>pregelix-api</name>
 
 	<parent>
-		<groupId>edu.uci.ics.hyracks</groupId>
+		<groupId>org.apache.hyracks</groupId>
 		<artifactId>pregelix</artifactId>
 		<version>0.2.16-SNAPSHOT</version>
 	</parent>
@@ -62,28 +62,28 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-common</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-hdfs-core</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>external-connector-api</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>external-connector-asterixdb</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>

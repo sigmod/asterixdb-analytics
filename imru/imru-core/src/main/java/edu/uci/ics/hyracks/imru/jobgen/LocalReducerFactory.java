@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.jobgen;
+package org.apache.hyracks.imru.jobgen;
 
 import java.util.Arrays;
 import java.util.BitSet;
@@ -22,18 +22,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import edu.uci.ics.hyracks.api.constraints.Constraint;
-import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
-import edu.uci.ics.hyracks.api.constraints.expressions.ConstantExpression;
-import edu.uci.ics.hyracks.api.constraints.expressions.PartitionLocationExpression;
-import edu.uci.ics.hyracks.api.dataflow.IConnectorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.std.connectors.HashtableLocalityMap;
-import edu.uci.ics.hyracks.dataflow.std.connectors.ILocalityMap;
-import edu.uci.ics.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.dataflow.ReduceOperatorDescriptor;
+import org.apache.hyracks.api.constraints.Constraint;
+import org.apache.hyracks.api.constraints.PartitionConstraintHelper;
+import org.apache.hyracks.api.constraints.expressions.ConstantExpression;
+import org.apache.hyracks.api.constraints.expressions.PartitionLocationExpression;
+import org.apache.hyracks.api.dataflow.IConnectorDescriptor;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.std.connectors.HashtableLocalityMap;
+import org.apache.hyracks.dataflow.std.connectors.ILocalityMap;
+import org.apache.hyracks.dataflow.std.connectors.LocalityAwareMToNPartitioningConnectorDescriptor;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.dataflow.ReduceOperatorDescriptor;
 
 /**
  * Adds local reducers (one per machine) to the output of a Map

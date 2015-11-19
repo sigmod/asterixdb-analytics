@@ -1,10 +1,10 @@
-package edu.uci.ics.hyracks.imru.api;
+package org.apache.hyracks.imru.api;
 
 import java.nio.ByteBuffer;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.comm.util.FrameUtils;
 
 public class FrameWriter {
     IFrameWriter writer;

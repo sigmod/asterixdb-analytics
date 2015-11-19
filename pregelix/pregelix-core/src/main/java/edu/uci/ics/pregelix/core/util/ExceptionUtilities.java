@@ -17,7 +17,7 @@ package edu.uci.ics.pregelix.core.util;
 import java.io.IOException;
 import java.util.Set;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
  * The util to analysis exceptions

@@ -19,8 +19,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.WritableComparator;
 
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
-import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
+import org.apache.hyracks.api.dataflow.value.IBinaryComparatorFactory;
+import org.apache.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
 import edu.uci.ics.pregelix.api.graph.NormalizedKeyComputer;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.RawBinaryComparatorFactory;

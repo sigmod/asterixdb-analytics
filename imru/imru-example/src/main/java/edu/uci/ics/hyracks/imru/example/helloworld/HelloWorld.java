@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.helloworld;
+package org.apache.hyracks.imru.example.helloworld;
 
-import edu.uci.ics.hyracks.imru.example.utils.Client;
+import org.apache.hyracks.imru.example.utils.Client;
 
 /**
  * This example demonstrate how data flows through IMRU.

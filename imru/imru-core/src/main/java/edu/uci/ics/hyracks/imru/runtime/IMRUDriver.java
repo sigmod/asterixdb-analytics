@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.runtime;
+package org.apache.hyracks.imru.runtime;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,16 +28,16 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobFlag;
-import edu.uci.ics.hyracks.api.job.JobId;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.api.job.JobStatus;
-import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
-import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;
-import edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUConnection;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobFlag;
+import org.apache.hyracks.api.job.JobId;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobStatus;
+import org.apache.hyracks.imru.api.IIMRUDataGenerator;
+import org.apache.hyracks.imru.api.IIMRUJob2;
+import org.apache.hyracks.imru.jobgen.IMRUJobFactory;
+import org.apache.hyracks.imru.runtime.bootstrap.IMRUConnection;
 
 /**
  * Schedules iterative map reduce update jobs.

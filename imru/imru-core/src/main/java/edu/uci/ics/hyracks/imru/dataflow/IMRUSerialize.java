@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.comm.util.FrameUtils;
+import org.apache.hyracks.imru.api.IMRUContext;
 
 public class IMRUSerialize {
     public static ExecutorService threadPool = Executors.newCachedThreadPool();

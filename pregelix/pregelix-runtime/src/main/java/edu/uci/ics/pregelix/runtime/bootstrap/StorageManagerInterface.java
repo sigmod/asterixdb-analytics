@@ -14,12 +14,12 @@
  */
 package edu.uci.ics.pregelix.runtime.bootstrap;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.storage.common.IStorageManagerInterface;
-import edu.uci.ics.hyracks.storage.common.buffercache.IBufferCache;
-import edu.uci.ics.hyracks.storage.common.file.IFileMapProvider;
-import edu.uci.ics.hyracks.storage.common.file.ILocalResourceRepository;
-import edu.uci.ics.hyracks.storage.common.file.ResourceIdFactory;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.storage.common.IStorageManagerInterface;
+import org.apache.hyracks.storage.common.buffercache.IBufferCache;
+import org.apache.hyracks.storage.common.file.IFileMapProvider;
+import org.apache.hyracks.storage.common.file.ILocalResourceRepository;
+import org.apache.hyracks.storage.common.file.ResourceIdFactory;
 import edu.uci.ics.pregelix.dataflow.context.RuntimeContext;
 
 public class StorageManagerInterface implements IStorageManagerInterface {

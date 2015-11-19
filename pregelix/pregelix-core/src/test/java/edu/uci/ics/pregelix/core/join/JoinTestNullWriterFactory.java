@@ -16,10 +16,10 @@ package edu.uci.ics.pregelix.core.join;
 
 import java.io.DataOutput;
 
-import edu.uci.ics.hyracks.api.dataflow.value.INullWriter;
-import edu.uci.ics.hyracks.api.dataflow.value.INullWriterFactory;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.INullWriter;
+import org.apache.hyracks.api.dataflow.value.INullWriterFactory;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
 
 public class JoinTestNullWriterFactory implements INullWriterFactory {
     private static final long serialVersionUID = 1L;

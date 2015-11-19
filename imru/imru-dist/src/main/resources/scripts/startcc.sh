@@ -41,5 +41,5 @@ $CUR_DIR/hyrackscc\
  -max-heartbeat-lapse-periods 999999\
  -default-max-job-attempts 0\
  -job-history-size 3\
- -app-cc-main-class edu.uci.ics.hyracks.imru.runtime.bootstrap.IMRUCCBootstrapImpl\
+ -app-cc-main-class org.apache.hyracks.imru.runtime.bootstrap.IMRUCCBootstrapImpl\
  &> $CCLOGS_DIR/cc.log &

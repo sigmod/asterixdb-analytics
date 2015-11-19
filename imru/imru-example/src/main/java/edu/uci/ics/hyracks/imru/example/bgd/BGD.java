@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.bgd;
+package org.apache.hyracks.imru.example.bgd;
 
-import edu.uci.ics.hyracks.imru.example.utils.Client;
+import org.apache.hyracks.imru.example.utils.Client;
 
 /**
  * Batch Gradient Descent example

@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.example.helloworld;
+package org.apache.hyracks.imru.example.helloworld;
 
 
 public class HelloWorldEC2 {

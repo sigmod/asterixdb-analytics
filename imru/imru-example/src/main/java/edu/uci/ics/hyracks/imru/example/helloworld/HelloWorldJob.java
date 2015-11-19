@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package edu.uci.ics.hyracks.imru.example.helloworld;
+package org.apache.hyracks.imru.example.helloworld;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,11 +21,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 
-import edu.uci.ics.hyracks.imru.api.DataWriter;
-import edu.uci.ics.hyracks.imru.api.IIMRUJob;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.api.IMRUDataException;
-import edu.uci.ics.hyracks.imru.api.IMRUReduceContext;
+import org.apache.hyracks.imru.api.DataWriter;
+import org.apache.hyracks.imru.api.IIMRUJob;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.api.IMRUDataException;
+import org.apache.hyracks.imru.api.IMRUReduceContext;
 
 /**
  * Core IMRU application specific code.

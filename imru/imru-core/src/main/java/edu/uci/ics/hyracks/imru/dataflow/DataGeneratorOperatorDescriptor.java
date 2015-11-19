@@ -1,4 +1,4 @@
-package edu.uci.ics.hyracks.imru.dataflow;
+package org.apache.hyracks.imru.dataflow;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
@@ -6,19 +6,19 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractOperatorNodePushable;
-import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
-import edu.uci.ics.hyracks.imru.api.IMRUContext;
-import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
-import edu.uci.ics.hyracks.imru.file.IMRUFileSplit;
-import edu.uci.ics.hyracks.imru.util.Rt;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.std.base.AbstractOperatorNodePushable;
+import org.apache.hyracks.imru.api.IIMRUDataGenerator;
+import org.apache.hyracks.imru.api.IMRUContext;
+import org.apache.hyracks.imru.file.ConfigurationFactory;
+import org.apache.hyracks.imru.file.IMRUFileSplit;
+import org.apache.hyracks.imru.util.Rt;
 
 public class DataGeneratorOperatorDescriptor extends
         IMRUOperatorDescriptor<Serializable, Serializable> {
