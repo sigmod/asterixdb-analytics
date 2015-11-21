@@ -16,7 +16,8 @@ package edu.uci.ics.external.connector.asterixdb.dataflow;
 
 import java.nio.ByteBuffer;
 
-import edu.uci.ics.asterix.om.types.ARecordType;
+import org.apache.asterix.om.types.ARecordType;
+
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverter;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.hyracks.api.comm.IFrame;

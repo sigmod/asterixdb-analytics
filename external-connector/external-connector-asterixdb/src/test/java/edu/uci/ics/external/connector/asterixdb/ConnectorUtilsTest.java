@@ -25,12 +25,12 @@ import java.util.Map;
 import junit.extensions.PA;
 import junit.framework.Assert;
 
+import org.apache.asterix.om.types.ARecordType;
+import org.apache.asterix.om.types.ATypeTag;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mortbay.util.SingletonList;
 
-import edu.uci.ics.asterix.om.types.ARecordType;
-import edu.uci.ics.asterix.om.types.ATypeTag;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
 
 public class ConnectorUtilsTest {

@@ -17,10 +17,10 @@ package edu.uci.ics.pregelix.api.converter;
 
 import java.io.DataOutput;
 
+import org.apache.asterix.om.types.ARecordType;
 import org.apache.hadoop.io.Writable;
 
 import edu.uci.ics.asterix.builders.RecordBuilder;
-import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 

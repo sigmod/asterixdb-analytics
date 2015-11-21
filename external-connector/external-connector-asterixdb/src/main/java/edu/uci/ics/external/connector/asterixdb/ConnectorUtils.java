@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.asterix.om.types.ARecordType;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -33,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.asterix.om.util.JSONDeserializerForTypes;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
 import edu.uci.ics.hyracks.dataflow.std.file.ConstantFileSplitProvider;

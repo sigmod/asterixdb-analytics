@@ -16,9 +16,10 @@ package edu.uci.ics.external.connector.asterixdb.dataflow;
 
 import java.nio.ByteBuffer;
 
+import org.apache.asterix.om.types.ARecordType;
+
 import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
 import edu.uci.ics.asterix.om.pointables.PointableAllocator;
-import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.external.connector.asterixdb.api.IReadConverter;
 import edu.uci.ics.external.connector.asterixdb.api.IReadConverterFactory;
 import edu.uci.ics.hyracks.api.comm.IFrame;

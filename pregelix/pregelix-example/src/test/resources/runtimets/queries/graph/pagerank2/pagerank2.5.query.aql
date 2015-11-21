@@ -1,0 +1,6 @@
+use dataverse graph;
+
+{
+  "count": count(for $r in dataset results return 1),
+  "sum": sum(for $r in dataset results return $r.value)
+};

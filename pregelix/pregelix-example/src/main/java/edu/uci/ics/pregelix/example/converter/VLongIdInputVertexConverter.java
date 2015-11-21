@@ -175,9 +175,9 @@ public class VLongIdInputVertexConverter implements VertexInputConverter {
     }
 
     // Sets the vertex value from an AsterixDB pointable.
-    private void setVertexValue(AFlatValuePointable vertexIdPointable, Writable v) throws HyracksDataException {
-        byte[] data = vertexIdPointable.getByteArray();
-        int start = vertexIdPointable.getStartOffset() + 1; // Considers the AsterixDB type tag.
+    private void setVertexValue(AFlatValuePointable vertexValuePointable, Writable v) throws HyracksDataException {
+        byte[] data = vertexValuePointable.getByteArray();
+        int start = vertexValuePointable.getStartOffset() + 1; // Considers the AsterixDB type tag.
         switch (vertexValueTypeTag) {
             case INT8: {
                 long value = AInt8SerializerDeserializer.getByte(data, start);

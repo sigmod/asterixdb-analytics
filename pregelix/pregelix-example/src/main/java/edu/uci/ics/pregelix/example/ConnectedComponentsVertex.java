@@ -105,6 +105,11 @@ public class ConnectedComponentsVertex extends Vertex<VLongWritable, VLongWritab
 
     @Override
     public void compute(Iterator<VLongWritable> msgIterator) {
+        VLongWritable vertexValue = getVertexValue();
+        if (vertexValue == null) {
+            tmpVertexValue.set(getVertexId().get());
+            setVertexValue(tmpVertexValue);
+        }
         long currentComponent = getVertexValue().get();
         // First superstep is special, because we can simply look at the neighbors
         if (getSuperstep() == 1) {

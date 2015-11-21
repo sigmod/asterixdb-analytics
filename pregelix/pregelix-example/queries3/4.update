@@ -1,0 +1,7 @@
+use dataverse graph;
+
+run pregel("examples/pregelix-example-0.2.16-SNAPSHOT-jar-with-dependencies.jar",
+ "edu.uci.ics.pregelix.example.PageRankVertex",
+ "-ip 128.195.11.31 -port 3099 -vnum 342345870 -num-iteration 5")
+from dataset MsgGraph2
+to dataset results;

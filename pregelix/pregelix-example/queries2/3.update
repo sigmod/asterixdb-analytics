@@ -1,0 +1,17 @@
+use dataverse graph;
+
+insert into dataset MsgGraph2
+(
+   let $p := create-point(46.4208 , 76.4114 )
+   let $r := create-circle($p, 0.05)
+   
+   for $tm in dataset TwitterMessages
+   let $edge := switch-case($tm.forward-from>=0, true,
+               $tm.forward-from, false, $tm.retweet-from)
+   where $edge >= 0 and spatial-intersect($tm.sender-location, $r)
+   return {
+        "vertexid": $tm.tweetid,
+        "value": 1.0/10000000000.0,
+        "edges": [$edge]
+   }
+)

@@ -1,0 +1,26 @@
+drop dataverse graph if exists;
+create dataverse graph;
+
+use dataverse graph;
+
+create type RawWebmap as open {
+  id: int64,
+  edges: {{int64}}
+}
+
+create type Webmap as open {
+  vertexid: int64,
+  value: double,
+  edgelist: {{int64}}
+}
+
+create type Result as open {
+  vertexid: int64,
+  value: double
+}
+
+create dataset rawweb(RawWebmap) primary key id;
+
+create dataset webmap(Webmap) primary key vertexid;
+
+create temporary dataset results(Result) primary key vertexid;

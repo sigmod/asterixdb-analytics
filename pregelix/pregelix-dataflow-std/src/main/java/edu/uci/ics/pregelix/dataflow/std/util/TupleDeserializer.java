@@ -69,7 +69,7 @@ public class TupleDeserializer {
             int tStart = left.getTupleStartOffset(tIndex) + left.getFieldSlotsLength();
             int leftFieldCount = left.getFieldCount();
             int fStart = tStart;
-            for (int i = 1; i < leftFieldCount; ++i) {
+            for (int i = right == null ? 0 : 1; i < leftFieldCount; ++i) {
                 /**
                  * reset the input
                  */
@@ -89,6 +89,12 @@ public class TupleDeserializer {
                 }
                 record[i] = instance;
             }
+            if (right == null) {
+                for (int i = leftFieldCount + 1; i < record.length; ++i) {
+                    record[i] = null;
+                }
+                return record;
+            }
             /** skip vertex id field in deserialization */
             for (int i = leftFieldCount + 1; i < record.length; ++i) {
                 byte[] rightData = right.getFieldData(i - leftFieldCount);
@@ -99,7 +105,7 @@ public class TupleDeserializer {
                 int availableBefore = bbis.available();
                 Object instance = recordDescriptor.getFields()[i].deserialize(di);
                 int availableAfter = bbis.available();
-                if (availableBefore - availableAfter > len) {
+                if (availableAfter - availableBefore > len) {
                     throw new IllegalStateException(ERROR_MSG);
                 }
                 record[i] = instance;

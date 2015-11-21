@@ -661,7 +661,7 @@ public abstract class Vertex<I extends WritableComparable, V extends Writable, E
      * @return the number of edges in the graph
      */
     public final long getNumEdges() {
-        return context.getNumVertices();
+        return context.getNumEdges();
     }
 
     /**

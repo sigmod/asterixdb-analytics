@@ -89,7 +89,7 @@ public class RunJobTestCase extends TestCase {
     public void test() throws Exception {
         setUp();
         System.out.println("TEST: " + jobFile);
-        Plan[] plans = new Plan[] { Plan.OUTER_JOIN, Plan.INNER_JOIN };
+        Plan[] plans = new Plan[] { Plan.OUTER_JOIN };
         for (Plan plan : plans) {
             job.setMergeConnector(true);
             driver.runJob(job, plan, PregelixHyracksIntegrationUtil.CC_HOST,

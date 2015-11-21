@@ -266,12 +266,12 @@ public class IndexNestedLoopSetUnionFunctionUpdateOperatorNodePushable extends A
     }
 
     /** write the left result */
-    private void writeLeftResults(IFrameTupleAccessor leftAccessor, int tIndex, ITupleReference frameTuple)
+    private void writeLeftResults(IFrameTupleAccessor leftAccessor, int tIndex, ITupleReference indexTuple)
             throws Exception {
-        functionProxy.functionCall(leftAccessor, tIndex, frameTuple, cloneUpdateTb, cursor);
+        functionProxy.functionCall(leftAccessor, tIndex, indexTuple, cloneUpdateTb, cursor);
 
         //doing clone update
-        CopyUpdateUtil.copyUpdate(tempTupleReference, frameTuple, updateBuffer, cloneUpdateTb, indexAccessor, cursor,
+        CopyUpdateUtil.copyUpdate(tempTupleReference, indexTuple, updateBuffer, cloneUpdateTb, indexAccessor, cursor,
                 rangePred, true, storageType);
     }
 

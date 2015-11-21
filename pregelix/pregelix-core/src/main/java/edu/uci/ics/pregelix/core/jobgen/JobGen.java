@@ -1145,7 +1145,7 @@ public abstract class JobGen implements IJobGen {
                     this.getConfigurationFactory(), false, true);
             IOperatorDescriptor localGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
                     keyFields, nkmFactory, sortCmpFactories, localAggregatorFactory, partialAggregatorFactory,
-                    rdCombinedMessage, rdCombinedMessage, false);
+                    rdCombinedMessage, rdCombinedMessage, false, Algorithm.QUICK_SORT);
             setLocationConstraint(spec, localGby);
 
             /**
@@ -1164,7 +1164,7 @@ public abstract class JobGen implements IJobGen {
             } else {
                 IOperatorDescriptor globalGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
                         keyFields, nkmFactory, sortCmpFactories, partialAggregatorFactory, finalAggregatorFactory,
-                        rdCombinedMessage, rdFinal, true);
+                        rdCombinedMessage, rdFinal, true, Algorithm.QUICK_SORT);
                 setLocationConstraint(spec, globalGby);
                 spec.connect(new MToNPartitioningConnectorDescriptor(spec, partionFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);

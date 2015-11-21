@@ -23,6 +23,11 @@
                 <output-dir compare="Text">pagerank</output-dir>
             </compilation-unit>
         </test-case>
+         <test-case FilePath="graph">
+            <compilation-unit name="pagerank2">
+                <output-dir compare="Text">pagerank2</output-dir>
+            </compilation-unit>
+        </test-case>
         <test-case FilePath="graph">
             <compilation-unit name="sssp">
                 <output-dir compare="Text">sssp</output-dir>

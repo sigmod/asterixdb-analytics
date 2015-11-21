@@ -28,6 +28,7 @@ import edu.uci.ics.hyracks.storage.am.lsm.common.api.ILSMIOOperationScheduler;
 import edu.uci.ics.hyracks.storage.am.lsm.common.api.ILSMMergePolicy;
 import edu.uci.ics.hyracks.storage.am.lsm.common.api.ILSMOperationTrackerProvider;
 import edu.uci.ics.hyracks.storage.am.lsm.common.api.IVirtualBufferCache;
+import edu.uci.ics.hyracks.storage.common.file.ILocalResourceFactory;
 
 public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
 
@@ -40,6 +41,23 @@ public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
         super(opDesc, ctx, partition, virtualBufferCaches, bloomFilterFalsePositiveRate, mergePolicy, opTrackerFactory,
                 ioScheduler, ioOpCallbackFactory, needKeyDupCheck, filterTypeTraits, filterCmpFactories, btreeFields,
                 filterFields, durable);
+    }
+
+    @Override
+    public void open() throws HyracksDataException {
+        synchronized (lcManager) {
+            long resourceID = getResourceID();
+            if (resourceID == -1) {
+                resourceID = addLocalResource();
+            }
+
+            index = lcManager.getIndex(resourceID);
+            if (index == null) {
+                index = createIndexInstance();
+                lcManager.register(resourceID, index);
+            }
+            lcManager.open(resourceID);
+        }
     }
 
     @Override
@@ -62,4 +80,14 @@ public class AsterixDBLSMBTreeDataflowHelper extends LSMBTreeDataflowHelper {
             }
         }
     }
+
+    // Adds the local resource if it is missing.
+    private long addLocalResource() throws HyracksDataException {
+        long resourceID = resourceIdFactory.createId();
+        ILocalResourceFactory localResourceFactory = opDesc.getLocalResourceFactoryProvider().getLocalResourceFactory();
+        localResourceRepository.insert(localResourceFactory.createLocalResource(resourceID, file.getFile().getPath(),
+                partition));
+        return resourceID;
+    }
+
 }

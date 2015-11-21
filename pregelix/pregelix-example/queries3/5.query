@@ -1,0 +1,14 @@
+use dataverse graph;
+
+
+for $tm in dataset TwitterMessages
+for $r in dataset results
+    where $r.vertexid /*+ indexnl */ = $tm.tweetid       
+group by $un := $tm.user with $r
+let $rank := sum(for $i in $r return $i.rank)
+order by $rank
+limit 50
+return {
+        "name": $un,
+        "rank": $rank
+}

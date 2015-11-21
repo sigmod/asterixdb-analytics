@@ -1,0 +1,28 @@
+use dataverse graph;
+set import-private-functions 'true';
+
+// Insert all source vertexes
+insert into dataset MsgGraph2
+(
+   for $tm2 in dataset TwitterMessages
+   for $tm1 in dataset TwitterMessages
+   let $edge := switch-case($tm1.forward-from>=0, true,
+               $tm1.forward-from, false, $tm1.retweet-from)
+   let $d := duration-from-interval(
+                 switch-case(
+                    $tm2.send-time<$tm1.send-time,
+                    true, 
+                    interval-from-datetime($tm2.send-time, $tm1.send-time),
+                    false,
+                    interval-from-datetime($tm1.send-time, $tm2.send-time)
+                  )
+              )
+   where $edge>=0
+         and $edge=$tm2.tweetid
+         and ms-from-day-time-duration($d)<= ms-from-day-time-duration( day-time-duration("P1D"))
+   return {
+      "vertexid":  $tm1.tweetid,
+      "value":  1.0/10000000000,
+      "edges":  [$tm2.tweetid]
+   }
+);

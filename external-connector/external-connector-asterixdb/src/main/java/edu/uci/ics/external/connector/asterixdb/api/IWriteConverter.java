@@ -15,7 +15,8 @@
 
 package edu.uci.ics.external.connector.asterixdb.api;
 
-import edu.uci.ics.asterix.om.types.ARecordType;
+import org.apache.asterix.om.types.ARecordType;
+
 import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 

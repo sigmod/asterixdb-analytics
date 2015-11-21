@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import edu.uci.ics.hyracks.api.comm.IFrame;
 import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
@@ -116,6 +118,9 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
             private int vertexSizeLimit = -1;
             private String jobId = "";
 
+            private Vertex addedNewVertex;
+            private VLongWritable addedNewVertexId;
+
             @Override
             public void open(IHyracksTaskContext ctx, RecordDescriptor rd, IFrameWriter... writers)
                     throws HyracksDataException {
@@ -178,6 +183,9 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
 
                 vertexSizeLimit = Math.min(IterationUtils.getVFrameSize(ctx) / 2 - 32, ctx.getInitialFrameSize() - 32);
                 jobId = BspUtils.getJobId(conf);
+
+                addedNewVertex = BspUtils.createVertex(conf);
+                addedNewVertex.setVertexContext(IterationUtils.getVertexContext(BspUtils.getJobId(conf), ctx));
             }
 
             @Override
@@ -186,7 +194,19 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
                 tbMsg.reset();
                 tbAlive.reset();
 
-                vertex = (Vertex) tuple[3];
+                if (tuple[3] == null) {
+                    if (vertex == null) {
+                        vertex = addedNewVertex;
+                    }
+                    vertex.getEdges().clear();
+                    vertex.getMsgList().clear();
+                    vertex.reset();
+                    WritableComparable vertexId = (WritableComparable) tuple[0];
+                    vertex.setVertexId(vertexId);
+                    vertex.activate(true);
+                } else {
+                    vertex = (Vertex) tuple[3];
+                }
 
                 if (vertex.isPartitionTerminated()) {
                     vertex.voteToHalt();
@@ -298,7 +318,7 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
                     throws HyracksDataException {
                 try {
                     if (vertex != null && vertex.hasUpdate()) {
-                        if (!dynamicStateLength) {
+                        if (!dynamicStateLength && tupleRef != null) {
                             // in-place update
                             byte[] data = tupleRef.getFieldData(1);
                             int offset = tupleRef.getFieldStart(1);

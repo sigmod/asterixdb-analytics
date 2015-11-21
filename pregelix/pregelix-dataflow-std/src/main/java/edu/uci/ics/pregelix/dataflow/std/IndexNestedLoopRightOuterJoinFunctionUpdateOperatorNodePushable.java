@@ -196,7 +196,8 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
         accessor.reset(buffer);
         int tupleCount = accessor.getTupleCount();
         try {
-            for (int i = 0; i < tupleCount && currentTopTuple != null;) {
+            int i = 0;
+            for (; i < tupleCount && currentTopTuple != null;) {
                 if (lowKey != null) {
                     lowKey.reset(accessor, i);
                 }
@@ -209,11 +210,19 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
                     if (cmp == 0) {
                         outputMatch(i);
                         currentTopTuple = cursor.getTuple();
+                    } else {
+                        // process the left-outer case
+                        writeResult(accessor, i, null);
                     }
                     i++;
                 } else {
+                    // process the right-outer case
                     moveTreeCursor();
                 }
+            }
+            // process the left-outer case
+            for (; i < tupleCount; i++) {
+                writeResult(accessor, i, null);
             }
         } catch (Exception e) {
             closeResource();
@@ -222,13 +231,13 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
     }
 
     private void outputMatch(int i) throws Exception {
-        writeResults(accessor, i, currentTopTuple);
+        writeResult(accessor, i, currentTopTuple);
         match = true;
     }
 
     private void moveTreeCursor() throws Exception {
         if (!match) {
-            writeResults(currentTopTuple);
+            writeRightOuterResults(currentTopTuple);
         }
         if (cursor.hasNext()) {
             cursor.next();
@@ -292,16 +301,17 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
     }
 
     //for the join match casesos
-    private void writeResults(IFrameTupleAccessor leftAccessor, int tIndex, ITupleReference indexTuple)
-            throws Exception {
+    private void writeResult(IFrameTupleAccessor leftAccessor, int tIndex, ITupleReference indexTuple) throws Exception {
         /**
          * merge with the cached tuple, if any
          */
         ITupleReference indexEntryTuple = indexTuple;
-        ITupleReference cachedUpdatedLastTuple = updateBuffer.getLastTuple();
-        if (cachedUpdatedLastTuple != null) {
-            if (compare(cachedUpdatedLastTuple, indexTuple) == 0) {
-                indexEntryTuple = cachedUpdatedLastTuple;
+        if (indexEntryTuple != null) {
+            ITupleReference cachedUpdatedLastTuple = updateBuffer.getLastTuple();
+            if (cachedUpdatedLastTuple != null) {
+                if (compare(cachedUpdatedLastTuple, indexTuple) == 0) {
+                    indexEntryTuple = cachedUpdatedLastTuple;
+                }
             }
         }
         /**
@@ -316,8 +326,8 @@ public class IndexNestedLoopRightOuterJoinFunctionUpdateOperatorNodePushable ext
                 cursor, rangePred, true, storageType);
     }
 
-    /** write result for outer case */
-    private void writeResults(ITupleReference frameTuple) throws Exception {
+    /** write result for right outer case */
+    private void writeRightOuterResults(ITupleReference frameTuple) throws Exception {
         /**
          * function call
          */
