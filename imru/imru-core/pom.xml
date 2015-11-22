@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.apache.hyracks</groupId>
 		<artifactId>imru</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.17-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -39,66 +39,66 @@
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-std</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-comm</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-api</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-data-std</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-btree</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-cc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-nc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -119,7 +119,7 @@
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-ipc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
@@ -156,7 +156,7 @@
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-net</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -176,7 +176,7 @@
 		<dependency>
 			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-hdfs-core</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>

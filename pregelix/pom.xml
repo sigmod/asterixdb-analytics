@@ -16,14 +16,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.hyracks</groupId>
   <artifactId>pregelix</artifactId>
-  <version>0.2.16-SNAPSHOT</version>
+  <version>0.2.17-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>pregelix</name>
 
   <parent>
     <groupId>org.apache.hyracks</groupId>
     <artifactId>asterixdb-analytics</artifactId>
-    <version>0.2.16-SNAPSHOT</version>
+    <version>0.2.17-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -32,9 +32,9 @@
     <global.test.includes>**/*TestSuite.java,**/*Test.java</global.test.includes>
     <global.test.excludes>${hanging.pregelix.tests},**/AsterixDataLoad*.java</global.test.excludes>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hyracks.version>0.2.16-SNAPSHOT</hyracks.version>
-    <pregelix.version>0.2.16-SNAPSHOT</pregelix.version>
-    <asterix.version>0.8.7-SNAPSHOT</asterix.version>
+    <hyracks.version>0.2.17-SNAPSHOT</hyracks.version>
+    <pregelix.version>0.2.17-SNAPSHOT</pregelix.version>
+    <asterix.version>0.8.8-SNAPSHOT</asterix.version>
     <junit.version>4.8.1</junit.version>
     <commons.io.version>2.4</commons.io.version>
  </properties>

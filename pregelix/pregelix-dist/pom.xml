@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.apache.hyracks</groupId>
 		<artifactId>pregelix</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.17-SNAPSHOT</version>
 	</parent>
 	<artifactId>pregelix-dist</artifactId>
 	<name>pregelix-dist</name>
