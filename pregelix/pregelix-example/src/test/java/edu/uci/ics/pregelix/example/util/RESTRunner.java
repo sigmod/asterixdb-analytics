@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+import org.apache.asterix.testframework.context.TestCaseContext.OutputFormat;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -19,8 +20,6 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Test;
-
-import edu.uci.ics.asterix.testframework.context.TestCaseContext.OutputFormat;
 
 public class RESTRunner {
 
@@ -75,6 +74,8 @@ public class RESTRunner {
         // Create a method instance.
         GetMethod method = new GetMethod(url);
         method.setQueryString(new NameValuePair[] { new NameValuePair("query", str) });
+
+        //Set accepted output response type
         method.setRequestHeader("Accept", fmt.mimeType());
 
         // Provide custom retry handler is necessary
@@ -106,8 +107,8 @@ public class RESTRunner {
         try {
             statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(
-                        method.getResponseBodyAsStream())));
+                JSONObject result = new JSONObject(
+                        new JSONTokener(new InputStreamReader(method.getResponseBodyAsStream())));
                 if (result.has("error-code")) {
                     String[] errors = { result.getJSONArray("error-code").getString(0), result.getString("summary"),
                             result.getString("stacktrace") };

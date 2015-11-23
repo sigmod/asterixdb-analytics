@@ -28,7 +28,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
 
-import edu.uci.ics.hyracks.data.std.util.ArrayBackedValueStorage;
+import org.apache.hyracks.data.std.util.ArrayBackedValueStorage;
 
 /**
  * A Writable for ListArray containing instances of a class.

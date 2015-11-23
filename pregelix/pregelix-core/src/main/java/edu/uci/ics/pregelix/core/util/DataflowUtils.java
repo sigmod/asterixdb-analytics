@@ -16,14 +16,14 @@ package edu.uci.ics.pregelix.core.util;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Writable;
+import org.apache.hyracks.algebricks.runtime.base.IAggregateEvaluatorFactory;
+import org.apache.hyracks.algebricks.runtime.operators.aggreg.SimpleAlgebricksAccumulatingAggregatorFactory;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
 
-import edu.uci.ics.hyracks.algebricks.runtime.base.IAggregateEvaluatorFactory;
-import edu.uci.ics.hyracks.algebricks.runtime.operators.aggreg.SimpleAlgebricksAccumulatingAggregatorFactory;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
-import edu.uci.ics.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
 import edu.uci.ics.pregelix.core.runtime.touchpoint.WritableRecordDescriptorFactory;
 import edu.uci.ics.pregelix.dataflow.base.IConfigurationFactory;
 import edu.uci.ics.pregelix.dataflow.std.base.IRecordDescriptorFactory;
@@ -102,9 +102,9 @@ public class DataflowUtils {
             String className1, String className2) throws HyracksException {
         RecordDescriptor recordDescriptor = null;
         try {
-            recordDescriptor = DatatypeHelper.createKeyValueRecordDescriptor((Class<? extends Writable>) ctx
-                    .getJobletContext().loadClass(className1), (Class<? extends Writable>) ctx.getJobletContext()
-                    .loadClass(className2), conf);
+            recordDescriptor = DatatypeHelper.createKeyValueRecordDescriptor(
+                    (Class<? extends Writable>) ctx.getJobletContext().loadClass(className1),
+                    (Class<? extends Writable>) ctx.getJobletContext().loadClass(className2), conf);
         } catch (Exception cnfe) {
             throw new HyracksException(cnfe);
         }

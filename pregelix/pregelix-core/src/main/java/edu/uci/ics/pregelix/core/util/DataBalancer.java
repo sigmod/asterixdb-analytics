@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,24 +34,25 @@ import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextInputFormat;
 
-@SuppressWarnings("deprecation")
 public class DataBalancer {
 
     public static class MapRecordOnly extends MapReduceBase implements Mapper<LongWritable, Text, LongWritable, Text> {
 
+        @Override
         public void map(LongWritable id, Text inputValue, OutputCollector<LongWritable, Text> output, Reporter reporter)
                 throws IOException {
             output.collect(id, inputValue);
         }
     }
 
-    public static class ReduceRecordOnly extends MapReduceBase implements
-            Reducer<LongWritable, Text, NullWritable, Text> {
+    public static class ReduceRecordOnly extends MapReduceBase
+            implements Reducer<LongWritable, Text, NullWritable, Text> {
 
         NullWritable key = NullWritable.get();
 
-        public void reduce(LongWritable inputKey, Iterator<Text> inputValue,
-                OutputCollector<NullWritable, Text> output, Reporter reporter) throws IOException {
+        @Override
+        public void reduce(LongWritable inputKey, Iterator<Text> inputValue, OutputCollector<NullWritable, Text> output,
+                Reporter reporter) throws IOException {
             while (inputValue.hasNext())
                 output.collect(key, inputValue.next());
         }

@@ -5,11 +5,11 @@
 //import org.apache.hadoop.io.LongWritable;
 //import org.apache.hadoop.io.Text;
 //
-//import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-//import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-//import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-//import edu.uci.ics.hyracks.hdfs.api.IKeyValueParser;
-//import edu.uci.ics.hyracks.hdfs.api.IKeyValueParserFactory;
+//import org.apache.hyracks.api.comm.IFrameWriter;
+//import org.apache.hyracks.api.context.IHyracksTaskContext;
+//import org.apache.hyracks.api.exceptions.HyracksDataException;
+//import org.apache.hyracks.hdfs.api.IKeyValueParser;
+//import org.apache.hyracks.hdfs.api.IKeyValueParserFactory;
 //import edu.uci.ics.hyracks.imru.api.TupleWriter;
 //import edu.uci.ics.hyracks.imru.util.Rt;
 //

@@ -23,6 +23,13 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.asterix.api.common.AsterixHyracksIntegrationUtil;
+import org.apache.asterix.common.config.AsterixPropertiesAccessor;
+import org.apache.asterix.common.config.AsterixTransactionProperties;
+import org.apache.asterix.common.config.GlobalConfig;
+import org.apache.asterix.external.dataset.adapter.FileSystemBasedAdapter;
+import org.apache.asterix.external.util.IdentitiyResolverFactory;
+import org.apache.asterix.testframework.context.TestCaseContext;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -37,17 +44,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import edu.uci.ics.asterix.api.common.AsterixHyracksIntegrationUtil;
-import edu.uci.ics.asterix.common.config.AsterixPropertiesAccessor;
-import edu.uci.ics.asterix.common.config.AsterixTransactionProperties;
-import edu.uci.ics.asterix.common.config.GlobalConfig;
-import edu.uci.ics.asterix.external.dataset.adapter.FileSystemBasedAdapter;
-import edu.uci.ics.asterix.external.util.IdentitiyResolverFactory;
-import edu.uci.ics.asterix.test.aql.TestsExecutor;
-import edu.uci.ics.asterix.testframework.context.TestCaseContext;
 import edu.uci.ics.pregelix.core.jobgen.clusterconfig.ClusterConfig;
 import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
-import edu.uci.ics.pregelix.example.util.AsterixDBTestsExecutor;
+import edu.uci.ics.pregelix.example.util.AsterixDBTestExecutor;
+import edu.uci.ics.pregelix.example.util.TestExecutor;
 
 /**
  * Runs the runtime test cases under 'asterix-app/src/test/resources/runtimets'.
@@ -76,7 +76,7 @@ public class ConnectorTest {
     private static final String PATH_TO_CLUSTER_STORE = "src/test/resources/cluster/stores.properties";
     private static final String PATH_TO_CLUSTER_PROPERTIES = "src/test/resources/cluster/cluster.properties";
 
-    private static final TestsExecutor testsExecutor = new AsterixDBTestsExecutor();
+    private static final TestExecutor testsExecutor = new AsterixDBTestExecutor();
 
     @BeforeClass
     public static void setUp() throws Exception {

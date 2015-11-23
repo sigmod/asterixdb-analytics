@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobFlag;
-import edu.uci.ics.hyracks.api.job.JobId;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.api.job.JobStatus;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobFlag;
+import org.apache.hyracks.api.job.JobId;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.api.job.JobStatus;
 import edu.uci.ics.hyracks.imru.api.IIMRUDataGenerator;
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
 import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;

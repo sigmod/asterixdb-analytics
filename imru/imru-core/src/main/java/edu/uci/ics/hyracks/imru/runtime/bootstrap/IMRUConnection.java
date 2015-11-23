@@ -8,7 +8,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Random;
 
-import edu.uci.ics.hyracks.api.util.JavaSerializationUtils;
+import org.apache.hyracks.api.util.JavaSerializationUtils;
 import edu.uci.ics.hyracks.imru.util.Rt;
 
 public class IMRUConnection implements Serializable {

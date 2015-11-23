@@ -17,7 +17,7 @@ package edu.uci.ics.hyracks.imru.data;
 
 import java.nio.ByteBuffer;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
 import edu.uci.ics.hyracks.imru.util.DelegateHyracksTaskContext;
 
 /**

@@ -17,8 +17,8 @@ package edu.uci.ics.external.connector.asterixdb.api;
 
 import java.io.Serializable;
 
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 public interface IReadConverterFactory extends Serializable {
 

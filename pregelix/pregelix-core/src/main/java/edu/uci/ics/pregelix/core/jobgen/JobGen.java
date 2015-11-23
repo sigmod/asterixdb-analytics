@@ -45,6 +45,51 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
+import org.apache.hyracks.api.constraints.PartitionConstraintHelper;
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.dataflow.value.IBinaryComparatorFactory;
+import org.apache.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.ITuplePartitionComputerFactory;
+import org.apache.hyracks.api.dataflow.value.ITypeTraits;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksException;
+import org.apache.hyracks.api.io.FileReference;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import org.apache.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
+import org.apache.hyracks.dataflow.common.data.partition.FieldHashPartitionComputerFactory;
+import org.apache.hyracks.dataflow.std.connectors.MToNPartitioningConnectorDescriptor;
+import org.apache.hyracks.dataflow.std.connectors.MToNPartitioningMergingConnectorDescriptor;
+import org.apache.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
+import org.apache.hyracks.dataflow.std.file.ConstantFileSplitProvider;
+import org.apache.hyracks.dataflow.std.file.FileSplit;
+import org.apache.hyracks.dataflow.std.file.IFileSplitProvider;
+import org.apache.hyracks.dataflow.std.group.HashSpillableTableFactory;
+import org.apache.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
+import org.apache.hyracks.dataflow.std.group.external.ExternalGroupOperatorDescriptor;
+import org.apache.hyracks.dataflow.std.group.preclustered.PreclusteredGroupOperatorDescriptor;
+import org.apache.hyracks.dataflow.std.group.sort.SortGroupByOperatorDescriptor;
+import org.apache.hyracks.dataflow.std.misc.ConstantTupleSourceOperatorDescriptor;
+import org.apache.hyracks.dataflow.std.sort.Algorithm;
+import org.apache.hyracks.dataflow.std.sort.ExternalSortOperatorDescriptor;
+import org.apache.hyracks.hdfs2.dataflow.HDFSReadOperatorDescriptor;
+import org.apache.hyracks.storage.am.btree.dataflow.BTreeDataflowHelperFactory;
+import org.apache.hyracks.storage.am.btree.dataflow.BTreeSearchOperatorDescriptor;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
+import org.apache.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
+import org.apache.hyracks.storage.am.common.dataflow.IndexDropOperatorDescriptor;
+import org.apache.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
+import org.apache.hyracks.storage.am.common.dataflow.TreeIndexCreateOperatorDescriptor;
+import org.apache.hyracks.storage.am.common.impls.NoOpOperationCallbackFactory;
+import org.apache.hyracks.storage.am.lsm.btree.dataflow.LSMBTreeDataflowHelperFactory;
+import org.apache.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
+import org.apache.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
+import org.apache.hyracks.storage.common.IStorageManagerInterface;
+import org.apache.hyracks.storage.common.file.TransientLocalResourceFactoryProvider;
 
 import edu.uci.ics.external.connector.api.ParallelOperator;
 import edu.uci.ics.external.connector.api.PhysicalProperties;
@@ -52,51 +97,6 @@ import edu.uci.ics.external.connector.asterixdb.ReadConnector;
 import edu.uci.ics.external.connector.asterixdb.StorageParameter;
 import edu.uci.ics.external.connector.asterixdb.WriteConnector;
 import edu.uci.ics.external.connector.asterixdb.data.TypeTraits;
-import edu.uci.ics.hyracks.api.constraints.PartitionConstraintHelper;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
-import edu.uci.ics.hyracks.api.dataflow.value.INormalizedKeyComputerFactory;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.ITuplePartitionComputerFactory;
-import edu.uci.ics.hyracks.api.dataflow.value.ITypeTraits;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.exceptions.HyracksException;
-import edu.uci.ics.hyracks.api.io.FileReference;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.data.marshalling.UTF8StringSerializerDeserializer;
-import edu.uci.ics.hyracks.dataflow.common.data.partition.FieldHashPartitionComputerFactory;
-import edu.uci.ics.hyracks.dataflow.std.connectors.MToNPartitioningConnectorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.connectors.MToNPartitioningMergingConnectorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.connectors.OneToOneConnectorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.file.ConstantFileSplitProvider;
-import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
-import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
-import edu.uci.ics.hyracks.dataflow.std.group.HashSpillableTableFactory;
-import edu.uci.ics.hyracks.dataflow.std.group.IAggregatorDescriptorFactory;
-import edu.uci.ics.hyracks.dataflow.std.group.external.ExternalGroupOperatorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.group.preclustered.PreclusteredGroupOperatorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.group.sort.SortGroupByOperatorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.misc.ConstantTupleSourceOperatorDescriptor;
-import edu.uci.ics.hyracks.dataflow.std.sort.Algorithm;
-import edu.uci.ics.hyracks.dataflow.std.sort.ExternalSortOperatorDescriptor;
-import edu.uci.ics.hyracks.hdfs2.dataflow.HDFSReadOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.btree.dataflow.BTreeDataflowHelperFactory;
-import edu.uci.ics.hyracks.storage.am.btree.dataflow.BTreeSearchOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManagerProvider;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.IndexDropOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexCreateOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.common.impls.NoOpOperationCallbackFactory;
-import edu.uci.ics.hyracks.storage.am.lsm.btree.dataflow.LSMBTreeDataflowHelperFactory;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
-import edu.uci.ics.hyracks.storage.common.IStorageManagerInterface;
-import edu.uci.ics.hyracks.storage.common.file.TransientLocalResourceFactoryProvider;
 import edu.uci.ics.pregelix.api.graph.GlobalAggregator;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -160,6 +160,7 @@ public abstract class JobGen implements IJobGen {
     protected IOptimizer optimizer;
 
     private static final Map<String, String> MERGE_POLICY_PROPERTIES;
+
     static {
         MERGE_POLICY_PROPERTIES = new HashMap<String, String>();
         MERGE_POLICY_PROPERTIES.put("num-components", "3");
@@ -255,7 +256,7 @@ public abstract class JobGen implements IJobGen {
         IFileSplitProvider fileSplitProvider = getFileSplitProvider(jobId, PRIMARY_INDEX);
         TreeIndexCreateOperatorDescriptor btreeCreate = new TreeIndexCreateOperatorDescriptor(spec,
                 storageManagerInterface, lcManagerProvider, fileSplitProvider, typeTraits, comparatorFactories,
-                keyFields, getIndexDataflowHelperFactory(), TransientLocalResourceFactoryProvider.INSTANCE,
+                keyFields, getIndexDataflowHelperFactory(), new TransientLocalResourceFactoryProvider(),
                 NoOpOperationCallbackFactory.INSTANCE);
         setLocationConstraint(spec, btreeCreate);
         spec.setFrameSize(frameSize);
@@ -509,15 +510,15 @@ public abstract class JobGen implements IJobGen {
         if (partitionerClazz != null) {
             return new VertexPartitionComputerFactory(confFactory);
         } else {
-            return new VertexIdPartitionComputerFactory(new WritableSerializerDeserializerFactory(
-                    BspUtils.getVertexIndexClass(conf)), confFactory);
+            return new VertexIdPartitionComputerFactory(
+                    new WritableSerializerDeserializerFactory(BspUtils.getVertexIndexClass(conf)), confFactory);
         }
     }
 
     protected IIndexDataflowHelperFactory getIndexDataflowHelperFactory() {
         if (BspUtils.useLSM(conf)) {
-            return new LSMBTreeDataflowHelperFactory(new VirtualBufferCacheProvider(),
-                    new ConstantMergePolicyFactory(), MERGE_POLICY_PROPERTIES, NoOpOperationTrackerProvider.INSTANCE,
+            return new LSMBTreeDataflowHelperFactory(new VirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
+                    MERGE_POLICY_PROPERTIES, NoOpOperationTrackerProvider.INSTANCE,
                     /* TODO verify whether key dup check is required or not in preglix: to be safe, just check it as it has been done*/
                     SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true, null, null,
                     null, null, false);
@@ -594,7 +595,8 @@ public abstract class JobGen implements IJobGen {
          * connect operator descriptors
          */
         ITuplePartitionComputerFactory hashPartitionComputerFactory = getVertexPartitionComputerFactory();
-        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), scanner, 0, sorter, 0);
+        spec.connect(new MToNPartitioningConnectorDescriptor(spec, hashPartitionComputerFactory), scanner, 0, sorter,
+                0);
         spec.connect(new OneToOneConnectorDescriptor(spec), sorter, 0, btreeBulkLoad, 0);
         spec.connect(new OneToOneConnectorDescriptor(spec), btreeBulkLoad, 0, sink, 0);
         spec.setFrameSize(frameSize);
@@ -685,8 +687,8 @@ public abstract class JobGen implements IJobGen {
         return spec;
     }
 
-    private JobSpecification scanIndexWriteToHDFS(Configuration conf, boolean ckpointing) throws HyracksDataException,
-            HyracksException {
+    private JobSpecification scanIndexWriteToHDFS(Configuration conf, boolean ckpointing)
+            throws HyracksDataException, HyracksException {
         Class<? extends WritableComparable<?>> vertexIdClass = BspUtils.getVertexIndexClass(conf);
         Class<? extends Writable> vertexClass = BspUtils.getVertexClass(conf);
         JobSpecification spec = new JobSpecification(frameSize);
@@ -756,10 +758,11 @@ public abstract class JobGen implements IJobGen {
         ArrayTupleBuilder tb = new ArrayTupleBuilder(2);
         DataOutput dos = tb.getDataOutput();
         tb.reset();
-        UTF8StringSerializerDeserializer.INSTANCE.serialize("0", dos);
+        UTF8StringSerializerDeserializer serde = new UTF8StringSerializerDeserializer();
+        serde.serialize("0", dos);
         tb.addFieldEndOffset();
-        ISerializerDeserializer[] keyRecDescSers = { UTF8StringSerializerDeserializer.INSTANCE,
-                UTF8StringSerializerDeserializer.INSTANCE };
+        ISerializerDeserializer[] keyRecDescSers = { new UTF8StringSerializerDeserializer(),
+                new UTF8StringSerializerDeserializer() };
         RecordDescriptor keyRecDesc = new RecordDescriptor(keyRecDescSers);
         ConstantTupleSourceOperatorDescriptor emptyTupleSource = new ConstantTupleSourceOperatorDescriptor(spec,
                 keyRecDesc, tb.getFieldEndOffsets(), tb.getByteArray(), tb.getSize());
@@ -884,8 +887,8 @@ public abstract class JobGen implements IJobGen {
             /**
              * construct the materializing write operator
              */
-            MaterializingReadOperatorDescriptor materializeRead = new MaterializingReadOperatorDescriptor(spec,
-                    rdFinal, false, jobId, lastSuccessfulIteration + 1);
+            MaterializingReadOperatorDescriptor materializeRead = new MaterializingReadOperatorDescriptor(spec, rdFinal,
+                    false, jobId, lastSuccessfulIteration + 1);
             setLocationConstraint(spec, materializeRead);
 
             String checkpointPath = BspUtils.getMessageCheckpointPath(conf, lastSuccessfulIteration);;
@@ -968,8 +971,8 @@ public abstract class JobGen implements IJobGen {
 
         /** construct runtime hook */
         RuntimeHookOperatorDescriptor postSuperStep = new RuntimeHookOperatorDescriptor(spec,
-                new RecoveryRuntimeHookFactory(jobId, lastCheckpointedIteration, new ConfigurationFactory(
-                        tmpJob.getConfiguration())));
+                new RecoveryRuntimeHookFactory(jobId, lastCheckpointedIteration,
+                        new ConfigurationFactory(tmpJob.getConfiguration())));
         setLocationConstraint(spec, postSuperStep);
 
         /** construct empty sink operator */
@@ -1139,20 +1142,20 @@ public abstract class JobGen implements IJobGen {
             /**
              * construct local group-by operator
              */
-            IAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
-                    this.getConfigurationFactory(), false, false);
-            IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
-                    this.getConfigurationFactory(), false, true);
-            IOperatorDescriptor localGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields,
-                    keyFields, nkmFactory, sortCmpFactories, localAggregatorFactory, partialAggregatorFactory,
-                    rdCombinedMessage, rdCombinedMessage, false, Algorithm.QUICK_SORT);
+            IAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils
+                    .getAccumulatingAggregatorFactory(this.getConfigurationFactory(), false, false);
+            IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils
+                    .getAccumulatingAggregatorFactory(this.getConfigurationFactory(), false, true);
+            IOperatorDescriptor localGby = new SortGroupByOperatorDescriptor(spec, maxFrameNumber, keyFields, keyFields,
+                    nkmFactory, sortCmpFactories, localAggregatorFactory, partialAggregatorFactory, rdCombinedMessage,
+                    rdCombinedMessage, false, Algorithm.QUICK_SORT);
             setLocationConstraint(spec, localGby);
 
             /**
              * construct global group-by operator
              */
-            IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils.getAccumulatingAggregatorFactory(
-                    getConfigurationFactory(), true, true);
+            IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils
+                    .getAccumulatingAggregatorFactory(getConfigurationFactory(), true, true);
             ITuplePartitionComputerFactory partionFactory = getVertexPartitionComputerFactory();
             if (merge) {
                 IOperatorDescriptor globalGby = new PreclusteredGroupOperatorDescriptor(spec, keyFields,
@@ -1176,17 +1179,17 @@ public abstract class JobGen implements IJobGen {
              * construct local group-by operator
              */
             ITuplePartitionComputerFactory partionFactory = getVertexPartitionComputerFactory();
-            IAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(
-                    getConfigurationFactory(), false, false);
-            IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(
-                    getConfigurationFactory(), false, true);
+            IAggregatorDescriptorFactory localAggregatorFactory = DataflowUtils
+                    .getSerializableAggregatorFactory(getConfigurationFactory(), false, false);
+            IAggregatorDescriptorFactory partialAggregatorFactory = DataflowUtils
+                    .getSerializableAggregatorFactory(getConfigurationFactory(), false, true);
             IOperatorDescriptor localGby = new ExternalGroupOperatorDescriptor(spec, keyFields, frameLimit,
                     sortCmpFactories, nkmFactory, localAggregatorFactory, partialAggregatorFactory, rdUnnestedMessage,
                     new HashSpillableTableFactory(partionFactory, hashTableSize), merge ? true : false);
             setLocationConstraint(spec, localGby);
 
-            IAggregatorDescriptorFactory aggregatorFactoryFinal = DataflowUtils.getAccumulatingAggregatorFactory(
-                    getConfigurationFactory(), true, true);
+            IAggregatorDescriptorFactory aggregatorFactoryFinal = DataflowUtils
+                    .getAccumulatingAggregatorFactory(getConfigurationFactory(), true, true);
             /**
              * construct global group-by operator
              */
@@ -1198,8 +1201,8 @@ public abstract class JobGen implements IJobGen {
                         sortCmpFactories, nkmFactory), localGby, 0, globalGby, 0);
                 return Pair.of(localGby, globalGby);
             } else {
-                IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils.getSerializableAggregatorFactory(
-                        getConfigurationFactory(), true, true);
+                IAggregatorDescriptorFactory finalAggregatorFactory = DataflowUtils
+                        .getSerializableAggregatorFactory(getConfigurationFactory(), true, true);
                 IOperatorDescriptor globalGby = new ExternalGroupOperatorDescriptor(spec, keyFields, frameLimit,
                         sortCmpFactories, nkmFactory, partialAggregatorFactory, finalAggregatorFactory,
                         rdCombinedMessage, new HashSpillableTableFactory(partionFactory, hashTableSize), false);

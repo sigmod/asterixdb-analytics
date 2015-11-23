@@ -14,7 +14,7 @@
  */
 package edu.uci.ics.pregelix.dataflow.std.util;
 
-import edu.uci.ics.hyracks.dataflow.common.data.accessors.ITupleReference;
+import org.apache.hyracks.dataflow.common.data.accessors.ITupleReference;
 
 public class SearchKeyTupleReference implements ITupleReference {
 

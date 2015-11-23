@@ -26,21 +26,21 @@ import java.util.Vector;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.comm.IFrame;
+import org.apache.hyracks.api.comm.VSizeFrame;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.IOperatorNodePushable;
+import org.apache.hyracks.api.dataflow.value.IRecordDescriptorProvider;
+import org.apache.hyracks.api.dataflow.value.ISerializerDeserializer;
+import org.apache.hyracks.api.dataflow.value.RecordDescriptor;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.dataflow.common.io.RunFileReader;
+import org.apache.hyracks.dataflow.common.io.RunFileWriter;
+import org.apache.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
 import org.eclipse.jetty.util.log.Log;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.comm.IFrame;
-import edu.uci.ics.hyracks.api.comm.VSizeFrame;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorNodePushable;
-import edu.uci.ics.hyracks.api.dataflow.value.IRecordDescriptorProvider;
-import edu.uci.ics.hyracks.api.dataflow.value.ISerializerDeserializer;
-import edu.uci.ics.hyracks.api.dataflow.value.RecordDescriptor;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.dataflow.common.io.RunFileReader;
-import edu.uci.ics.hyracks.dataflow.common.io.RunFileWriter;
-import edu.uci.ics.hyracks.dataflow.std.base.AbstractUnaryOutputSourceOperatorNodePushable;
 import edu.uci.ics.hyracks.imru.api.ASyncIO;
 import edu.uci.ics.hyracks.imru.api.DataWriter;
 import edu.uci.ics.hyracks.imru.api.IIMRUJob2;
@@ -63,8 +63,8 @@ import edu.uci.ics.hyracks.imru.util.Rt;
  *            persisted between iterations.
  * @author Josh Rosen
  */
-public class MapOperatorDescriptor<Model extends Serializable, Data extends Serializable> extends
-        IMRUOperatorDescriptor<Model, Data> {
+public class MapOperatorDescriptor<Model extends Serializable, Data extends Serializable>
+        extends IMRUOperatorDescriptor<Model, Data> {
 
     private static Logger LOG = Logger.getLogger(MapOperatorDescriptor.class.getName());
 
@@ -102,7 +102,7 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
     @Override
     public IOperatorNodePushable createPushRuntime(final IHyracksTaskContext ctx,
             IRecordDescriptorProvider recordDescProvider, final int partition, int nPartitions)
-            throws HyracksDataException {
+                    throws HyracksDataException {
         return new AbstractUnaryOutputSourceOperatorNodePushable() {
             private final IHyracksTaskContext fileCtx;
             private final String name;
@@ -131,8 +131,8 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
                     }
                     synchronized (context.envLock) {
                         if (context.modelAge < roundNum) {
-                            throw new HyracksDataException("Model was not spread to "
-                                    + new IMRUContext(ctx, name).getNodeId());
+                            throw new HyracksDataException(
+                                    "Model was not spread to " + new IMRUContext(ctx, name).getNodeId());
                         }
                     }
 
@@ -162,7 +162,7 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
                         if (runFileWriter != null) {
                             Log.info("Cached example file size is " + runFileWriter.getFileSize() + " bytes");
                             final RunFileReader reader = new RunFileReader(runFileWriter.getFileReference(),
-                                    ctx.getIOManager(), runFileWriter.getFileSize());
+                                    ctx.getIOManager(), runFileWriter.getFileSize(), true);
                             //readInReverse
                             reader.open();
                             final IFrame inputFrame = new VSizeFrame(fileCtx);
@@ -234,14 +234,9 @@ public class MapOperatorDescriptor<Model extends Serializable, Data extends Seri
                             //                                    + MergedFrames.deserialize(objectData));
 
                             IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " map start " + partition);
-                            MergedFrames
-                                    .serializeToFrames(
-                                            imruContext,
-                                            writer,
-                                            objectData,
-                                            partition,
-                                            imruContext.getNodeId() + " map " + partition + " "
-                                                    + imruContext.getOperatorName());
+                            MergedFrames.serializeToFrames(imruContext, writer, objectData, partition,
+                                    imruContext.getNodeId() + " map " + partition + " "
+                                            + imruContext.getOperatorName());
                             IMRUDebugger.sendDebugInfo(imruContext.getNodeId() + " map finish");
                             //                            IMRUSerialize.serializeToFrames(imruContext,
                             //                                    writer, objectData);

@@ -1,3 +1,4 @@
+*NodeControllerService
 .DS_Store
 target
 .classpath
@@ -11,7 +12,7 @@ rttest
 ClusterControllerService
 actual
 build
-edu.uci.ics.hyracks.control.nc.NodeControllerService
+org.apache.hyracks.control.nc.NodeControllerService
 
 exception
 expected

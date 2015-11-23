@@ -34,9 +34,9 @@ import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableUtils;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
-import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import org.apache.hyracks.api.comm.IFrameFieldAppender;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 import edu.uci.ics.pregelix.api.util.BspUtils;
 import edu.uci.ics.pregelix.api.util.JobStateUtils;
 

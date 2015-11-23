@@ -1,7 +1,7 @@
 use dataverse graph;
 
 load dataset rawweb 
-using "edu.uci.ics.asterix.external.dataset.adapter.NCFileSystemAdapter"
+using "org.apache.asterix.external.dataset.adapter.NCFileSystemAdapter"
 (("path"="nc1://data/webmap_json/webmap_link.adm"),("format"="adm")) pre-sorted;
 
 insert into dataset webmap(

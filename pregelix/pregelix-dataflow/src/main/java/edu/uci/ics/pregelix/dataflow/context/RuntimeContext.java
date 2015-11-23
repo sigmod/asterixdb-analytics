@@ -22,30 +22,31 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hyracks.api.application.INCApplicationContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.dataflow.state.IStateObject;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.io.FileReference;
+import org.apache.hyracks.api.io.IWorkspaceFileFactory;
+import org.apache.hyracks.control.nc.io.IOManager;
+import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManager;
+import org.apache.hyracks.storage.am.common.dataflow.IndexLifecycleManager;
+import org.apache.hyracks.storage.am.lsm.common.api.IVirtualBufferCache;
+import org.apache.hyracks.storage.am.lsm.common.impls.MultitenantVirtualBufferCache;
+import org.apache.hyracks.storage.am.lsm.common.impls.VirtualBufferCache;
+import org.apache.hyracks.storage.common.buffercache.BufferCache;
+import org.apache.hyracks.storage.common.buffercache.ClockPageReplacementStrategy;
+import org.apache.hyracks.storage.common.buffercache.HeapBufferAllocator;
+import org.apache.hyracks.storage.common.buffercache.IBufferCache;
+import org.apache.hyracks.storage.common.buffercache.ICacheMemoryAllocator;
+import org.apache.hyracks.storage.common.buffercache.IPageReplacementStrategy;
+import org.apache.hyracks.storage.common.file.IFileMapManager;
+import org.apache.hyracks.storage.common.file.IFileMapProvider;
+import org.apache.hyracks.storage.common.file.ILocalResourceRepository;
+import org.apache.hyracks.storage.common.file.ResourceIdFactory;
+import org.apache.hyracks.storage.common.file.TransientFileMapManager;
+import org.apache.hyracks.storage.common.file.TransientLocalResourceRepository;
 
-import edu.uci.ics.hyracks.api.application.INCApplicationContext;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.dataflow.state.IStateObject;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.api.io.FileReference;
-import edu.uci.ics.hyracks.api.io.IWorkspaceFileFactory;
-import edu.uci.ics.hyracks.control.nc.io.IOManager;
-import edu.uci.ics.hyracks.storage.am.common.api.IIndexLifecycleManager;
-import edu.uci.ics.hyracks.storage.am.lsm.common.api.IVirtualBufferCache;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.MultitenantVirtualBufferCache;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.VirtualBufferCache;
-import edu.uci.ics.hyracks.storage.common.buffercache.BufferCache;
-import edu.uci.ics.hyracks.storage.common.buffercache.ClockPageReplacementStrategy;
-import edu.uci.ics.hyracks.storage.common.buffercache.HeapBufferAllocator;
-import edu.uci.ics.hyracks.storage.common.buffercache.IBufferCache;
-import edu.uci.ics.hyracks.storage.common.buffercache.ICacheMemoryAllocator;
-import edu.uci.ics.hyracks.storage.common.buffercache.IPageReplacementStrategy;
-import edu.uci.ics.hyracks.storage.common.file.IFileMapManager;
-import edu.uci.ics.hyracks.storage.common.file.IFileMapProvider;
-import edu.uci.ics.hyracks.storage.common.file.ILocalResourceRepository;
-import edu.uci.ics.hyracks.storage.common.file.ResourceIdFactory;
-import edu.uci.ics.hyracks.storage.common.file.TransientFileMapManager;
-import edu.uci.ics.hyracks.storage.common.file.TransientLocalResourceRepository;
 import edu.uci.ics.pregelix.api.graph.VertexContext;
 
 public class RuntimeContext implements IWorkspaceFileFactory {
@@ -79,15 +80,15 @@ public class RuntimeContext implements IWorkspaceFileFactory {
         ICacheMemoryAllocator allocator = new HeapBufferAllocator();
         IPageReplacementStrategy prs = new ClockPageReplacementStrategy(allocator, pageSize, numPages);
         /** let the buffer cache never flush dirty pages */
-        bufferCache = new BufferCache(appCtx.getRootContext().getIOManager(), prs, new PreDelayPageCleanerPolicy(
-                Long.MAX_VALUE), fileMapManager, 1000000, threadFactory);
+        bufferCache = new BufferCache(appCtx.getRootContext().getIOManager(), prs,
+                new PreDelayPageCleanerPolicy(Long.MAX_VALUE), fileMapManager, 1000000, threadFactory);
         int numPagesInMemComponents = numPages / 8;
         vbcs = new ArrayList<IVirtualBufferCache>();
-        IVirtualBufferCache vBufferCache = new MultitenantVirtualBufferCache(new VirtualBufferCache(
-                new HeapBufferAllocator(), memPageSize, numPagesInMemComponents));
+        IVirtualBufferCache vBufferCache = new MultitenantVirtualBufferCache(
+                new VirtualBufferCache(new HeapBufferAllocator(), memPageSize, numPagesInMemComponents));
         vbcs.add(vBufferCache);
         ioManager = (IOManager) appCtx.getRootContext().getIOManager();
-        lcManager = new NoBudgetIndexLifecycleManager();
+        lcManager = new IndexLifecycleManager();
         localResourceRepository = new TransientLocalResourceRepository();
         resourceIdFactory = new ResourceIdFactory(0);
     }

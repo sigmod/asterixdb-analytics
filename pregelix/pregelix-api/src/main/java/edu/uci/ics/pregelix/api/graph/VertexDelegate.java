@@ -22,9 +22,9 @@ import java.util.List;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
-import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import org.apache.hyracks.api.comm.IFrameFieldAppender;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
 import edu.uci.ics.pregelix.api.io.Pointable;
 import edu.uci.ics.pregelix.api.util.FrameTupleUtils;
 

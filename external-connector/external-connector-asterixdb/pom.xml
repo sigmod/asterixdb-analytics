@@ -15,9 +15,9 @@
 	<name>external-connector-asterixdb</name>
 
 	<parent>
-		<groupId>edu.uci.ics.hyracks</groupId>
+		<groupId>org.apache.hyracks</groupId>
 		<artifactId>external-connector</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.17-SNAPSHOT</version>
 	</parent>
 
 	<properties>
@@ -62,56 +62,56 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>external-connector-api</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-common</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-hdfs-core</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-common</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-lsm-common</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-btree</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-lsm-btree</artifactId>
 			<version>${hyracks.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.asterix</groupId>
+			<groupId>org.apache.asterix</groupId>
 			<artifactId>asterix-om</artifactId>
 			<version>${asterix.version}</version>
 		</dependency>

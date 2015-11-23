@@ -17,7 +17,7 @@ package edu.uci.ics.pregelix.example.trianglecounting;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.Counters;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.job.PregelixJob;
 import edu.uci.ics.pregelix.api.util.BspUtils;

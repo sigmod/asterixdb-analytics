@@ -14,8 +14,8 @@
  */
 package edu.uci.ics.pregelix.core.runtime.touchpoint;
 
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparator;
-import edu.uci.ics.hyracks.api.dataflow.value.IBinaryComparatorFactory;
+import org.apache.hyracks.api.dataflow.value.IBinaryComparator;
+import org.apache.hyracks.api.dataflow.value.IBinaryComparatorFactory;
 
 public class RawBinaryComparatorFactory implements IBinaryComparatorFactory {
 

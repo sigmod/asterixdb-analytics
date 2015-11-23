@@ -19,7 +19,7 @@ import java.io.IOException;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
  * This is the abstract class to implement for aggregating the state of all the vertices globally in the graph.

@@ -14,7 +14,7 @@
  */
 package edu.uci.ics.pregelix.api.job;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
  * Interface for an object whose {@link completeIteration} method is called at the end

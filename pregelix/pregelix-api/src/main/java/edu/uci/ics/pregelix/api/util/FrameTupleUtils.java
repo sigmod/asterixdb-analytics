@@ -15,12 +15,12 @@
 
 package edu.uci.ics.pregelix.api.util;
 
-import edu.uci.ics.hyracks.api.comm.IFrameFieldAppender;
-import edu.uci.ics.hyracks.api.comm.IFrameTupleAppender;
-import edu.uci.ics.hyracks.api.comm.IFrameWriter;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.dataflow.common.comm.util.FrameUtils;
+import org.apache.hyracks.api.comm.IFrameFieldAppender;
+import org.apache.hyracks.api.comm.IFrameTupleAppender;
+import org.apache.hyracks.api.comm.IFrameWriter;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import org.apache.hyracks.dataflow.common.comm.util.FrameUtils;
 import edu.uci.ics.pregelix.api.io.Pointable;
 
 public class FrameTupleUtils {

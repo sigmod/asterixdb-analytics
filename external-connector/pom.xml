@@ -19,9 +19,9 @@
   <name>external-connector</name>
 
   <parent>
-    <groupId>edu.uci.ics.hyracks</groupId>
+    <groupId>org.apache.hyracks</groupId>
     <artifactId>asterixdb-analytics</artifactId>
-    <version>0.2.16-SNAPSHOT</version>
+    <version>0.2.17-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -30,9 +30,9 @@
     <global.test.includes>**/*TestSuite.java,**/*Test.java</global.test.includes>
     <global.test.excludes>**/Abstract*.java,${hanging.pregelix.tests},${hivesterix.perf.tests}</global.test.excludes>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <hyracks.version>0.2.16-SNAPSHOT</hyracks.version>
-    <pregelix.version>0.2.16-SNAPSHOT</pregelix.version>
-    <asterix.version>0.8.7-SNAPSHOT</asterix.version>
+    <hyracks.version>0.2.17-SNAPSHOT</hyracks.version>
+    <pregelix.version>0.2.17-SNAPSHOT</pregelix.version>
+    <asterix.version>0.8.8-SNAPSHOT</asterix.version>
     <junit.version>4.8.1</junit.version>
     <commons.io.version>2.4</commons.io.version>
  </properties>

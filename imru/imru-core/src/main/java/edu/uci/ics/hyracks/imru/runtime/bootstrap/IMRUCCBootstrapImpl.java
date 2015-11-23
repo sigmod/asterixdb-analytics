@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.Servlet;
@@ -31,12 +30,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.hyracks.api.application.ICCApplicationContext;
+import org.apache.hyracks.api.application.ICCApplicationEntryPoint;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import edu.uci.ics.hyracks.api.application.ICCApplicationContext;
-import edu.uci.ics.hyracks.api.application.ICCApplicationEntryPoint;
 import edu.uci.ics.hyracks.imru.util.Rt;
 
 /**
@@ -44,15 +43,13 @@ import edu.uci.ics.hyracks.imru.util.Rt;
  * Cluster Controller.
  */
 public class IMRUCCBootstrapImpl implements ICCApplicationEntryPoint {
-    private static final Logger LOGGER = Logger
-            .getLogger(IMRUCCBootstrapImpl.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(IMRUCCBootstrapImpl.class.getName());
     private Server webServer;
     private ICCApplicationContext appCtx;
     private Hashtable<String, String> jobStatus = new Hashtable<String, String>();
 
     @Override
-    public void start(ICCApplicationContext appCtx, String[] arg1)
-            throws Exception {
+    public void start(ICCApplicationContext appCtx, String[] arg1) throws Exception {
         LOGGER.info("Starting IMRU model uploader/downloader");
         try {
             this.appCtx = appCtx;
@@ -74,8 +71,7 @@ public class IMRUCCBootstrapImpl implements ICCApplicationEntryPoint {
     String modelDir;
 
     private void setupWebServer() throws Exception {
-        InputStream stream = this.getClass().getClassLoader()
-                .getResourceAsStream("imru-deployment.properties");
+        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("imru-deployment.properties");
         Properties p = new Properties();
         p.load(stream);
         stream.close();
@@ -88,14 +84,12 @@ public class IMRUCCBootstrapImpl implements ICCApplicationEntryPoint {
             modelDir = System.getProperty("imru.tempdir");
         webServer = new Server(port);
 
-        ServletContextHandler context = new ServletContextHandler(
-                ServletContextHandler.SESSIONS);
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         webServer.setHandler(context);
         context.addServlet(new ServletHolder(new Servlet() {
             @Override
-            public void service(ServletRequest request, ServletResponse response)
-                    throws ServletException, IOException {
+            public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
                 HttpServletRequest r = (HttpServletRequest) request;
                 String key = r.getParameter("key");
                 String name = r.getParameter("name");
@@ -170,5 +164,10 @@ public class IMRUCCBootstrapImpl implements ICCApplicationEntryPoint {
             public void destroy() {
             }
         }), "/*");
+    }
+
+    @Override
+    public void startupCompleted() throws Exception {
+
     }
 }

@@ -16,9 +16,11 @@
 package edu.uci.ics.pregelix.api.converter;
 
 import org.apache.asterix.om.types.ARecordType;
+import org.apache.asterix.om.pointables.ARecordVisitablePointable;
+import org.apache.asterix.om.types.ARecordType;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
-import edu.uci.ics.asterix.om.pointables.ARecordVisitablePointable;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+
 import edu.uci.ics.pregelix.api.graph.Vertex;
 
 public interface VertexInputConverter {

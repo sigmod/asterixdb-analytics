@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.uci.ics.hyracks.examples</groupId>
+	<groupId>org.apache.hyracks.examples</groupId>
 	<artifactId>imru-example</artifactId>
 	<packaging>jar</packaging>
 
 	<parent>
-		<groupId>edu.uci.ics.hyracks</groupId>
+		<groupId>org.apache.hyracks</groupId>
 		<artifactId>imru</artifactId>
-		<version>0.2.16-SNAPSHOT</version>
+		<version>0.2.17-SNAPSHOT</version>
 	</parent>
 
 	<build>
@@ -124,59 +124,59 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>imru-core</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-std</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-api</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-dataflow-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-data-std</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-storage-am-btree</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-common</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-cc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-control-nc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-ipc</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -237,9 +237,9 @@
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>edu.uci.ics.hyracks</groupId>
+			<groupId>org.apache.hyracks</groupId>
 			<artifactId>hyracks-net</artifactId>
-			<version>0.2.16-SNAPSHOT</version>
+			<version>0.2.17-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

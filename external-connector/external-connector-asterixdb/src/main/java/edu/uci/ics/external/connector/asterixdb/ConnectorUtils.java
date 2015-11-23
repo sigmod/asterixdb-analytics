@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.asterix.om.types.ARecordType;
+import org.apache.asterix.om.util.JSONDeserializerForTypes;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -29,16 +30,15 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.hyracks.dataflow.std.file.ConstantFileSplitProvider;
+import org.apache.hyracks.dataflow.std.file.FileSplit;
+import org.apache.hyracks.dataflow.std.file.IFileSplitProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import edu.uci.ics.asterix.om.util.JSONDeserializerForTypes;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
-import edu.uci.ics.hyracks.dataflow.std.file.ConstantFileSplitProvider;
-import edu.uci.ics.hyracks.dataflow.std.file.FileSplit;
-import edu.uci.ics.hyracks.dataflow.std.file.IFileSplitProvider;
 
 public class ConnectorUtils {
 
@@ -187,8 +187,8 @@ public class ConnectorUtils {
         try {
             statusCode = client.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
-                JSONObject result = new JSONObject(new JSONTokener(new InputStreamReader(
-                        method.getResponseBodyAsStream())));
+                JSONObject result = new JSONObject(
+                        new JSONTokener(new InputStreamReader(method.getResponseBodyAsStream())));
                 if (result.has("error-code")) {
                     String[] errors = { result.getJSONArray("error-code").getString(0), result.getString("summary"),
                             result.getString("stacktrace") };

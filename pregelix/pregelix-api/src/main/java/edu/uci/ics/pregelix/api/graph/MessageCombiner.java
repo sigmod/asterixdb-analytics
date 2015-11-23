@@ -18,7 +18,7 @@ package edu.uci.ics.pregelix.api.graph;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
 
 /**
  * This is the abstract class to implement for combining of messages that are sent to the same vertex.

@@ -21,9 +21,9 @@ import java.io.Serializable;
 
 import org.kohsuke.args4j.Option;
 
-import edu.uci.ics.hyracks.api.client.HyracksConnection;
-import edu.uci.ics.hyracks.api.deployment.DeploymentId;
-import edu.uci.ics.hyracks.api.job.JobStatus;
+import org.apache.hyracks.api.client.HyracksConnection;
+import org.apache.hyracks.api.deployment.DeploymentId;
+import org.apache.hyracks.api.job.JobStatus;
 import edu.uci.ics.hyracks.imru.file.ConfigurationFactory;
 import edu.uci.ics.hyracks.imru.jobgen.ClusterConfig;
 import edu.uci.ics.hyracks.imru.jobgen.IMRUJobFactory;

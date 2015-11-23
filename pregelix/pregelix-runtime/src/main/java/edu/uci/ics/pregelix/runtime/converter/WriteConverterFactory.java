@@ -18,17 +18,17 @@ package edu.uci.ics.pregelix.runtime.converter;
 import java.io.DataInput;
 import java.io.DataInputStream;
 
+import org.apache.asterix.builders.RecordBuilder;
+import org.apache.asterix.om.types.ARecordType;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
+import org.apache.hyracks.api.context.IHyracksTaskContext;
+import org.apache.hyracks.api.exceptions.HyracksDataException;
+import org.apache.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
+import org.apache.hyracks.hdfs.ContextFactory;
 
-import edu.uci.ics.asterix.builders.RecordBuilder;
-import edu.uci.ics.asterix.om.types.ARecordType;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverter;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
-import edu.uci.ics.hyracks.api.context.IHyracksTaskContext;
-import edu.uci.ics.hyracks.api.exceptions.HyracksDataException;
-import edu.uci.ics.hyracks.dataflow.common.comm.io.ArrayTupleBuilder;
-import edu.uci.ics.hyracks.hdfs.ContextFactory;
 import edu.uci.ics.pregelix.api.converter.VertexOutputConverter;
 import edu.uci.ics.pregelix.api.graph.Vertex;
 import edu.uci.ics.pregelix.api.util.BspUtils;
@@ -46,7 +46,8 @@ public class WriteConverterFactory implements IWriteConverterFactory {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public IWriteConverter getFieldWriteConverter(IHyracksTaskContext ctx, int partitionId) throws HyracksDataException {
+    public IWriteConverter getFieldWriteConverter(IHyracksTaskContext ctx, int partitionId)
+            throws HyracksDataException {
         final Configuration conf = confFactory.createConfiguration();
         // Set context properly
         ContextFactory ctxFactory = new ContextFactory();

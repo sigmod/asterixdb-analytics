@@ -15,20 +15,21 @@
 
 package edu.uci.ics.external.connector.asterixdb;
 
+import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
+import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
+import org.apache.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
+import org.apache.hyracks.storage.am.lsm.btree.dataflow.LSMBTreeDataflowHelperFactory;
+import org.apache.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
+import org.apache.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
+import org.apache.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
+
 import edu.uci.ics.external.connector.api.IWriteConnector;
 import edu.uci.ics.external.connector.api.ParallelOperator;
 import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
-import edu.uci.ics.external.connector.asterixdb.dataflow.helper.AsterixDBLSMBTreeDataflowHelperFactory;
-import edu.uci.ics.hyracks.api.dataflow.IOperatorDescriptor;
-import edu.uci.ics.hyracks.api.job.JobSpecification;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
-import edu.uci.ics.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
-import edu.uci.ics.hyracks.storage.am.lsm.common.impls.SynchronousSchedulerProvider;
 
 public class WriteConnector implements IWriteConnector {
 
@@ -86,7 +87,7 @@ public class WriteConnector implements IWriteConnector {
 
     @Override
     public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
-        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new AsterixDBLSMBTreeDataflowHelperFactory(
+        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
                 SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true,
