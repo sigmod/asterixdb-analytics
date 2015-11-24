@@ -17,9 +17,8 @@ package edu.uci.ics.external.connector.asterixdb;
 
 import org.apache.hyracks.api.dataflow.IOperatorDescriptor;
 import org.apache.hyracks.api.job.JobSpecification;
+import org.apache.hyracks.storage.am.common.dataflow.AbstractTreeIndexOperatorDescriptor;
 import org.apache.hyracks.storage.am.common.dataflow.IIndexDataflowHelperFactory;
-import org.apache.hyracks.storage.am.common.dataflow.TreeIndexBulkLoadOperatorDescriptor;
-import org.apache.hyracks.storage.am.lsm.btree.dataflow.LSMBTreeDataflowHelperFactory;
 import org.apache.hyracks.storage.am.lsm.common.impls.ConstantMergePolicyFactory;
 import org.apache.hyracks.storage.am.lsm.common.impls.NoOpIOOperationCallback;
 import org.apache.hyracks.storage.am.lsm.common.impls.NoOpOperationTrackerProvider;
@@ -29,7 +28,9 @@ import edu.uci.ics.external.connector.api.IWriteConnector;
 import edu.uci.ics.external.connector.api.ParallelOperator;
 import edu.uci.ics.external.connector.api.PhysicalProperties;
 import edu.uci.ics.external.connector.asterixdb.api.IWriteConverterFactory;
+import edu.uci.ics.external.connector.asterixdb.dataflow.AsterixDBTreeIndexBulkLoadOperatorDescriptor;
 import edu.uci.ics.external.connector.asterixdb.dataflow.WriteTransformOperatorDescriptor;
+import edu.uci.ics.external.connector.asterixdb.dataflow.helper.AsterixDBLSMBTreeDataflowHelperFactory;
 
 public class WriteConnector implements IWriteConnector {
 
@@ -87,14 +88,14 @@ public class WriteConnector implements IWriteConnector {
 
     @Override
     public ParallelOperator getWriteOperatorDescriptor(JobSpecification jobSpec, String[] locationConstraints) {
-        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new LSMBTreeDataflowHelperFactory(
+        IIndexDataflowHelperFactory asterixDataflowHelperFactory = new AsterixDBLSMBTreeDataflowHelperFactory(
                 storageParameter.getVirtualBufferCacheProvider(), new ConstantMergePolicyFactory(),
                 storageParameter.getMergePolicyProperties(), NoOpOperationTrackerProvider.INSTANCE,
                 SynchronousSchedulerProvider.INSTANCE, NoOpIOOperationCallback.INSTANCE, 0.01, true,
                 datasetInfo.getTypeTraits(), null, null, null, true);
 
         // BTree bulkload operator.
-        TreeIndexBulkLoadOperatorDescriptor writer = new TreeIndexBulkLoadOperatorDescriptor(jobSpec,
+        AbstractTreeIndexOperatorDescriptor writer = new AsterixDBTreeIndexBulkLoadOperatorDescriptor(jobSpec,
                 datasetInfo.getRecordDescriptor(), storageParameter.getStorageManagerInterface(),
                 storageParameter.getIndexLifecycleManagerProvider(), datasetInfo.getFileSplitProvider(),
                 datasetInfo.getTypeTraits(), datasetInfo.getPrimaryKeyComparatorFactories(),

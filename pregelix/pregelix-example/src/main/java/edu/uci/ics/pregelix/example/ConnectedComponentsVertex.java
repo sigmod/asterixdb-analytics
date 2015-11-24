@@ -23,8 +23,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-
 import org.apache.hyracks.api.exceptions.HyracksDataException;
+
 import edu.uci.ics.pregelix.api.graph.Edge;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -87,7 +87,8 @@ public class ConnectedComponentsVertex extends Vertex<VLongWritable, VLongWritab
         }
 
         @Override
-        public void stepPartial2(VLongWritable vertexIndex, VLongWritable partialAggregate) throws HyracksDataException {
+        public void stepPartial2(VLongWritable vertexIndex, VLongWritable partialAggregate)
+                throws HyracksDataException {
             long value = partialAggregate.get();
             if (min > value) {
                 min = value;
@@ -172,15 +173,15 @@ public class ConnectedComponentsVertex extends Vertex<VLongWritable, VLongWritab
     /**
      * Simple VertexWriter that support
      */
-    public static class SimpleConnectedComponentsVertexWriter extends
-            TextVertexWriter<VLongWritable, VLongWritable, FloatWritable> {
+    public static class SimpleConnectedComponentsVertexWriter
+            extends TextVertexWriter<VLongWritable, VLongWritable, FloatWritable> {
         public SimpleConnectedComponentsVertexWriter(RecordWriter<Text, Text> lineRecordWriter) {
             super(lineRecordWriter);
         }
 
         @Override
-        public void writeVertex(Vertex<VLongWritable, VLongWritable, FloatWritable, ?> vertex) throws IOException,
-                InterruptedException {
+        public void writeVertex(Vertex<VLongWritable, VLongWritable, FloatWritable, ?> vertex)
+                throws IOException, InterruptedException {
             getRecordWriter().write(new Text(vertex.getVertexId().toString()),
                     new Text(vertex.getVertexValue().toString()));
         }
@@ -189,8 +190,8 @@ public class ConnectedComponentsVertex extends Vertex<VLongWritable, VLongWritab
     /**
      * output format for connected components
      */
-    public static class SimpleConnectedComponentsVertexOutputFormat extends
-            TextVertexOutputFormat<VLongWritable, VLongWritable, FloatWritable> {
+    public static class SimpleConnectedComponentsVertexOutputFormat
+            extends TextVertexOutputFormat<VLongWritable, VLongWritable, FloatWritable> {
 
         @Override
         public VertexWriter<VLongWritable, VLongWritable, FloatWritable> createVertexWriter(TaskAttemptContext context)

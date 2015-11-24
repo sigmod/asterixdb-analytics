@@ -28,8 +28,8 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
-
 import org.apache.hyracks.api.exceptions.HyracksDataException;
+
 import edu.uci.ics.pregelix.api.graph.Edge;
 import edu.uci.ics.pregelix.api.graph.MessageCombiner;
 import edu.uci.ics.pregelix.api.graph.MsgList;
@@ -163,6 +163,11 @@ public class ReachabilityVertex extends Vertex<VLongWritable, ByteWritable, Floa
                 ByteWritable msg = msgIterator.next();
                 int msgValue = msg.get();
                 if (msgValue < 3) {
+                    ByteWritable vertexValue = getVertexValue();
+                    if (vertexValue == null) {
+                        tmpVertexValue.set((byte) 0);
+                        setVertexValue(tmpVertexValue);
+                    }
                     int state = getVertexValue().get();
                     int newState = state | msgValue;
                     boolean changed = state == newState ? false : true;
@@ -242,15 +247,15 @@ public class ReachabilityVertex extends Vertex<VLongWritable, ByteWritable, Floa
     /**
      * Simple VertexWriter
      */
-    public static class SimpleReachibilityVertexWriter extends
-            TextVertexWriter<VLongWritable, ByteWritable, FloatWritable> {
+    public static class SimpleReachibilityVertexWriter
+            extends TextVertexWriter<VLongWritable, ByteWritable, FloatWritable> {
         public SimpleReachibilityVertexWriter(RecordWriter<Text, Text> lineRecordWriter) {
             super(lineRecordWriter);
         }
 
         @Override
-        public void writeVertex(Vertex<VLongWritable, ByteWritable, FloatWritable, ?> vertex) throws IOException,
-                InterruptedException {
+        public void writeVertex(Vertex<VLongWritable, ByteWritable, FloatWritable, ?> vertex)
+                throws IOException, InterruptedException {
             getRecordWriter().write(new Text(vertex.getVertexId().toString()),
                     new Text(vertex.getVertexValue().toString()));
         }
@@ -259,8 +264,8 @@ public class ReachabilityVertex extends Vertex<VLongWritable, ByteWritable, Floa
     /**
      * output format for reachibility
      */
-    public static class SimpleReachibilityVertexOutputFormat extends
-            TextVertexOutputFormat<VLongWritable, ByteWritable, FloatWritable> {
+    public static class SimpleReachibilityVertexOutputFormat
+            extends TextVertexOutputFormat<VLongWritable, ByteWritable, FloatWritable> {
 
         @Override
         public VertexWriter<VLongWritable, ByteWritable, FloatWritable> createVertexWriter(TaskAttemptContext context)

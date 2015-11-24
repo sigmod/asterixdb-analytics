@@ -3,9 +3,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * you may obtain a copy of the License from
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +32,9 @@ public class PregelixTestUtils {
         Collection<Record> expectedRecords = loadRecords(expectedFileDir);
         Collection<Record> actualRecords = loadRecords(actualFileDir);
         boolean equal = collectionEqual(expectedRecords, actualRecords);
-        Assert.assertTrue(equal);
+        if (!equal) {
+            throw new IllegalStateException("Wrong results in " + actualFileDir.toString());
+        }
     }
 
     public static boolean collectionEqual(Collection<Record> c1, Collection<Record> c2) {
@@ -84,8 +86,8 @@ public class PregelixTestUtils {
         return records;
     }
 
-    private static void populateResultFile(Collection<Record> records, File file) throws FileNotFoundException,
-            IOException {
+    private static void populateResultFile(Collection<Record> records, File file)
+            throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String line = null;
         while ((line = reader.readLine()) != null) {

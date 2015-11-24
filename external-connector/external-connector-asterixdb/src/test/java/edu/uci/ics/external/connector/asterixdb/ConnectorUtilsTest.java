@@ -22,18 +22,15 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
-import junit.extensions.PA;
-import junit.framework.Assert;
-
 import org.apache.asterix.om.types.ARecordType;
 import org.apache.asterix.om.types.ATypeTag;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.mortbay.util.SingletonList;
 
-import org.apache.asterix.om.types.ARecordType;
-import org.apache.asterix.om.types.ATypeTag;
 import edu.uci.ics.external.connector.asterixdb.api.FilePartition;
+import junit.extensions.PA;
+import junit.framework.Assert;
 
 public class ConnectorUtilsTest {
 
@@ -50,8 +47,8 @@ public class ConnectorUtilsTest {
         Assert.assertEquals(ATypeTag.STRING, recordType.getFieldType("DataverseName").getTypeTag());
         Assert.assertEquals(ATypeTag.STRING, recordType.getFieldType("DatasetName").getTypeTag());
 
-        boolean temp = (Boolean) PA
-                .invokeMethod(ConnectorUtils.class, "extractTempInfo(org.json.JSONObject)", response);
+        boolean temp = (Boolean) PA.invokeMethod(ConnectorUtils.class, "extractTempInfo(org.json.JSONObject)",
+                response);
         Assert.assertTrue(temp);
 
         List<FilePartition> partitions = (List<FilePartition>) PA.invokeMethod(ConnectorUtils.class,

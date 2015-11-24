@@ -17,8 +17,6 @@ package edu.uci.ics.pregelix.example.jobrun;
 
 import java.io.File;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -31,6 +29,7 @@ import edu.uci.ics.pregelix.core.base.IDriver.Plan;
 import edu.uci.ics.pregelix.core.driver.Driver;
 import edu.uci.ics.pregelix.core.util.PregelixHyracksIntegrationUtil;
 import edu.uci.ics.pregelix.example.util.PregelixTestUtils;
+import junit.framework.TestCase;
 
 public class RunJobTestCase extends TestCase {
     private static String HDFS_INPUTPATH = "/webmap";
@@ -55,8 +54,8 @@ public class RunJobTestCase extends TestCase {
     private final Driver driver = new Driver(this.getClass());
     private final FileSystem dfs;
 
-    public RunJobTestCase(String hadoopConfPath, String jobName, String jobFile, String resultFile,
-            String expectedFile, FileSystem dfs) throws Exception {
+    public RunJobTestCase(String hadoopConfPath, String jobName, String jobFile, String resultFile, String expectedFile,
+            FileSystem dfs) throws Exception {
         super("test");
         this.jobFile = jobFile;
         this.job = new PregelixJob("test");

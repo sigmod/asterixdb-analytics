@@ -22,10 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.io.VLongWritable;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
-
 import org.apache.hyracks.api.comm.IFrame;
 import org.apache.hyracks.api.comm.IFrameFieldAppender;
 import org.apache.hyracks.api.comm.IFrameWriter;
@@ -38,6 +36,7 @@ import org.apache.hyracks.dataflow.common.comm.io.FrameFixedFieldTupleAppender;
 import org.apache.hyracks.dataflow.common.data.accessors.ITupleReference;
 import org.apache.hyracks.storage.am.common.api.IIndexCursor;
 import org.apache.hyracks.storage.am.common.api.ITreeIndexCursor;
+
 import edu.uci.ics.pregelix.api.graph.GlobalAggregator;
 import edu.uci.ics.pregelix.api.graph.MsgList;
 import edu.uci.ics.pregelix.api.graph.Vertex;
@@ -119,7 +118,6 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
             private String jobId = "";
 
             private Vertex addedNewVertex;
-            private VLongWritable addedNewVertexId;
 
             @Override
             public void open(IHyracksTaskContext ctx, RecordDescriptor rd, IFrameWriter... writers)
@@ -201,6 +199,7 @@ public class ComputeUpdateFunctionFactory implements IUpdateFunctionFactory {
                     vertex.getEdges().clear();
                     vertex.getMsgList().clear();
                     vertex.reset();
+                    vertex.setVertexValue(null); // let the new vertex's value be null
                     WritableComparable vertexId = (WritableComparable) tuple[0];
                     vertex.setVertexId(vertexId);
                     vertex.activate(true);

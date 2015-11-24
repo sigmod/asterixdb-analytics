@@ -30,7 +30,6 @@ import org.apache.hyracks.api.io.FileReference;
 import org.apache.hyracks.api.io.IWorkspaceFileFactory;
 import org.apache.hyracks.control.nc.io.IOManager;
 import org.apache.hyracks.storage.am.common.api.IIndexLifecycleManager;
-import org.apache.hyracks.storage.am.common.dataflow.IndexLifecycleManager;
 import org.apache.hyracks.storage.am.lsm.common.api.IVirtualBufferCache;
 import org.apache.hyracks.storage.am.lsm.common.impls.MultitenantVirtualBufferCache;
 import org.apache.hyracks.storage.am.lsm.common.impls.VirtualBufferCache;
@@ -88,7 +87,7 @@ public class RuntimeContext implements IWorkspaceFileFactory {
                 new VirtualBufferCache(new HeapBufferAllocator(), memPageSize, numPagesInMemComponents));
         vbcs.add(vBufferCache);
         ioManager = (IOManager) appCtx.getRootContext().getIOManager();
-        lcManager = new IndexLifecycleManager();
+        lcManager = new NoBudgetIndexLifecycleManager();
         localResourceRepository = new TransientLocalResourceRepository();
         resourceIdFactory = new ResourceIdFactory(0);
     }
