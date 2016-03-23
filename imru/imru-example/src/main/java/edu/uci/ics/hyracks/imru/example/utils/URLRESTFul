@@ -1,0 +1,105 @@
+package edu.uci.ics.hyracks.imru.example.utils;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.HttpURLConnection;
+
+import java.net.URL;
+import java.lang.Object;
+import java.nio.file.Paths;
+import java.util.Scanner;
+
+import org.eclipse.jetty.util.log.Log;
+import org.json.*;
+
+/**
+ * Created by lmd on 1/25/16.
+ */
+public class URLRESTFul {
+    private static final String   urlstr= "http://localhost:19002/query?query=use%20dataverse%20datamine;for%20$l%20in%20dataset%28%27Points%27%29%20return%20$l;";
+    public static String[] converter(String[] args){
+        int determine=0;//no http
+        String file=null;
+        for(int i=0;i<args.length;i++){
+            if( args[i].toLowerCase().contains("http")){
+                determine=1;
+                file=args[i].replace("\'","");
+                args[i]=Paths.get(".").toAbsolutePath().normalize().toString()+"/exampleAsterix.txt";
+            }
+        }
+        System.out.println(determine);
+        if(determine==1) {//add file
+
+            try {
+                URL restServiceURL = new URL(file);
+                HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
+                httpConnection.setRequestMethod("GET");
+
+                httpConnection.setRequestProperty("Accept", "application/json");
+
+                if (httpConnection.getResponseCode() != 200) {
+                    throw new RuntimeException("HTTP GET Request Failed with Error code : "
+                            + httpConnection.getResponseCode());
+                }
+
+                BufferedReader responseBuffer = new BufferedReader(new InputStreamReader(
+                        (httpConnection.getInputStream())));
+
+                String output;
+                String output2 = "{ \"out\": ";
+                System.out.println("Output from Server:  \n");
+
+                while ((output = responseBuffer.readLine()) != null) {
+                    System.out.println(output);
+                    output2 = output2 + output;
+                }
+                String output3 = output2 + "}";
+                System.out.println(output3);
+                httpConnection.disconnect();
+
+                try {
+                    JSONObject obj = new JSONObject(output3);
+                    JSONArray arr = obj.getJSONArray("out");
+                   // String ss = Paths.get(".").toAbsolutePath().normalize().toString();
+                   // System.out.println(ss);
+                    File fileasterix = new File(Paths.get(".").toAbsolutePath().normalize().toString(), "exampleAsterix.txt");
+                    /*new File("exampleAsterix.txt").getAbsolutePath();*/
+                    PrintWriter writer = new PrintWriter(fileasterix);
+                    for (int i = 0; i < arr.length(); i++) {
+                        String h = arr.getJSONObject(i).getString("horizontal");//to impro
+                        String v = arr.getJSONObject(i).getString("vertical");
+                        writer.println(h + " " + v);
+                        System.out.println(h + " " + v + "\n");
+
+                    }
+                    writer.close();
+
+
+                } catch (JSONException e) {
+                    Log.warn("something wrong for json");
+                }
+
+
+            } catch (MalformedURLException e) {
+
+                e.printStackTrace();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+
+            }
+        }
+        return args;
+
+    }
+    /*public static void main(String[] args){
+        String command="bin/imru examples/imru-example-0.2.17-SNAPSHOT.jar edu.uci.ics.hyracks.imru.example.kmeans.KMeans -debug -disable-logging -host localhost -port 3099 -app kmeans -example-paths 'http://localhost:19002/query?query=use%20dataverse%20datamine;for%20$l%20in%20dataset%28%27Points%27%29%20return%20$l;' ";
+        String[] array=command.split(" ");
+        String[] pin= converter(array);
+       // String s=null;
+        for (String s:pin){
+            System.out.println(s);
+        }
+    }*/
+
+}
